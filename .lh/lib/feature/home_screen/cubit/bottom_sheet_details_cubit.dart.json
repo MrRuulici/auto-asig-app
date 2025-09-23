@@ -1,0 +1,30 @@
+{
+    "sourceFile": "lib/feature/home_screen/cubit/bottom_sheet_details_cubit.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 3,
+            "patches": [
+                {
+                    "date": 1730898441942,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1730992498962,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -17,5 +17,9 @@\n \n   void saveNotifications() {\n     // Logic to save notifications, if needed\n   }\n+\n+  void removeNotification(int index) {\n+    \n+  }\n }\n"
+                },
+                {
+                    "date": 1730993141973,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -18,6 +18,8 @@\n   void saveNotifications() {\n     // Logic to save notifications, if needed\n   }\n \n-  void removeNotification(int index) {}\n+  void removeNotification(int index) {\n+    \n+  }\n }\n"
+                },
+                {
+                    "date": 1730993173371,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -14,10 +14,12 @@\n     updatedNotifications[index] = updatedNotification;\n     emit(BottomSheetDetailsState(updatedNotifications));\n   }\n \n-  void saveNotifications() {\n-    // Logic to save notifications, if needed\n+  // void saveNotifications() {\n+  //   // Logic to save notifications, if needed\n+  // }\n+\n+  void removeNotification(int index) {\n+\n   }\n-\n-  void removeNotification(int index) {}\n }\n"
+                }
+            ],
+            "date": 1730898441942,
+            "name": "Commit-0",
+            "content": "import 'package:bloc/bloc.dart';\nimport 'package:equatable/equatable.dart';\nimport 'package:auto_asig/core/models/notification_model.dart';\n\npart 'bottom_sheet_details_state.dart';\n\nclass BottomSheetDetailsCubit extends Cubit<BottomSheetDetailsState> {\n  BottomSheetDetailsCubit(List<NotificationModel> notifications)\n      : super(BottomSheetDetailsState(notifications));\n\n  void updateNotification(int index, NotificationModel updatedNotification) {\n    final updatedNotifications = List<NotificationModel>.from(state.notifications);\n    updatedNotifications[index] = updatedNotification;\n    emit(BottomSheetDetailsState(updatedNotifications));\n  }\n\n  void saveNotifications() {\n    // Logic to save notifications, if needed\n  }\n}\n"
+        }
+    ]
+}

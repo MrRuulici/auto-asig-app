@@ -1,0 +1,42 @@
+{
+    "sourceFile": "lib/feature/auth/cubit/reg_country_picker_cubit.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 6,
+            "patches": [
+                {
+                    "date": 1730885052994,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1730885262142,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -3,10 +3,10 @@\n import 'package:auto_asig/feature/auth/cubit/reg_country_picker_state.dart';\n import 'package:bloc/bloc.dart';\n import 'package:fl_country_code_picker/fl_country_code_picker.dart';\n \n-class RegCountryPickerCubit extends Cubit<CountryPickerState> {\n-  RegCountryPickerCubit() : super(CountryPickerState.initial());\n+class CountryPickerCubit extends Cubit<CountryPickerState> {\n+  CountryPickerCubit() : super(CountryPickerState.initial());\n \n   void selectCountry(CountryCode country) {\n     emit(state.copyWith(selectedCountry: country));\n   }\n"
+                },
+                {
+                    "date": 1730885476795,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,13 +1,11 @@\n-// reg_country_picker_cubit.dart\n-\n import 'package:auto_asig/feature/auth/cubit/reg_country_picker_state.dart';\n import 'package:bloc/bloc.dart';\n import 'package:fl_country_code_picker/fl_country_code_picker.dart';\n \n class CountryPickerCubit extends Cubit<CountryPickerState> {\n   CountryPickerCubit() : super(CountryPickerState.initial());\n \n-  void selectCountry(CountryCode country) {\n-    emit(state.copyWith(selectedCountry: country));\n+  void selectCountry(CountryCode countryCode) {\n+    emit(state.copyWith(countryCode: countryCode));\n   }\n }\n"
+                },
+                {
+                    "date": 1730886160535,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,11 +1,13 @@\n-import 'package:auto_asig/feature/auth/cubit/reg_country_picker_state.dart';\n-import 'package:bloc/bloc.dart';\n import 'package:fl_country_code_picker/fl_country_code_picker.dart';\n \n-class CountryPickerCubit extends Cubit<CountryPickerState> {\n-  CountryPickerCubit() : super(CountryPickerState.initial());\n+class CountryPickerState {\n+  final CountryCode? countryCode;\n \n-  void selectCountry(CountryCode countryCode) {\n-    emit(state.copyWith(countryCode: countryCode));\n+  CountryPickerState({this.countryCode});\n+\n+  CountryPickerState copyWith({CountryCode? countryCode}) {\n+    return CountryPickerState(\n+      countryCode: countryCode ?? this.countryCode,\n+    );\n   }\n }\n"
+                },
+                {
+                    "date": 1730886270048,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,13 +1,11 @@\n+import 'package:auto_asig/feature/auth/cubit/reg_country_picker_state.dart';\n+import 'package:flutter_bloc/flutter_bloc.dart';\n import 'package:fl_country_code_picker/fl_country_code_picker.dart';\n \n-class CountryPickerState {\n-  final CountryCode? countryCode;\n+class CountryPickerCubit extends Cubit<CountryPickerState> {\n+  CountryPickerCubit() : super(CountryPickerState(countryCode: CountryCode(code: 'RO', dialCode: '+40', name: 'Romania')));\n \n-  CountryPickerState({this.countryCode});\n-\n-  CountryPickerState copyWith({CountryCode? countryCode}) {\n-    return CountryPickerState(\n-      countryCode: countryCode ?? this.countryCode,\n-    );\n+  void setCountryCode(CountryCode code) {\n+    emit(state.copyWith(countryCode: code));\n   }\n }\n"
+                },
+                {
+                    "date": 1730886349904,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,14 +1,13 @@\n+// reg_country_picker_cubit.dart\n+\n import 'package:auto_asig/feature/auth/cubit/reg_country_picker_state.dart';\n-import 'package:flutter_bloc/flutter_bloc.dart';\n+import 'package:bloc/bloc.dart';\n import 'package:fl_country_code_picker/fl_country_code_picker.dart';\n \n class CountryPickerCubit extends Cubit<CountryPickerState> {\n-  CountryPickerCubit()\n-      : super(CountryPickerState(\n-            countryCode: const CountryCode(\n-                code: 'RO', dialCode: '+40', name: 'Romania')));\n+  CountryPickerCubit() : super(CountryPickerState.initial());\n \n-  void setCountryCode(CountryCode code) {\n-    emit(state.copyWith(countryCode: code));\n+  void selectCountry(CountryCode country) {\n+    emit(state.copyWith(selectedCountry: country));\n   }\n }\n"
+                },
+                {
+                    "date": 1730886404897,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,13 +1,19 @@\n-// reg_country_picker_cubit.dart\n-\n-import 'package:auto_asig/feature/auth/cubit/reg_country_picker_state.dart';\n-import 'package:bloc/bloc.dart';\n import 'package:fl_country_code_picker/fl_country_code_picker.dart';\n \n-class CountryPickerCubit extends Cubit<CountryPickerState> {\n-  CountryPickerCubit() : super(CountryPickerState.initial());\n+class CountryPickerState {\n+  final CountryCode countryCode;\n \n-  void selectCountry(CountryCode country) {\n-    emit(state.copyWith(selectedCountry: country));\n+  CountryPickerState({required this.countryCode});\n+\n+  // Default to Romania\n+  factory CountryPickerState.initial() {\n+    return CountryPickerState(countryCode: CountryCode(name: \"Romania\", code: \"RO\", dialCode: \"+40\"));\n   }\n+\n+  // copyWith method to update countryCode selectively\n+  CountryPickerState copyWith({CountryCode? countryCode}) {\n+    return CountryPickerState(\n+      countryCode: countryCode ?? this.countryCode,\n+    );\n+  }\n }\n"
+                }
+            ],
+            "date": 1730885052994,
+            "name": "Commit-0",
+            "content": "// reg_country_picker_cubit.dart\n\nimport 'package:auto_asig/feature/auth/cubit/reg_country_picker_state.dart';\nimport 'package:bloc/bloc.dart';\nimport 'package:fl_country_code_picker/fl_country_code_picker.dart';\n\nclass RegCountryPickerCubit extends Cubit<CountryPickerState> {\n  RegCountryPickerCubit() : super(CountryPickerState.initial());\n\n  void selectCountry(CountryCode country) {\n    emit(state.copyWith(selectedCountry: country));\n  }\n}\n"
+        }
+    ]
+}

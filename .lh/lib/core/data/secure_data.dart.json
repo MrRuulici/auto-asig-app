@@ -1,0 +1,22 @@
+{
+    "sourceFile": "lib/core/data/secure_data.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 1,
+            "patches": [
+                {
+                    "date": 1732808251619,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1732808308701,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,21 +1,22 @@\n import 'package:auto_asig/core/app/app_data.dart';\n-import 'package:flutter_secure_storage/flutter_secure_storage.dart';\n \n-Future<void> writeSecureData({required String key, required String value}) async {\n+Future<void> writeSecureData(\n+    {required String key, required String value}) async {\n   await secureStorage!.write(key: key, value: value);\n }\n \n-// Write data\n-await storage.write(key: 'your_key', value: 'your_value');\n+Future<String?> readSecureData({required String key}) async {\n+  return await secureStorage!.read(key: key);\n+}\n \n-// Read data\n-String? value = await storage.read(key: 'your_key');\n+Future<void> deleteSecureData({required String key}) async {\n+  await secureStorage!.delete(key: key);\n+}\n \n-// Delete data\n-await storage.delete(key: 'your_key');\n+Future<Map<String, String>> readAllSecureData() async {\n+  return await secureStorage!.readAll();\n+}\n \n-// Read all data\n-Map<String, String> allData = await storage.readAll();\n-\n-// Delete all data\n-await storage.deleteAll();\n+Future<void> deleteAllSecureData() async {\n+  await secureStorage!.deleteAll();\n+}\n"
+                }
+            ],
+            "date": 1732808251616,
+            "name": "Commit-0",
+            "content": "import 'package:auto_asig/core/app/app_data.dart';\nimport 'package:flutter_secure_storage/flutter_secure_storage.dart';\n\nFuture<void> writeSecureData({required String key, required String value}) async {\n  await secureStorage!.write(key: key, value: value);\n}\n\n// Write data\nawait storage.write(key: 'your_key', value: 'your_value');\n\n// Read data\nString? value = await storage.read(key: 'your_key');\n\n// Delete data\nawait storage.delete(key: 'your_key');\n\n// Read all data\nMap<String, String> allData = await storage.readAll();\n\n// Delete all data\nawait storage.deleteAll();\n"
+        }
+    ]
+}

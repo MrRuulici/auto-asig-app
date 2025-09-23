@@ -1,0 +1,30 @@
+{
+    "sourceFile": "lib/feature/intro/screens/old_version_screen.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 3,
+            "patches": [
+                {
+                    "date": 1728305206737,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1730566374805,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -4,9 +4,9 @@\n import 'package:flutter/material.dart';\r\n import 'package:url_launcher/url_launcher.dart';\r\n \r\n class OldVersionScreen extends StatelessWidget {\r\n-  const OldVersionScreen({Key? key}) : super(key: key);\r\n+  const OldVersionScreen({super.key});\r\n \r\n   static const path = '/old_version_screen';\r\n \r\n   @override\r\n"
+                },
+                {
+                    "date": 1730900408484,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -38,9 +38,9 @@\n                   fontStyle: FontStyle.italic,\r\n                 ),\r\n               ),\r\n               const SizedBox(height: 40),\r\n-              AsigButton(\r\n+              AutoAsigButton(\r\n                 onPressed: () {\r\n                   // open url\r\n                   launchURL();\r\n                 },\r\n"
+                },
+                {
+                    "date": 1732027487362,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,7 +1,7 @@\n import 'package:auto_asig/core/app/app_data.dart';\n import 'package:auto_asig/core/data/constants.dart';\n-import 'package:auto_asig/core/widgets/custom_btn.dart';\n+import 'package:auto_asig/core/widgets/auto_asig_button_full.dart';\n import 'package:flutter/material.dart';\n import 'package:url_launcher/url_launcher.dart';\n \n class OldVersionScreen extends StatelessWidget {\n"
+                }
+            ],
+            "date": 1728305206737,
+            "name": "Commit-0",
+            "content": "import 'package:auto_asig/core/app/app_data.dart';\nimport 'package:auto_asig/core/data/constants.dart';\nimport 'package:auto_asig/core/widgets/custom_btn.dart';\nimport 'package:flutter/material.dart';\nimport 'package:url_launcher/url_launcher.dart';\n\nclass OldVersionScreen extends StatelessWidget {\n  const OldVersionScreen({Key? key}) : super(key: key);\n\n  static const path = '/old_version_screen';\n\n  @override\n  Widget build(BuildContext context) {\n    void launchURL() {\n      // const url =\n      //     'https://drive.google.com/file/d/105Wi4ZSUEYN3awDEXDlh7zz3brkRFOco/view?usp=drive_link';\n\n      // convert to Uri\n      final Uri uri = Uri.parse(updateUrl);\n\n      launchUrl(uri);\n    }\n\n    return Scaffold(\n      body: Padding(\n        padding: const EdgeInsets.symmetric(horizontal: padding),\n        child: Center(\n          child: Column(\n            mainAxisAlignment: MainAxisAlignment.center,\n            children: [\n              const Text(\n                'Această versiune a aplicației nu mai este suportată. Te rugăm să o actualizezi folosind butonul de mai jos.',\n                textAlign: TextAlign.center,\n                style: TextStyle(\n                  fontSize: theFontSize,\n                  fontWeight: FontWeight.bold,\n                  color: Colors.red,\n                  fontStyle: FontStyle.italic,\n                ),\n              ),\n              const SizedBox(height: 40),\n              AsigButton(\n                onPressed: () {\n                  // open url\n                  launchURL();\n                },\n                text: 'Actualizează',\n              ),\n            ],\n          ),\n        ),\n      ),\n    );\n  }\n}\n"
+        }
+    ]
+}

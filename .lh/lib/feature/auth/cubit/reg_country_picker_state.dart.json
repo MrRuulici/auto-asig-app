@@ -1,0 +1,26 @@
+{
+    "sourceFile": "lib/feature/auth/cubit/reg_country_picker_state.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 2,
+            "patches": [
+                {
+                    "date": 1730885032353,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1730885038668,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -8,11 +8,11 @@\n \n   const CountryPickerState({required this.selectedCountry});\n \n   // Set the default country to Romania\n-  factory CountryPickerState.initial() => CountryPickerState(\n+  factory CountryPickerState.initial() => const CountryPickerState(\n       selectedCountry:\n-          const CountryCode(name: 'Romania', code: 'RO', dialCode: '+40'));\n+          CountryCode(name: 'Romania', code: 'RO', dialCode: '+40'));\n \n   CountryPickerState copyWith({CountryCode? selectedCountry}) {\n     return CountryPickerState(\n       selectedCountry: selectedCountry ?? this.selectedCountry,\n"
+                },
+                {
+                    "date": 1730885469132,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,24 +1,19 @@\n-// country_picker_state.dart\n-\n-import 'package:equatable/equatable.dart';\n import 'package:fl_country_code_picker/fl_country_code_picker.dart';\n \n-class CountryPickerState extends Equatable {\n-  final CountryCode selectedCountry;\n+class CountryPickerState {\n+  final CountryCode countryCode;\n \n-  const CountryPickerState({required this.selectedCountry});\n+  CountryPickerState({required this.countryCode});\n \n-  // Set the default country to Romania\n-  factory CountryPickerState.initial() => const CountryPickerState(\n-      selectedCountry:\n-          CountryCode(name: 'Romania', code: 'RO', dialCode: '+40'));\n+  // Default to Romania\n+  factory CountryPickerState.initial() {\n+    return CountryPickerState(countryCode: const CountryCode(name: \"Romania\", code: \"RO\", dialCode: \"+40\"));\n+  }\n \n-  CountryPickerState copyWith({CountryCode? selectedCountry}) {\n+  // copyWith method to update countryCode selectively\n+  CountryPickerState copyWith({CountryCode? countryCode}) {\n     return CountryPickerState(\n-      selectedCountry: selectedCountry ?? this.selectedCountry,\n+      countryCode: countryCode ?? this.countryCode,\n     );\n   }\n-\n-  @override\n-  List<Object?> get props => [selectedCountry];\n }\n"
+                }
+            ],
+            "date": 1730885032353,
+            "name": "Commit-0",
+            "content": "// country_picker_state.dart\n\nimport 'package:equatable/equatable.dart';\nimport 'package:fl_country_code_picker/fl_country_code_picker.dart';\n\nclass CountryPickerState extends Equatable {\n  final CountryCode selectedCountry;\n\n  const CountryPickerState({required this.selectedCountry});\n\n  // Set the default country to Romania\n  factory CountryPickerState.initial() => CountryPickerState(\n      selectedCountry: const CountryCode(name: 'Romania', code: 'RO', dialCode: '+40'));\n\n  CountryPickerState copyWith({CountryCode? selectedCountry}) {\n    return CountryPickerState(\n      selectedCountry: selectedCountry ?? this.selectedCountry,\n    );\n  }\n\n  @override\n  List<Object?> get props => [selectedCountry];\n}\n"
+        }
+    ]
+}

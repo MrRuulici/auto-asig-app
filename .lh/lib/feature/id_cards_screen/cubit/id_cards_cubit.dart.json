@@ -1,0 +1,30 @@
+{
+    "sourceFile": "lib/feature/id_cards_screen/cubit/id_cards_cubit.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 3,
+            "patches": [
+                {
+                    "date": 1728304107438,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1728304317661,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -12,5 +12,14 @@\n \n   void updateExpirationDate(DateTime expirationDate) {\n     emit(state.copyWith(expirationDate: expirationDate));\n   }\n+\n+  void reset() {\n+    emit(IdCardsInitial());\n+  }\n+\n+  void save() {\n+    // save to database\n+    \n+  }\n }\n"
+                },
+                {
+                    "date": 1728304358482,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,4 +1,5 @@\n+import 'package:auto_asig/core/data/http_data.dart';\n import 'package:bloc/bloc.dart';\n import 'package:equatable/equatable.dart';\n \n part 'id_cards_state.dart';\n@@ -17,8 +18,13 @@\n   void reset() {\n     emit(IdCardsInitial());\n   }\n \n-  void save() {\n+  void save(String userId) {\n     // save to database\n+    Map<String, dynamic> ids = {\n+      'name': state.name,\n+      'expirationDate': state.expirationDate,\n+    };\n+    addTheIdsForUser(userId, ids);\n   }\n }\n"
+                },
+                {
+                    "date": 1728304885697,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -10,9 +10,9 @@\n   void updateName(String name) {\n     emit(state.copyWith(name: name));\n   }\n \n-  void updateExpirationDate(DateTime expirationDate) {\n+  void updateExpirationDate(DateTime? expirationDate) {\n     emit(state.copyWith(expirationDate: expirationDate));\n   }\n \n   void reset() {\n"
+                }
+            ],
+            "date": 1728304107438,
+            "name": "Commit-0",
+            "content": "import 'package:bloc/bloc.dart';\nimport 'package:equatable/equatable.dart';\n\npart 'id_cards_state.dart';\n\nclass IdCardsCubit extends Cubit<IdCardsState> {\n  IdCardsCubit() : super(IdCardsInitial());\n\n  void updateName(String name) {\n    emit(state.copyWith(name: name));\n  }\n\n  void updateExpirationDate(DateTime expirationDate) {\n    emit(state.copyWith(expirationDate: expirationDate));\n  }\n}\n"
+        }
+    ]
+}

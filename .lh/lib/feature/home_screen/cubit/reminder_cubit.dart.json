@@ -1,0 +1,34 @@
+{
+    "sourceFile": "lib/feature/home_screen/cubit/reminder_cubit.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 4,
+            "patches": [
+                {
+                    "date": 1729860625096,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1729865569135,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -9,9 +9,9 @@\n class ReminderCubit extends Cubit<ReminderState> {\r\n   ReminderCubit() : super(ReminderInitial());\r\n \r\n   // Function to fetch reminders\r\n-  void fetchReminders(String userId) async {\r\n+  Future<void> fetchReminders(String userId) async {\r\n     try {\r\n       emit(ReminderLoading());\r\n \r\n       // Fetch the reminders (replace with your actual logic)\r\n"
+                },
+                {
+                    "date": 1729866230190,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -8,8 +8,13 @@\n // ReminderCubit that handles state management for the reminders\r\n class ReminderCubit extends Cubit<ReminderState> {\r\n   ReminderCubit() : super(ReminderInitial());\r\n \r\n+  void initializeWithReminders(List<Reminder> reminders) {\r\n+      emit(ReminderLoaded(reminders));\r\n+   }\r\n+\r\n+\r\n   // Function to fetch reminders\r\n   Future<void> fetchReminders(String userId) async {\r\n     try {\r\n       emit(ReminderLoading());\r\n"
+                },
+                {
+                    "date": 1730551320065,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -12,22 +12,36 @@\n   void initializeWithReminders(List<Reminder> reminders) {\r\n     emit(ReminderLoaded(reminders));\r\n   }\r\n \r\n-  // Function to fetch reminders\r\n+  // Function to fetch general reminders (e.g., for \"Personal\" tab)\r\n   Future<void> fetchReminders(String userId) async {\r\n     try {\r\n       emit(ReminderLoading());\r\n \r\n-      // Fetch the reminders (replace with your actual logic)\r\n+      // Fetch the general reminders\r\n       final reminders = await getRemindersFromDB(userId);\r\n \r\n       emit(ReminderLoaded(reminders));\r\n     } catch (e) {\r\n       emit(ReminderError('Failed to load reminders: ${e.toString()}'));\r\n     }\r\n   }\r\n \r\n+  // Function to fetch vehicle-specific reminders\r\n+  Future<void> fetchVehicleReminders(String userId) async {\r\n+    try {\r\n+      emit(ReminderLoading());\r\n+\r\n+      // Fetch only vehicle-specific reminders\r\n+      final vehicleReminders = await getVehicleRemindersFromDB(userId);\r\n+\r\n+      emit(ReminderLoaded(vehicleReminders));\r\n+    } catch (e) {\r\n+      emit(ReminderError('Failed to load vehicle reminders: ${e.toString()}'));\r\n+    }\r\n+  }\r\n+\r\n   // Function to add a new reminder\r\n   void addNewReminder(String title, DateTime expirationDate,\r\n       List<NotificationModel> notificationDates, ReminderType type) {\r\n     // Check if the current state is ReminderLoaded to add the new reminder\r\n@@ -45,9 +59,9 @@\n \r\n       // Emit the updated state with the new reminder added to the list\r\n       emit(ReminderLoaded([...currentReminders, newReminder]));\r\n     } else {\r\n-      // If the reminders aren't loaded, you can handle this scenario as needed\r\n+      // If the reminders aren't loaded, handle this scenario\r\n       emit(ReminderError('Cannot add reminder: reminders not loaded.'));\r\n     }\r\n   }\r\n }\r\n"
+                },
+                {
+                    "date": 1730562851626,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -28,8 +28,9 @@\n   }\r\n \r\n   // Function to fetch vehicle-specific reminders\r\n   Future<void> fetchVehicleReminders(String userId) async {\r\n+    // TODO - implement this function\r\n     try {\r\n       emit(ReminderLoading());\r\n \r\n       // Fetch only vehicle-specific reminders\r\n"
+                }
+            ],
+            "date": 1729860625095,
+            "name": "Commit-0",
+            "content": "import 'package:auto_asig/core/data/constants.dart';\r\nimport 'package:auto_asig/core/data/http_data.dart';\r\nimport 'package:auto_asig/core/models/notification_model.dart';\r\nimport 'package:auto_asig/core/models/reminder.dart';\r\nimport 'package:auto_asig/feature/home_screen/cubit/reminder_state.dart';\r\nimport 'package:bloc/bloc.dart';\r\n\r\n// ReminderCubit that handles state management for the reminders\r\nclass ReminderCubit extends Cubit<ReminderState> {\r\n  ReminderCubit() : super(ReminderInitial());\r\n\r\n  // Function to fetch reminders\r\n  void fetchReminders(String userId) async {\r\n    try {\r\n      emit(ReminderLoading());\r\n\r\n      // Fetch the reminders (replace with your actual logic)\r\n      final reminders = await getRemindersFromDB(userId);\r\n\r\n      emit(ReminderLoaded(reminders));\r\n    } catch (e) {\r\n      emit(ReminderError('Failed to load reminders: ${e.toString()}'));\r\n    }\r\n  }\r\n\r\n   // Function to add a new reminder\r\n  void addNewReminder(String title, DateTime expirationDate, List<NotificationModel> notificationDates, ReminderType type) {\r\n    // Check if the current state is ReminderLoaded to add the new reminder\r\n    if (state is ReminderLoaded) {\r\n      final currentReminders = (state as ReminderLoaded).reminders;\r\n\r\n      // Create the new reminder\r\n      final newReminder = Reminder(\r\n        title: title,\r\n        expirationDate: expirationDate,\r\n        notificationDates: notificationDates,\r\n        creationDate: DateTime.now(),\r\n        type: type,\r\n      );\r\n\r\n      // Emit the updated state with the new reminder added to the list\r\n      emit(ReminderLoaded([...currentReminders, newReminder]));\r\n    } else {\r\n      // If the reminders aren't loaded, you can handle this scenario as needed\r\n      emit(ReminderError('Cannot add reminder: reminders not loaded.'));\r\n    }\r\n  }\r\n}\r\n"
+        }
+    ]
+}

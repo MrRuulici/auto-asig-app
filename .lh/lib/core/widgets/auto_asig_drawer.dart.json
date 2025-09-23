@@ -1,0 +1,26 @@
+{
+    "sourceFile": "lib/core/widgets/auto_asig_drawer.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 2,
+            "patches": [
+                {
+                    "date": 1729684463082,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1729684500105,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -95,9 +95,8 @@\n                 ),\r\n               ],\r\n             ),\r\n           ),\r\n-          // \"Delogare\" is placed here and will always be at the bottom\r\n           ListTile(\r\n             title: const Text('Delogare'),\r\n             onTap: logout,\r\n           ),\r\n"
+                },
+                {
+                    "date": 1729684521310,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -75,8 +75,9 @@\n                     return Text(\r\n                       state.member.fullName,\r\n                       style: const TextStyle(\r\n                         fontSize: theFontSize,\r\n+                        fontWeight: FontWeight.bold,\r\n                       ),\r\n                     );\r\n                   },\r\n                 ),\r\n"
+                }
+            ],
+            "date": 1729684463082,
+            "name": "Commit-0",
+            "content": "import 'package:auto_asig/core/cubit/user_data_cubit.dart';\r\nimport 'package:auto_asig/core/data/constants.dart';\r\nimport 'package:auto_asig/feature/auth/cubit/auth_cubit.dart';\r\nimport 'package:auto_asig/feature/auth/screens/onboarding_screen.dart';\r\nimport 'package:auto_asig/feature/home_screen/screens/about_screen.dart';\r\nimport 'package:flutter/material.dart';\r\nimport 'package:flutter_bloc/flutter_bloc.dart';\r\nimport 'package:go_router/go_router.dart';\r\n\r\nclass AutoAsigDrawer extends StatelessWidget {\r\n  const AutoAsigDrawer({super.key});\r\n\r\n  @override\r\n  Widget build(BuildContext context) {\r\n    void logout() {\r\n      // ask for confirmation\r\n      showDialog(\r\n        context: context,\r\n        builder: (context) => AlertDialog(\r\n          title: const Text(\r\n            'Delogare',\r\n            style: TextStyle(fontSize: theFontSize),\r\n          ),\r\n          content: const Text(\r\n            'Ești sigur că vrei să te deloghezi?',\r\n            style: TextStyle(\r\n              fontSize: theFontSize,\r\n            ),\r\n          ),\r\n          actions: [\r\n            TextButton(\r\n              onPressed: () => Navigator.of(context).pop(false),\r\n              child: const Text(\r\n                'Nu',\r\n                style: TextStyle(fontSize: theFontSize),\r\n              ),\r\n            ),\r\n            TextButton(\r\n              onPressed: () => Navigator.of(context).pop(true),\r\n              child: const Text(\r\n                'Da',\r\n                style: TextStyle(\r\n                  fontSize: theFontSize,\r\n                ),\r\n              ),\r\n            ),\r\n          ],\r\n        ),\r\n      ).then((value) {\r\n        if (value == true) {\r\n          context.read<UserDataCubit>().clearUserData();\r\n          context.read<AuthenticationCubit>().signOut();\r\n          context.go(OnboardingScreen.path);\r\n        }\r\n      });\r\n    }\r\n\r\n\r\n    return Drawer(\r\n        elevation: 2,\r\n        child: Column(\r\n          children: [\r\n            DrawerHeader(\r\n              child: Column(\r\n                children: [\r\n                  const CircleAvatar(\r\n                    radius: 40,\r\n                    child: Icon(\r\n                      Icons.person_rounded,\r\n                      size: 40,\r\n                    ),\r\n                  ),\r\n                  const SizedBox(height: 8),\r\n                  BlocBuilder<UserDataCubit, UserDataState>(\r\n                    builder: (context, state) {\r\n                      return Text(\r\n                        state.member.fullName,\r\n                        style: const TextStyle(\r\n                          fontSize: theFontSize,\r\n                        ),\r\n                      );\r\n                    },\r\n                  ),\r\n                ],\r\n              ),\r\n            ),\r\n            Expanded(\r\n              // Ensures that the rest of the list takes up available space\r\n              child: ListView(\r\n                children: [\r\n                  ListTile(\r\n                    title: const Text('Despre Aplicație'),\r\n                    onTap: () {\r\n                      context.push(AboutScreen.absolutePath);\r\n                    },\r\n                  ),\r\n                ],\r\n              ),\r\n            ),\r\n            // \"Delogare\" is placed here and will always be at the bottom\r\n            ListTile(\r\n              title: const Text('Delogare'),\r\n              onTap: logout,\r\n            ),\r\n          ],\r\n        ),\r\n      );\r\n  }\r\n}"
+        }
+    ]
+}

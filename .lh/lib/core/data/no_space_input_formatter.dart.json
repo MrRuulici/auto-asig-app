@@ -1,0 +1,18 @@
+{
+    "sourceFile": "lib/core/data/no_space_input_formatter.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1730566559080,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1730566559080,
+            "name": "Commit-0",
+            "content": "\r\nimport 'package:flutter/services.dart';\r\n\r\nclass NoSpaceInputFormatter extends TextInputFormatter {\r\n  @override\r\n  TextEditingValue formatEditUpdate(\r\n      TextEditingValue oldValue, TextEditingValue newValue) {\r\n    // Remove any whitespace from the new value\r\n    final newText = newValue.text.replaceAll(RegExp(r'\\s+'), '');\r\n    return TextEditingValue(\r\n      text: newText,\r\n      selection: newValue.selection,\r\n    );\r\n  }\r\n}\r\n"
+        }
+    ]
+}

@@ -1,0 +1,26 @@
+{
+    "sourceFile": "lib/feature/home_screen/widgets/home_bottom_navigation_bar.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 2,
+            "patches": [
+                {
+                    "date": 1730705410297,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1730705435845,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -18,9 +18,9 @@\n           onTap: (index) {\r\n             final tab = HomeScreenTabState.values[index];\r\n             homeCubit.selectTab(tab);\r\n           },\r\n-          selectedItemColor: Colors.blue, // Set selected tab color to blue\r\n+          selectedItemColor: logoBlue, // Set selected tab color to blue\r\n           unselectedItemColor:\r\n               Colors.grey, // Optional: color for unselected tabs\r\n           items: const [\r\n             BottomNavigationBarItem(\r\n"
+                },
+                {
+                    "date": 1730705460341,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -18,11 +18,11 @@\n           onTap: (index) {\r\n             final tab = HomeScreenTabState.values[index];\r\n             homeCubit.selectTab(tab);\r\n           },\r\n-          selectedItemColor: logoBlue, // Set selected tab color to blue\r\n+          selectedItemColor: primaryYellow, // Set selected tab color to blue\r\n           unselectedItemColor:\r\n-              Colors.grey, // Optional: color for unselected tabs\r\n+              logoBlue, // Optional: color for unselected tabs\r\n           items: const [\r\n             BottomNavigationBarItem(\r\n               icon: Icon(Icons.person),\r\n               label: 'Personal',\r\n"
+                }
+            ],
+            "date": 1730705410297,
+            "name": "Commit-0",
+            "content": "import 'package:auto_asig/core/data/constants.dart';\r\nimport 'package:flutter/material.dart';\r\nimport 'package:auto_asig/feature/home_screen/cubit/home_screen_cubit.dart';\r\nimport 'package:auto_asig/feature/home_screen/cubit/home_screen_state.dart';\r\nimport 'package:flutter_bloc/flutter_bloc.dart';\r\n\r\nclass HomeBottomNavigationBar extends StatelessWidget {\r\n  final HomeScreenCubit homeCubit;\r\n\r\n  const HomeBottomNavigationBar({super.key, required this.homeCubit});\r\n\r\n  @override\r\n  Widget build(BuildContext context) {\r\n    return BlocBuilder<HomeScreenCubit, HomeScreenState>(\r\n      builder: (context, state) {\r\n        return BottomNavigationBar(\r\n          currentIndex: state.activeTab.index,\r\n          onTap: (index) {\r\n            final tab = HomeScreenTabState.values[index];\r\n            homeCubit.selectTab(tab);\r\n          },\r\n          selectedItemColor: Colors.blue, // Set selected tab color to blue\r\n          unselectedItemColor: Colors.grey, // Optional: color for unselected tabs\r\n          items: const [\r\n            BottomNavigationBarItem(\r\n              icon: Icon(Icons.person),\r\n              label: 'Personal',\r\n            ),\r\n            BottomNavigationBarItem(\r\n              icon: Icon(Icons.directions_car),\r\n              label: 'Vehicule',\r\n            ),\r\n          ],\r\n        );\r\n      },\r\n    );\r\n  }\r\n}\r\n"
+        }
+    ]
+}

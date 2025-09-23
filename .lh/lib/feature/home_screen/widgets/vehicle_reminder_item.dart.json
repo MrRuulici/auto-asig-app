@@ -1,0 +1,18 @@
+{
+    "sourceFile": "lib/feature/home_screen/widgets/vehicle_reminder_item.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1730554299767,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1730554299767,
+            "name": "Commit-0",
+            "content": "\r\nimport 'package:flutter/material.dart';\r\n\r\nclass VehicleReminderItem extends StatelessWidget {\r\n  final String reminderTitle;\r\n  final String expirationDate;\r\n  final int daysLeft;\r\n  final String time;\r\n\r\n  const VehicleReminderItem({\r\n    required this.reminderTitle,\r\n    required this.expirationDate,\r\n    required this.daysLeft,\r\n    required this.time,\r\n    super.key,\r\n  });\r\n\r\n  @override\r\n  Widget build(BuildContext context) {\r\n    return ListTile(\r\n      leading: Icon(Icons.car_rental,\r\n          color: daysLeft <= 0 ? Colors.red : Colors.green),\r\n      title: Text(reminderTitle),\r\n      subtitle: Text('Expira in: $expirationDate'),\r\n      trailing: Text(daysLeft > 0 ? '$daysLeft zile ramase' : 'Expirat'),\r\n    );\r\n  }\r\n}"
+        }
+    ]
+}

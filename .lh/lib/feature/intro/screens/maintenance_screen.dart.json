@@ -1,0 +1,26 @@
+{
+    "sourceFile": "lib/feature/intro/screens/maintenance_screen.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 2,
+            "patches": [
+                {
+                    "date": 1728305206737,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1730900408484,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -28,9 +28,9 @@\n                   fontStyle: FontStyle.italic,\r\n                 ),\r\n               ),\r\n               const SizedBox(height: 40),\r\n-              AsigButton(\r\n+              AutoAsigButton(\r\n                 onPressed: () {\r\n                   // close the app\r\n                   closeApp();\r\n                 },\r\n"
+                },
+                {
+                    "date": 1732027494246,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,6 +1,6 @@\n import 'package:auto_asig/core/data/constants.dart';\n-import 'package:auto_asig/core/widgets/custom_btn.dart';\n+import 'package:auto_asig/core/widgets/auto_asig_button_full.dart';\n import 'package:flutter/material.dart';\n import 'package:flutter/services.dart';\n \n class MaintenanceScreen extends StatelessWidget {\n"
+                }
+            ],
+            "date": 1728305206737,
+            "name": "Commit-0",
+            "content": "import 'package:auto_asig/core/data/constants.dart';\nimport 'package:auto_asig/core/widgets/custom_btn.dart';\nimport 'package:flutter/material.dart';\nimport 'package:flutter/services.dart';\n\nclass MaintenanceScreen extends StatelessWidget {\n  const MaintenanceScreen({super.key});\n\n  static const path = '/maintenance_screen';\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      body: Padding(\n        padding: const EdgeInsets.symmetric(horizontal: padding),\n        child: Center(\n          child: Column(\n            mainAxisAlignment: MainAxisAlignment.center,\n            children: [\n              const Text(\n                // under maintenance message\n                'Ne pare rău, aplicație este momentan în mentenanță. Te rugăm să încerci mai târziu.',\n                textAlign: TextAlign.center,\n                style: TextStyle(\n                  fontSize: theFontSize,\n                  fontWeight: FontWeight.bold,\n                  color: Colors.red,\n                  fontStyle: FontStyle.italic,\n                ),\n              ),\n              const SizedBox(height: 40),\n              AsigButton(\n                onPressed: () {\n                  // close the app\n                  closeApp();\n                },\n                text: 'Închide aplicația',\n              ),\n            ],\n          ),\n        ),\n      ),\n    );\n  }\n\n  void closeApp() {\n    // Close the app\n    SystemNavigator.pop();\n  }\n}\n"
+        }
+    ]
+}

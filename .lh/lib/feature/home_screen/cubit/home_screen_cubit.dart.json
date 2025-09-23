@@ -1,0 +1,26 @@
+{
+    "sourceFile": "lib/feature/home_screen/cubit/home_screen_cubit.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 2,
+            "patches": [
+                {
+                    "date": 1730550887025,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1730550989807,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,8 +1,20 @@\n import 'package:auto_asig/core/data/constants.dart';\n+import 'package:auto_asig/feature/home_screen/cubit/home_screen_state.dart';\n import 'package:flutter_bloc/flutter_bloc.dart';\n \n class HomeScreenCubit extends Cubit<HomeScreenState> {\n-  HomeScreenCubit() : super(HomeScreenState.personal);\n+  HomeScreenCubit() : super(HomeScreenState());\n \n-  void selectTab(HomeScreenState tab) {}\n+  void selectTab(HomeScreenTabState tab) {\n+    emit(state.copyWith(activeTab: tab, isLoading: true));\n+\n+    // Simulate fetching data for the selected tab\n+    // After fetching data, update the state\n+    // For example, once loading is complete:\n+    emit(state.copyWith(isLoading: false));\n+  }\n+\n+  void showError(String message) {\n+    emit(state.copyWith(hasError: true, errorMessage: message));\n+  }\n }\n"
+                },
+                {
+                    "date": 1730554896968,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,17 +1,26 @@\n import 'package:auto_asig/core/data/constants.dart';\n import 'package:auto_asig/feature/home_screen/cubit/home_screen_state.dart';\n+import 'package:auto_asig/feature/home_screen/cubit/reminder_cubit.dart';\n import 'package:flutter_bloc/flutter_bloc.dart';\n \n class HomeScreenCubit extends Cubit<HomeScreenState> {\n-  HomeScreenCubit() : super(HomeScreenState());\n+  final ReminderCubit reminderCubit;\n+  final String userId;\n \n+  HomeScreenCubit(this.reminderCubit, this.userId) : super(HomeScreenState());\n+\n   void selectTab(HomeScreenTabState tab) {\n     emit(state.copyWith(activeTab: tab, isLoading: true));\n \n-    // Simulate fetching data for the selected tab\n-    // After fetching data, update the state\n-    // For example, once loading is complete:\n+    // Fetch reminders based on the selected tab\n+    if (tab == HomeScreenTabState.personal) {\n+      reminderCubit.fetchReminders(userId);\n+    } else {\n+      reminderCubit.fetchVehicleReminders(userId);\n+    }\n+\n+    // Update state to stop loading after initiating fetch\n     emit(state.copyWith(isLoading: false));\n   }\n \n   void showError(String message) {\n"
+                }
+            ],
+            "date": 1730550887025,
+            "name": "Commit-0",
+            "content": "import 'package:auto_asig/core/data/constants.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\n\nclass HomeScreenCubit extends Cubit<HomeScreenState> {\n  HomeScreenCubit() : super(HomeScreenState.personal);\n\n  void selectTab(HomeScreenState tab) {\n    \n  }\n}\n"
+        }
+    ]
+}

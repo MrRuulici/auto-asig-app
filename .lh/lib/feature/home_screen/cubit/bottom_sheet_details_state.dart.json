@@ -1,0 +1,30 @@
+{
+    "sourceFile": "lib/feature/home_screen/cubit/bottom_sheet_details_state.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 3,
+            "patches": [
+                {
+                    "date": 1730898442785,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1730898447955,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,5 +1,4 @@\n-// bottom_sheet_details_state.dart\n part of 'bottom_sheet_details_cubit.dart';\n \n class BottomSheetDetailsState extends Equatable {\n   final List<NotificationModel> notifications;\n"
+                },
+                {
+                    "date": 1731231169867,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -6,5 +6,13 @@\n   const BottomSheetDetailsState(this.notifications);\n \n   @override\n   List<Object> get props => [notifications];\n+\n+  BottomSheetDetailsState copyWith({\n+    List<NotificationModel>? notifications,\n+  }) {\n+    return BottomSheetDetailsState(\n+      notifications ?? this.notifications,\n+    );\n+  }\n }\n"
+                },
+                {
+                    "date": 1731247032887,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,18 +1,21 @@\n part of 'bottom_sheet_details_cubit.dart';\n \n class BottomSheetDetailsState extends Equatable {\n   final List<NotificationModel> notifications;\n+  final String? errorMessage; // Add error message field\n \n-  const BottomSheetDetailsState(this.notifications);\n+  const BottomSheetDetailsState(this.notifications, {this.errorMessage});\n \n   @override\n-  List<Object> get props => [notifications];\n+  List<Object?> get props => [notifications, errorMessage]; // Include errorMessage in props\n \n   BottomSheetDetailsState copyWith({\n     List<NotificationModel>? notifications,\n+    String? errorMessage,\n   }) {\n     return BottomSheetDetailsState(\n       notifications ?? this.notifications,\n+      errorMessage: errorMessage,\n     );\n   }\n }\n"
+                }
+            ],
+            "date": 1730898442785,
+            "name": "Commit-0",
+            "content": "// bottom_sheet_details_state.dart\npart of 'bottom_sheet_details_cubit.dart';\n\nclass BottomSheetDetailsState extends Equatable {\n  final List<NotificationModel> notifications;\n\n  const BottomSheetDetailsState(this.notifications);\n\n  @override\n  List<Object> get props => [notifications];\n}\n"
+        }
+    ]
+}

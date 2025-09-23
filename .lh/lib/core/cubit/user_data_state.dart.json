@@ -1,0 +1,26 @@
+{
+    "sourceFile": "lib/core/cubit/user_data_state.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 2,
+            "patches": [
+                {
+                    "date": 1728038729493,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1728038857007,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -2,28 +2,40 @@\n \n sealed class UserDataState extends Equatable {\n   const UserDataState({\n     required this.member,\n+    required this.carInfo,\n+    required this.idInfo,\n   });\n \n   final UserModel member;\n+  final List<CarInfo> carInfo;\n+  final List<IdModel> idInfo;\n \n   @override\n   List<Object> get props => [\n         member,\n+        carInfo,\n+        idInfo,\n       ];\n \n   // write a copyWith method to copy the current state with some new values\n   UserDataState copyWith({\n     UserModel? member,\n+    List<CarInfo>? carInfo,\n+    List<IdModel>? idInfo,\n   }) {\n     return UserDataInitial(\n       member: member ?? this.member,\n+      carInfo: carInfo ?? this.carInfo,\n+      idInfo: idInfo ?? this.idInfo,\n     );\n   }\n }\n \n class UserDataInitial extends UserDataState {\n   const UserDataInitial({\n     required UserModel member,\n-  }) : super(member: member);\n+    required List<CarInfo> carInfo,\n+    required List<IdModel> idInfo,\n+  }) : super(member: member, carInfo: carInfo, idInfo: idInfo,);\n }\n"
+                },
+                {
+                    "date": 1728039062245,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -33,13 +33,9 @@\n }\n \n class UserDataInitial extends UserDataState {\n   const UserDataInitial({\n-    required UserModel member,\n-    required List<CarInfo> carInfo,\n-    required List<IdModel> idInfo,\n-  }) : super(\n-          member: member,\n-          carInfo: carInfo,\n-          idInfo: idInfo,\n-        );\n+    required super.member,\n+    required super.carInfo,\n+    required super.idInfo,\n+  });\n }\n"
+                }
+            ],
+            "date": 1728038729493,
+            "name": "Commit-0",
+            "content": "part of 'user_data_cubit.dart';\n\nsealed class UserDataState extends Equatable {\n  const UserDataState({\n    required this.member,\n  });\n\n  final UserModel member;\n  \n\n  @override\n  List<Object> get props => [\n        member,\n      ];\n\n  // write a copyWith method to copy the current state with some new values\n  UserDataState copyWith({\n    UserModel? member,\n  }) {\n    return UserDataInitial(\n      member: member ?? this.member,\n    );\n  }\n}\n\nclass UserDataInitial extends UserDataState {\n  const UserDataInitial({\n    required UserModel member,\n  }) : super(member: member);\n}\n"
+        }
+    ]
+}

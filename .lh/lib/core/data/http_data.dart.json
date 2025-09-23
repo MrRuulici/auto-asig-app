@@ -1,0 +1,30 @@
+{
+    "sourceFile": "lib/core/data/http_data.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 3,
+            "patches": [
+                {
+                    "date": 1728038169390,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1728287367745,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -109,10 +109,13 @@\n Future<void> readVehiclesDataForUser() async {\r\n   //\r\n }\r\n \r\n-Future<void> addVehicleDataForUser(Map<String, dynamic> carInfos) async {\r\n+Future<void> addVehicleDataForUser(String userId, Map<String, dynamic> carInfo) async {\r\n   //\r\n+  userCollection!.doc(userId).update({\r\n+    'carInfos': FieldValue.arrayUnion([carInfo]),\r\n+  });\r\n }\r\n \r\n Future<void> updateVehicleData(String id, Map<String, dynamic> carInfos) async {\r\n   //\r\n"
+                },
+                {
+                    "date": 1728287549572,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -112,11 +112,9 @@\n \r\n Future<void> addVehicleDataForUser(\r\n     String userId, Map<String, dynamic> carInfo) async {\r\n   //\r\n-  userCollection!.doc(userId).update({\r\n-    'carInfos': FieldValue.arrayUnion([carInfo]),\r\n-  });\r\n+  userCollection!.doc(userId).collection('vehicles')..doc(carInfo['carNr']).set(carInfo, SetOptions(merge: true),);\r\n }\r\n \r\n Future<void> updateVehicleData(String id, Map<String, dynamic> carInfos) async {\r\n   //\r\n"
+                },
+                {
+                    "date": 1728287574032,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -112,10 +112,10 @@\n \r\n Future<void> addVehicleDataForUser(\r\n     String userId, Map<String, dynamic> carInfo) async {\r\n   //\r\n-  userCollection!.doc(userId).collection('vehicles')\r\n-    ..doc(carInfo['carNr']).set(\r\n+ await userCollection!.doc(userId).collection('vehicles')\r\n+    .doc(carInfo['carNr']).set(\r\n       carInfo,\r\n       SetOptions(merge: true),\r\n     );\r\n }\r\n"
+                }
+            ],
+            "date": 1728038169390,
+            "name": "Commit-0",
+            "content": "import 'package:auto_asig/core/app/app_data.dart';\r\nimport 'package:auto_asig/core/models/user.dart';\r\nimport 'package:cloud_firestore/cloud_firestore.dart';\r\n\r\nFuture<Map<String, bool>> getAppData() async {\r\n  late bool isUpToDate;\r\n  late bool isMaintenance;\r\n\r\n  await appDataCollection!.doc('settings').get().then((value) {\r\n    if (value.data() != null) {\r\n      // Access the 'current' field in the version document\r\n      final version = value.data()! as Map<String, dynamic>;\r\n\r\n      isMaintenance = version['in_maintenance']; // Set isMaintenance\r\n\r\n      print('online version: ${version['current']}');\r\n      print('app version: $appVersion');\r\n\r\n      final int currentVersion = version['app_version'];\r\n\r\n      if (appVersion == currentVersion) {\r\n        print('App is up to date');\r\n        isOldVersion = false;\r\n        isUpToDate = true;\r\n      } else {\r\n        isUpToDate = false;\r\n      }\r\n\r\n      updateUrl = version['update_url'];\r\n    }\r\n    // }).then((value) async {\r\n    //   await getTheDataForMember();\r\n  });\r\n\r\n  return {'isUpToDate': isUpToDate, 'isMaintenance': isMaintenance};\r\n}\r\n\r\nFuture<UserModel?> readUserData(String id) async {\r\n  print('Reading user data for accountId: $id');\r\n\r\n  // Perform a query where the 'accountId' field matches the provided 'id'\r\n  // var querySnapshot = await userCollection!\r\n  //     .where('accountId', isEqualTo: id)\r\n  //     .limit(1) // Limiting to 1 result since you expect a single member\r\n  //     .get();\r\n  var querySnapshot = await userCollection!.doc(id).get();\r\n\r\n  UserModel? currentMember;\r\n\r\n  if (querySnapshot.exists) {\r\n    // Get the first matching document\r\n    var snapshot = querySnapshot;\r\n\r\n    final data = snapshot.data() as Map<String, dynamic>;\r\n\r\n    currentMember = UserModel(\r\n      snapshot.id, // Use the Firestore document ID for member ID\r\n      fullName: data['fullName'],\r\n      email: data['email'],\r\n      phone: data['phone'],\r\n    );\r\n\r\n    print('User data: $data');\r\n  } else {\r\n    print('No user found with accountId: $id');\r\n  }\r\n\r\n  return currentMember;\r\n}\r\n\r\nFuture<void> updateEmailAndPhoneForUser(\r\n  String id,\r\n  String email,\r\n  String phone,\r\n) async {\r\n  await userCollection!.doc(id).update({\r\n    'email': email,\r\n    'phone': phone,\r\n  });\r\n}\r\n\r\nFuture<void> registerUser(String uid, String email) async {\r\n  DocumentReference monthDoc = db.collection('users').doc(uid);\r\n\r\n  Map<String, dynamic> membersData = {\r\n    'timestamp': FieldValue.serverTimestamp(),\r\n    'email': email,\r\n    'fullName': '',\r\n    'phone': '',\r\n  };\r\n\r\n  return monthDoc.set(\r\n    membersData,\r\n  );\r\n}\r\n\r\nFuture<void> readTheIdsForUser() async {\r\n  //\r\n}\r\n\r\nFuture<void> updateTheUserIds(String id, Map<String, dynamic> ids) async {\r\n  //\r\n}\r\n\r\nFuture<void> addTheIdsForUser(Map<String, dynamic> ids) async {\r\n  //\r\n}\r\n\r\nFuture<void> readVehiclesDataForUser() async {\r\n  //\r\n}\r\n\r\nFuture<void> addVehicleDataForUser(Map<String, dynamic> carInfos) async {\r\n  //\r\n}\r\n\r\nFuture<void> updateVehicleData(String id, Map<String, dynamic> carInfos) async {\r\n  //\r\n}\r\n"
+        }
+    ]
+}

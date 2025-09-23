@@ -1,0 +1,34 @@
+{
+    "sourceFile": "lib/feature/reminders_viewer/cubit/reminder_state.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 4,
+            "patches": [
+                {
+                    "date": 1729354998033,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1729841137299,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,32 +1,56 @@\n-import 'package:auto_asig/feature/reminders_viewer/model/reminder.dart';\n import 'package:equatable/equatable.dart';\n-import 'package:meta/meta.dart';\n \n-// ReminderState class that extends Equatable to manage the different states\n-@immutable\n+// Reminder Type Enum\n+enum ReminderType {\n+  idCard,\n+  other, // Add other types as needed\n+}\n+\n+// Reminder Model\n+class Reminder {\n+  final String title;\n+  final DateTime expirationDate;\n+  final List<DateTime> notificationDates;\n+  final DateTime creationDate;\n+  final ReminderType type;\n+\n+  Reminder({\n+    required this.title,\n+    required this.expirationDate,\n+    required this.notificationDates,\n+    required this.creationDate,\n+    required this.type,\n+  });\n+}\n+\n+// Base State Class\n abstract class ReminderState extends Equatable {\n   @override\n-  List<Object?> get props => [];\n+  List<Object> get props => [];\n }\n \n+// Initial State\n class ReminderInitial extends ReminderState {}\n \n+// Loading State\n class ReminderLoading extends ReminderState {}\n \n+// Loaded State\n class ReminderLoaded extends ReminderState {\n   final List<Reminder> reminders;\n \n   ReminderLoaded(this.reminders);\n \n   @override\n-  List<Object?> get props => [reminders];\n+  List<Object> get props => [reminders];\n }\n \n+// Error State\n class ReminderError extends ReminderState {\n   final String message;\n \n   ReminderError(this.message);\n \n   @override\n-  List<Object?> get props => [message];\n+  List<Object> get props => [message];\n }\n"
+                },
+                {
+                    "date": 1729841262596,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,30 +1,5 @@\n-import 'package:equatable/equatable.dart';\n-\n-// Reminder Type Enum\n-enum ReminderType {\n-  idCard,\n-  other, // Add other types as needed\n-}\n-\n-// Reminder Model\n-class Reminder {\n-  final String title;\n-  final DateTime expirationDate;\n-  final List<DateTime> notificationDates;\n-  final DateTime creationDate;\n-  final ReminderType type;\n-\n-  Reminder({\n-    required this.title,\n-    required this.expirationDate,\n-    required this.notificationDates,\n-    required this.creationDate,\n-    required this.type,\n-  });\n-}\n-\n-// Base State Class\n+// Base state class with Equatable to handle equality checks\n abstract class ReminderState extends Equatable {\n   @override\n   List<Object> get props => [];\n }\n@@ -34,9 +9,9 @@\n \n // Loading State\n class ReminderLoading extends ReminderState {}\n \n-// Loaded State\n+// Loaded State with reminders data\n class ReminderLoaded extends ReminderState {\n   final List<Reminder> reminders;\n \n   ReminderLoaded(this.reminders);\n@@ -44,13 +19,13 @@\n   @override\n   List<Object> get props => [reminders];\n }\n \n-// Error State\n+// Error State with error message\n class ReminderError extends ReminderState {\n   final String message;\n \n   ReminderError(this.message);\n \n   @override\n   List<Object> get props => [message];\n-}\n+}\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1729841269480,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,6 +1,7 @@\n // Base state class with Equatable to handle equality checks\n import 'package:auto_asig/feature/reminders_viewer/model/reminder.dart';\n+import 'package:equatable/equatable.dart';\n \n abstract class ReminderState extends Equatable {\n   @override\n   List<Object> get props => [];\n"
+                },
+                {
+                    "date": 1729855231083,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,6 +1,6 @@\n // Base state class with Equatable to handle equality checks\n-import 'package:auto_asig/feature/reminders_viewer/model/reminder.dart';\n+import 'package:auto_asig/core/models/reminder.dart';\n import 'package:equatable/equatable.dart';\n \n abstract class ReminderState extends Equatable {\n   @override\n"
+                }
+            ],
+            "date": 1729354998033,
+            "name": "Commit-0",
+            "content": "import 'package:auto_asig/feature/reminders_viewer/model/reminder.dart';\nimport 'package:equatable/equatable.dart';\nimport 'package:meta/meta.dart';\n\n// ReminderState class that extends Equatable to manage the different states\n@immutable\nabstract class ReminderState extends Equatable {\n  @override\n  List<Object?> get props => [];\n}\n\nclass ReminderInitial extends ReminderState {}\n\nclass ReminderLoading extends ReminderState {}\n\nclass ReminderLoaded extends ReminderState {\n  final List<Reminder> reminders;\n\n  ReminderLoaded(this.reminders);\n\n  @override\n  List<Object?> get props => [reminders];\n}\n\nclass ReminderError extends ReminderState {\n  final String message;\n\n  ReminderError(this.message);\n\n  @override\n  List<Object?> get props => [message];\n}\n"
+        }
+    ]
+}

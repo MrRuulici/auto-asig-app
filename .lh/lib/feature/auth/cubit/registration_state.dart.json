@@ -1,0 +1,18 @@
+{
+    "sourceFile": "lib/feature/auth/cubit/registration_state.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1732032762563,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1732032762563,
+            "name": "Commit-0",
+            "content": "import 'package:equatable/equatable.dart';\n\nabstract class RegistrationState extends Equatable {\n  @override\n  List<Object> get props => [];\n}\n\nclass RegistrationInitial extends RegistrationState {}\n\nclass RegistrationCheckboxState extends RegistrationState {\n  final bool isChecked;\n\n  RegistrationCheckboxState(this.isChecked);\n\n  @override\n  List<Object> get props => [isChecked];\n}\n\nclass RegistrationSuccess extends RegistrationState {}\n\nclass RegistrationFailure extends RegistrationState {\n  final String errorMessage;\n\n  RegistrationFailure(this.errorMessage);\n\n  @override\n  List<Object> get props => [errorMessage];\n}\n"
+        }
+    ]
+}

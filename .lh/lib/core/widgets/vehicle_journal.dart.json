@@ -1,0 +1,34 @@
+{
+    "sourceFile": "lib/core/widgets/vehicle_journal.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 4,
+            "patches": [
+                {
+                    "date": 1731740938013,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1731741210560,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -26,7 +26,8 @@\n   });\n }\n \n enum JournalEntryType {\n+  none,\n   service,\n   distribution,\n }\n"
+                },
+                {
+                    "date": 1731742549086,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -24,10 +24,4 @@\n     required this.type,\n     required this.date,\n   });\n }\n-\n-enum JournalEntryType {\n-  none,\n-  service,\n-  distribution,\n-}\n"
+                },
+                {
+                    "date": 1731742561177,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,4 +1,5 @@\n+import 'package:auto_asig/core/data/constants.dart';\n import 'package:cloud_firestore/cloud_firestore.dart';\n \n class VehicleJournal {\n   String journalId;\n"
+                },
+                {
+                    "date": 1731743106529,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -17,12 +17,14 @@\n   final String entryId;\n   final Timestamp timestamp;\n   final JournalEntryType type;\n   final DateTime date;\n+  final int kms;\n \n   JournalEntry({\n     required this.entryId,\n     required this.timestamp,\n     required this.type,\n     required this.date,\n+    required this.kms,\n   });\n }\n"
+                }
+            ],
+            "date": 1731740938013,
+            "name": "Commit-0",
+            "content": "import 'package:cloud_firestore/cloud_firestore.dart';\n\nclass VehicleJournal {\n  String journalId;\n  String vehicleId;\n  List<JournalEntry> entries;\n\n  VehicleJournal({\n    required this.journalId,\n    required this.vehicleId,\n    required this.entries,\n  });\n}\n\nclass JournalEntry {\n  final String entryId;\n  final Timestamp timestamp;\n  final JournalEntryType type;\n  final DateTime date;\n\n  JournalEntry({\n    required this.entryId,\n    required this.timestamp,\n    required this.type,\n    required this.date,\n  });\n}\n\nenum JournalEntryType {\n  service,\n  distribution,\n}\n"
+        }
+    ]
+}

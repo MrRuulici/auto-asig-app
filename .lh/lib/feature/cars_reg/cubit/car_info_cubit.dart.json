@@ -1,0 +1,30 @@
+{
+    "sourceFile": "lib/feature/cars_reg/cubit/car_info_cubit.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 3,
+            "patches": [
+                {
+                    "date": 1728039218519,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1728039236753,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -30,9 +30,9 @@\n   void updateExpirationDateTahograf(DateTime? date) {\n     emit(state.copyWith(expirationDateTahograf: date));\n   }\n \n-  void addCar() {\n+  Future<void> addCar() async {\n     Map<String, dynamic> carInfo = {\n       'carNr': state.carNr,\n       'expirationDateRCA': state.expirationDateRCA,\n       'expirationDateITP': state.expirationDateITP,\n"
+                },
+                {
+                    "date": 1728287466213,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -30,9 +30,9 @@\n   void updateExpirationDateTahograf(DateTime? date) {\n     emit(state.copyWith(expirationDateTahograf: date));\n   }\n \n-  Future<void> addCar() async {\n+  Future<void> addCar(String userId) async {\n     Map<String, dynamic> carInfo = {\n       'carNr': state.carNr,\n       'expirationDateRCA': state.expirationDateRCA,\n       'expirationDateITP': state.expirationDateITP,\n@@ -40,7 +40,7 @@\n       'expirationDateRovinieta': state.expirationDateRovinieta,\n       'expirationDateTahograf': state.expirationDateTahograf,\n     };\n \n-    addVehicleDataForUser(carInfo);\n+    addVehicleDataForUser(userId, carInfo);\n   }\n }\n"
+                },
+                {
+                    "date": 1728287707075,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -31,8 +31,16 @@\n     emit(state.copyWith(expirationDateTahograf: date));\n   }\n \n   Future<void> addCar(String userId) async {\n+    print('Adding car info for user: $userId');\n+    print('Car number: ${state.carNr}');\n+    print('RCA expiration date: ${state.expirationDateRCA}');\n+    print('ITP expiration date: ${state.expirationDateITP}');\n+    print('CASCO expiration date: ${state.expirationDateCASCO}');\n+    print('Rovinieta expiration date: ${state.expirationDateRovinieta}');\n+    print('Tahograf expiration date: ${state.expirationDateTahograf}');\n+\n     Map<String, dynamic> carInfo = {\n       'carNr': state.carNr,\n       'expirationDateRCA': state.expirationDateRCA,\n       'expirationDateITP': state.expirationDateITP,\n"
+                }
+            ],
+            "date": 1728039218519,
+            "name": "Commit-0",
+            "content": "import 'package:auto_asig/core/data/http_data.dart';\nimport 'package:bloc/bloc.dart';\nimport 'package:equatable/equatable.dart';\n\npart 'car_info_state.dart';\n\nclass CarInfoCubit extends Cubit<CarInfoState> {\n  CarInfoCubit() : super(CarInfoInitial());\n\n  void updateExpirationDateRCA(DateTime? date) {\n    emit(state.copyWith(expirationDateRCA: date));\n  }\n\n  void updateExpirationDateITP(DateTime? date) {\n    emit(state.copyWith(expirationDateITP: date));\n  }\n\n  void updateCarNumber(String value) {\n    emit(state.copyWith(carNr: value));\n  }\n\n  void updateExpirationDateCASCO(DateTime? date) {\n    emit(state.copyWith(expirationDateCASCO: date));\n  }\n\n  void updateExpirationDateRovinieta(DateTime? date) {\n    emit(state.copyWith(expirationDateRovinieta: date));\n  }\n\n  void updateExpirationDateTahograf(DateTime? date) {\n    emit(state.copyWith(expirationDateTahograf: date));\n  }\n\n  void addCar() {\n    Map<String, dynamic> carInfo = {\n      'carNr': state.carNr,\n      'expirationDateRCA': state.expirationDateRCA,\n      'expirationDateITP': state.expirationDateITP,\n      'expirationDateCASCO': state.expirationDateCASCO,\n      'expirationDateRovinieta': state.expirationDateRovinieta,\n      'expirationDateTahograf': state.expirationDateTahograf,\n    };\n\n    addVehicleDataForUser(carInfo\n    );\n  }\n}\n"
+        }
+    ]
+}

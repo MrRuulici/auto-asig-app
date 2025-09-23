@@ -1,0 +1,30 @@
+{
+    "sourceFile": "lib/feature/auth/auth_repository.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 3,
+            "patches": [
+                {
+                    "date": 1730888889214,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1731337152526,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -13,9 +13,8 @@\n   Future<String?> signInWithEmailAndPassword({\n     required String email,\n     required String password,\n   }) async {\n-    // TODO: implement signInWithEmailAndPassword\n     return null;\n   }\n \n   /// Returns members ID if successful, null otherwise.\n"
+                },
+                {
+                    "date": 1731337166381,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -30,9 +30,8 @@\n     // );\n   }\n \n   Future<void> sendPasswordResetEmail(String email) async {\n-    // TODO: implement sendPasswordResetEmail\n   }\n \n   Future<void> signOut() async {\n     // TODO: temp\n"
+                },
+                {
+                    "date": 1731337173442,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -32,9 +32,8 @@\n \n   Future<void> sendPasswordResetEmail(String email) async {}\n \n   Future<void> signOut() async {\n-    // TODO: temp\n     // await AuthService().saveToken(token: '', email: '');\n \n     // await _authenticationProvider.signOut();\n \n"
+                }
+            ],
+            "date": 1730888889214,
+            "name": "Commit-0",
+            "content": "class AuthRepository {\r\n  const AuthRepository(\r\n      // this._authenticationProvider,\r\n      // this._biometricStorageProvider,\r\n      );\r\n\r\n  // final SupabaseAuthProvider _authenticationProvider;\r\n  // final BiometricStorageProvider _biometricStorageProvider;\r\n\r\n  // String? get membersId => _authenticationProvider.getUserId();\r\n\r\n  /// Returns members ID if successful, null otherwise.\r\n  Future<String?> signInWithEmailAndPassword({\r\n    required String email,\r\n    required String password,\r\n  }) async {\r\n    // TODO: implement signInWithEmailAndPassword\r\n    return null;\r\n  }\r\n\r\n  /// Returns members ID if successful, null otherwise.\r\n  Future<void> signUp({\r\n    required String firstName,\r\n    required String email,\r\n    required String phoneNumber,\r\n  }) async {\r\n    // await _authenticationProvider.signUp(\r\n    //   firstName,\r\n    //   email,\r\n    //   phoneNumber,\r\n    // );\r\n  }\r\n\r\n  Future<void> sendPasswordResetEmail(String email) async {\r\n    // TODO: implement sendPasswordResetEmail\r\n  }\r\n\r\n  Future<void> signOut() async {\r\n    // TODO: temp\r\n    // await AuthService().saveToken(token: '', email: '');\r\n\r\n    // await _authenticationProvider.signOut();\r\n\r\n    return;\r\n  }\r\n}\r\n"
+        }
+    ]
+}

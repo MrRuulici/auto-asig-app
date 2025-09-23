@@ -1,0 +1,26 @@
+{
+    "sourceFile": "lib/feature/reminders_viewer/cubit/reminder_cubit.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 2,
+            "patches": [
+                {
+                    "date": 1729354974977,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1729355093423,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -12,9 +12,9 @@\n       emit(ReminderLoading());\n \n       // Fetch the reminders (replace with your actual logic)\n       final reminders = await getIdCardsStream(\n-          userId); // getIdCardsStream should return a List<Reminder>\n+          userId);\n \n       emit(ReminderLoaded(reminders));\n     } catch (e) {\n       emit(ReminderError('Failed to load reminders: ${e.toString()}'));\n"
+                },
+                {
+                    "date": 1729355306106,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -11,9 +11,9 @@\n     try {\n       emit(ReminderLoading());\n \n       // Fetch the reminders (replace with your actual logic)\n-      final reminders = await getIdCardsStream(userId);\n+      final reminders = await getRemindersFromDB(userId);\n \n       emit(ReminderLoaded(reminders));\n     } catch (e) {\n       emit(ReminderError('Failed to load reminders: ${e.toString()}'));\n"
+                }
+            ],
+            "date": 1729354974977,
+            "name": "Commit-0",
+            "content": "import 'package:auto_asig/core/data/http_data.dart';\nimport 'package:auto_asig/feature/reminders_viewer/cubit/reminder_state.dart';\nimport 'package:bloc/bloc.dart';\n\n// ReminderCubit that handles state management for the reminders\nclass ReminderCubit extends Cubit<ReminderState> {\n  ReminderCubit() : super(ReminderInitial());\n\n  // Function to fetch reminders\n  void fetchReminders(String userId) async {\n    try {\n      emit(ReminderLoading());\n\n      // Fetch the reminders (replace with your actual logic)\n      final reminders = await getIdCardsStream(userId); // getIdCardsStream should return a List<Reminder>\n\n      emit(ReminderLoaded(reminders));\n    } catch (e) {\n      emit(ReminderError('Failed to load reminders: ${e.toString()}'));\n    }\n  }\n}\n"
+        }
+    ]
+}

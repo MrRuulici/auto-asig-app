@@ -1,0 +1,26 @@
+{
+    "sourceFile": "android/app/build.gradle",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 2,
+            "patches": [
+                {
+                    "date": 1737288421800,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1737288490877,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -41,15 +41,15 @@\n         versionCode = flutter.versionCode\n         versionName = flutter.versionName\n     }\n \n-    buildTypes {\n-        release {\n-            // TODO: Add your own signing config for the release build.\n-            // Signing with the debug keys for now, so `flutter run --release` works.\n-            signingConfig = signingConfigs.debug\n-        }\n-    }\n+    // buildTypes {\n+    //     release {\n+    //         // TODO: Add your own signing config for the release build.\n+    //         // Signing with the debug keys for now, so `flutter run --release` works.\n+    //         signingConfig = signingConfigs.debug\n+    //     }\n+    // }\n \n     //  signingConfigs {\n     //     release {\n     //         keyAlias keystoreProperties['keyAlias']\n"
+                },
+                {
+                    "date": 1737288503051,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -60,9 +60,9 @@\n     // }\n \n     buildTypes {\n         release {\n-            signingConfig signingConfigs.release\n+            // signingConfig signingConfigs.release\n             minifyEnabled false\n             shrinkResources false\n             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'\n         }\n"
+                }
+            ],
+            "date": 1737288421799,
+            "name": "Commit-0",
+            "content": "plugins {\n    id \"com.android.application\"\n    // START: FlutterFire Configuration\n    id 'com.google.gms.google-services'\n    id 'com.google.firebase.crashlytics'\n    // END: FlutterFire Configuration\n    id \"kotlin-android\"\n    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.\n    id \"dev.flutter.flutter-gradle-plugin\"\n}\n\nandroid {\n    namespace = \"com.geektec.autoasig\"\n    // compileSdk = flutter.compileSdkVersion\n    compileSdk = 34\n    ndkVersion = flutter.ndkVersion\n\n    def keystoreProperties = new Properties()\n    def keystorePropertiesFile = rootProject.file(\"key.properties\")\n    if (keystorePropertiesFile.exists()) {\n        keystoreProperties.load(new FileInputStream(keystorePropertiesFile))\n    }\n\n    compileOptions {\n        sourceCompatibility = JavaVersion.VERSION_1_8\n        targetCompatibility = JavaVersion.VERSION_1_8\n    }\n\n    kotlinOptions {\n        jvmTarget = JavaVersion.VERSION_1_8\n    }\n\n    defaultConfig {\n        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).\n        applicationId = \"com.geektec.autoasig\"\n        // You can update the following values to match your application needs.\n        // For more information, see: https://flutter.dev/to/review-gradle-config.\n        minSdk = 23\n        // targetSdk = flutter.targetSdkVersion\n        targetSdk = 31\n        versionCode = flutter.versionCode\n        versionName = flutter.versionName\n    }\n\n    buildTypes {\n        release {\n            // TODO: Add your own signing config for the release build.\n            // Signing with the debug keys for now, so `flutter run --release` works.\n            signingConfig = signingConfigs.debug\n        }\n    }\n\n    //  signingConfigs {\n    //     release {\n    //         keyAlias keystoreProperties['keyAlias']\n    //         keyPassword keystoreProperties['keyPassword']\n    //         storeFile file(keystoreProperties['storeFile'])\n    //         storePassword keystoreProperties['storePassword']\n    //     }\n    // }\n\n    buildTypes {\n        release {\n            signingConfig signingConfigs.release\n            minifyEnabled false\n            shrinkResources false\n            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'\n        }\n    }\n}\n\nflutter {\n    source = \"../..\"\n}\n"
+        }
+    ]
+}

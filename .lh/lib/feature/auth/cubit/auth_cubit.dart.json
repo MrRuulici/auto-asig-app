@@ -1,0 +1,26 @@
+{
+    "sourceFile": "lib/feature/auth/cubit/auth_cubit.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 2,
+            "patches": [
+                {
+                    "date": 1729855906260,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1729859521991,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -26,9 +26,9 @@\n           .then((value) async {\n         if (value.user != null) {\n           // UserModel? member = await readUserData(value.user!.uid);\n           UserModel? member = await loadUserAndMembers(\n-              value.user!, context.go(LoginScreen.absolutePath));\n+              value.user!, () => context.go(LoginScreen.absolutePath));\n \n           // Use post-frame callback to ensure that context is fully built\n           WidgetsBinding.instance.addPostFrameCallback((_) {\n             if (member != null) {\n"
+                },
+                {
+                    "date": 1729865081217,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -26,9 +26,9 @@\n           .then((value) async {\n         if (value.user != null) {\n           // UserModel? member = await readUserData(value.user!.uid);\n           UserModel? member = await loadUserAndMembers(\n-              value.user!, () => context.go(LoginScreen.absolutePath));\n+              value.user!, () => context.go(LoginScreen.absolutePath),);\n \n           // Use post-frame callback to ensure that context is fully built\n           WidgetsBinding.instance.addPostFrameCallback((_) {\n             if (member != null) {\n"
+                }
+            ],
+            "date": 1729855906260,
+            "name": "Commit-0",
+            "content": "import 'package:auto_asig/core/cubit/user_data_cubit.dart';\nimport 'package:auto_asig/core/data/http_data.dart';\nimport 'package:auto_asig/core/models/user.dart';\nimport 'package:auto_asig/feature/auth/cubit/auth_state.dart';\nimport 'package:auto_asig/feature/auth/screens/login_screen.dart';\nimport 'package:auto_asig/feature/intro/screens/splash_screen.dart';\nimport 'package:firebase_auth/firebase_auth.dart';\nimport 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\nimport 'package:go_router/go_router.dart';\n\nclass AuthenticationCubit extends Cubit<AuthenticationState> {\n  final FirebaseAuth _firebaseAuth;\n  bool _isPasswordVisible = false;\n\n  AuthenticationCubit(this._firebaseAuth) : super(AuthenticationInitial());\n\n  Future<void> login({\n    required String email,\n    required String password,\n    required BuildContext context,\n  }) async {\n    try {\n      await _firebaseAuth\n          .signInWithEmailAndPassword(email: email, password: password)\n          .then((value) async {\n        if (value.user != null) {\n          // UserModel? member = await readUserData(value.user!.uid);\n          UserModel? member = await loadUserAndMembers(value.user!, context.go(LoginScreen.absolutePath));\n\n          // Use post-frame callback to ensure that context is fully built\n          WidgetsBinding.instance.addPostFrameCallback((_) {\n            if (member != null) {\n              // context.read<UserCubit>().setUser(user);\n              context.read<UserDataCubit>().setMember(member);\n            } else {\n              print('Member data is missing');\n              // Logout and navigate to login if member data is missing\n              _firebaseAuth.signOut();\n              context.go(SplashScreen.path);\n            }\n          });\n\n          print('Logged in with email');\n        }\n      });\n      emit(AuthenticationSuccess());\n    } on FirebaseAuthException catch (e) {\n      print('Firebase Error: ${e.code} - ${e.message}');\n      emit(AuthenticationFailure(\n          e.message ?? 'Unknown error during authentication'));\n    }\n  }\n\n  void togglePasswordVisibility() {\n    _isPasswordVisible = !_isPasswordVisible;\n    emit(PasswordVisibilityState(_isPasswordVisible));\n  }\n\n  bool get isPasswordVisible => _isPasswordVisible;\n\n  void signOut() {\n    _firebaseAuth.signOut();\n    emit(AuthenticationInitial());\n  }\n}\n"
+        }
+    ]
+}

@@ -1,0 +1,26 @@
+{
+    "sourceFile": "lib/feature/home_screen/helpers/bottom_sheet_helpers.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 2,
+            "patches": [
+                {
+                    "date": 1730902989930,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1730903001755,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,8 +1,8 @@\n // Helper function to delete notification\r\n import 'package:flutter/material.dart';\r\n \r\n-void _deleteNotification(BuildContext context) {\r\n+void deleteNotification(BuildContext context) {\r\n   // context.read<BottomSheetDetailsCubit>().deleteNotification(index);\r\n   showDialog(\r\n     context: context,\r\n     builder: (context) {\r\n"
+                },
+                {
+                    "date": 1730903105418,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,15 +1,15 @@\n // Helper function to delete notification\r\n import 'package:flutter/material.dart';\r\n \r\n-void deleteNotification(BuildContext context) {\r\n+void deleteNotification(BuildContext context, {required String title, required String content}) {\r\n   // context.read<BottomSheetDetailsCubit>().deleteNotification(index);\r\n   showDialog(\r\n     context: context,\r\n     builder: (context) {\r\n       return AlertDialog(\r\n-        title: const Text(\r\n-          'Ștergere Notificare',\r\n+        title:  Text(\r\n+          title,\r\n           style: TextStyle(\r\n             fontWeight: FontWeight.bold,\r\n           ),\r\n         ),\r\n@@ -17,11 +17,11 @@\n           Icons.warning,\r\n           color: Colors.red,\r\n           size: 40,\r\n         ),\r\n-        content: const Text(\r\n-          'Ești sigur că dorești să ștergi această notificare? Această acțiune este ireversibilă.',\r\n-          style: TextStyle(\r\n+        content:  Text(\r\n+         content,\r\n+          style: const TextStyle(\r\n             color: Colors.red,\r\n             fontWeight: FontWeight.bold,\r\n           ),\r\n         ),\r\n"
+                }
+            ],
+            "date": 1730902989930,
+            "name": "Commit-0",
+            "content": "// Helper function to delete notification\r\n  import 'package:flutter/material.dart';\r\n\r\nvoid _deleteNotification(BuildContext context) {\r\n    // context.read<BottomSheetDetailsCubit>().deleteNotification(index);\r\n    showDialog(\r\n      context: context,\r\n      builder: (context) {\r\n        return AlertDialog(\r\n          title: const Text(\r\n            'Ștergere Notificare',\r\n            style: TextStyle(\r\n              fontWeight: FontWeight.bold,\r\n            ),\r\n          ),\r\n          icon: const Icon(\r\n            Icons.warning,\r\n            color: Colors.red,\r\n            size: 40,\r\n          ),\r\n          content: const Text(\r\n            'Ești sigur că dorești să ștergi această notificare? Această acțiune este ireversibilă.',\r\n            style: TextStyle(\r\n              color: Colors.red,\r\n              fontWeight: FontWeight.bold,\r\n            ),\r\n          ),\r\n          actions: [\r\n            TextButton(\r\n              onPressed: () {\r\n                Navigator.of(context).pop();\r\n              },\r\n              child: const Text('Anulează'),\r\n            ),\r\n            TextButton(\r\n              onPressed: () {\r\n                // context.read<BottomSheetDetailsCubit>().deleteNotification(index);\r\n                Navigator.of(context).pop();\r\n              },\r\n              child: const Text('Șterge'),\r\n            ),\r\n          ],\r\n        );\r\n      },\r\n    );\r\n  }"
+        }
+    ]
+}

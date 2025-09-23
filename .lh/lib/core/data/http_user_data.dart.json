@@ -1,0 +1,34 @@
+{
+    "sourceFile": "lib/core/data/http_user_data.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 4,
+            "patches": [
+                {
+                    "date": 1731331265307,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1731331329363,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,6 +1,8 @@\n import 'package:auto_asig/core/data/http_data.dart';\n+import 'package:auto_asig/core/models/reminder.dart';\n import 'package:auto_asig/core/models/user.dart';\n+import 'package:auto_asig/core/models/vehicle_reminder.dart';\n import 'package:firebase_auth/firebase_auth.dart';\n \n Future<UserModel?> loadUserData(\n   User user,\n@@ -25,4 +27,17 @@\n     navigateTo();\n     return null;\n   }\n }\n+\n+Future<Map<String, dynamic>> getFullUserData(String userId) async {\n+  Map<String, dynamic> fullReminders = {};\n+\n+  // Get the reminders for the user\n+  List<Reminder> reminders = await getRemindersFromDB(userId);\n+  List<VehicleReminder> vehicleReminders = await getAllVehiclesForUser(userId);\n+\n+  fullReminders['reminders'] = reminders;\n+  fullReminders['vehicleReminders'] = vehicleReminders;\n+\n+  return fullReminders;\n+}\n"
+                },
+                {
+                    "date": 1731331671206,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,10 +1,51 @@\n+import 'package:auto_asig/core/app/app_data.dart';\n import 'package:auto_asig/core/data/http_data.dart';\n import 'package:auto_asig/core/models/reminder.dart';\n import 'package:auto_asig/core/models/user.dart';\n import 'package:auto_asig/core/models/vehicle_reminder.dart';\n+import 'package:cloud_firestore/cloud_firestore.dart';\n+import 'package:country_list_pick/support/code_country.dart';\n import 'package:firebase_auth/firebase_auth.dart';\n \n+Future<bool> registerUser(\n+  String uid,\n+  String email,\n+  String firstName,\n+  String lastName,\n+  String phone,\n+  CountryCode country,\n+) async {\n+  try {\n+    // Reference to the user's document in Firestore\n+    DocumentReference userDoc = userCollection!.doc(uid);\n+\n+    // Combine country dial code with the phone number\n+    String fullPhoneNr = '${country.dialCode}$phone';\n+\n+    // User data to be written to Firestore\n+    Map<String, dynamic> userData = {\n+      'timestamp': FieldValue.serverTimestamp(),\n+      'email': email,\n+      'lastName': lastName,\n+      'firstName': firstName,\n+      'phone': fullPhoneNr,\n+      'country': country.name,\n+    };\n+\n+    // Write the data to Firestore and await the completion\n+    await userDoc.set(userData);\n+\n+    return true; // Return true if the operation is successful\n+  } catch (e) {\n+    // Log any errors that occur\n+    print('Error writing user data to Firestore: $e');\n+\n+    return false; // Return false if an error occurs\n+  }\n+}\n+\n+\n Future<UserModel?> loadUserData(\n   User user,\n   void Function() navigateTo,\n ) async {\n"
+                },
+                {
+                    "date": 1731331686065,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -43,8 +43,19 @@\n     return false; // Return false if an error occurs\n   }\n }\n \n+Future<void> updateEmailAndPhoneForUser(\n+  String id,\n+  String email,\n+  String phone,\n+) async {\n+  await userCollection!.doc(id).update({\n+    'email': email,\n+    'phone': phone,\n+  });\n+}\n+\n Future<UserModel?> loadUserData(\n   User user,\n   void Function() navigateTo,\n ) async {\n"
+                },
+                {
+                    "date": 1731331703196,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -54,8 +54,41 @@\n     'phone': phone,\n   });\n }\n \n+\n+Future<UserModel?> readUserData(String id) async {\n+  // print('Reading user data for accountId: $id');\n+  var querySnapshot = await userCollection!.doc(id).get();\n+\n+  UserModel? currentMember;\n+\n+  // Check if the document exists\n+  if (querySnapshot.exists) {\n+    // Get the first matching document\n+    var snapshot = querySnapshot;\n+\n+    final data = snapshot.data() as Map<String, dynamic>;\n+\n+    currentMember = UserModel(\n+      snapshot.id, // Use the Firestore document ID for member ID\n+      firstName: data['firstName'],\n+      lastName: data['lastName'],\n+      email: data['email'] ?? '',\n+      phone: data['phone'] ?? '',\n+      country: data['country'] ?? '',\n+    );\n+\n+    // print('User data: $data');\n+  } else {\n+    print('No user found with accountId: $id');\n+\n+    // Todo - Log the user out????\n+  }\n+\n+  return currentMember;\n+}\n+\n Future<UserModel?> loadUserData(\n   User user,\n   void Function() navigateTo,\n ) async {\n"
+                }
+            ],
+            "date": 1731331265307,
+            "name": "Commit-0",
+            "content": "import 'package:auto_asig/core/data/http_data.dart';\nimport 'package:auto_asig/core/models/user.dart';\nimport 'package:firebase_auth/firebase_auth.dart';\n\nFuture<UserModel?> loadUserData(\n  User user,\n  void Function() navigateTo,\n) async {\n  UserModel? member = await readUserData(user.uid);\n  if (member != null) {\n    UserModel userModel = UserModel(\n      member.id,\n      firstName: member.firstName,\n      lastName: member.lastName,\n      email: member.email,\n      phone: member.phone,\n      country: member.country,\n    );\n\n    return userModel;\n  } else {\n    // Logout and navigate to login if member data is missing\n    await FirebaseAuth.instance.signOut();\n    // loadLoginScreen!();\n    navigateTo();\n    return null;\n  }\n}\n"
+        }
+    ]
+}

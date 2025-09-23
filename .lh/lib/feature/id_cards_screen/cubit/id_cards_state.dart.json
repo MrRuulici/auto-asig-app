@@ -1,0 +1,26 @@
+{
+    "sourceFile": "lib/feature/id_cards_screen/cubit/id_cards_state.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 2,
+            "patches": [
+                {
+                    "date": 1728303934020,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1728303960429,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,8 +1,8 @@\n part of 'id_cards_cubit.dart';\n \n class IdCardsState extends Equatable {\n-  const IdCardsState({\n+   IdCardsState({\n     required this.name,\n     required this.expirationDate,\n   });\n \n@@ -15,5 +15,13 @@\n         expirationDate,\n       ];\n }\n \n-final class IdCardsInitial extends IdCardsState {}\n+final class IdCardsInitial extends IdCardsState {\n+  const IdCardsInitial({\n+    required this.name,\n+    required this.expirationDate,\n+  }) : super(\n+          name: name,\n+          expirationDate: expirationDate,\n+        );\n+}\n"
+                },
+                {
+                    "date": 1728304057142,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -15,13 +15,11 @@\n         expirationDate,\n       ];\n }\n \n-final class IdCardsInitial extends IdCardsState {\n-  const IdCardsInitial({\n-    required this.name,\n-    required this.expirationDate,\n-  }) : super(\n-          name: name,\n-          expirationDate: expirationDate,\n+class IdCardsInitial extends IdCardsState {\n+  IdCardsInitial()\n+      : super(\n+          name: '',\n+          expirationDate: DateTime.now(),\n         );\n }\n"
+                }
+            ],
+            "date": 1728303934019,
+            "name": "Commit-0",
+            "content": "part of 'id_cards_cubit.dart';\n\n class IdCardsState extends Equatable {\n  const IdCardsState(\n    {\n      required this.name,\n      required this.expirationDate,\n    }\n  );\n\n  String name;\n  DateTime expirationDate;\n\n  @override\n  List<Object> get props => [\n    name,\n    expirationDate,\n  ];\n}\n\nfinal class IdCardsInitial extends IdCardsState {}\n"
+        }
+    ]
+}

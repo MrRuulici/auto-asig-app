@@ -1,0 +1,26 @@
+{
+    "sourceFile": "lib/core/widgets/progress_colored_bar.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 2,
+            "patches": [
+                {
+                    "date": 1730962611158,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1730965782265,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -3,9 +3,9 @@\n class ProgressColoredBar extends StatelessWidget {\r\n   const ProgressColoredBar({\r\n     super.key,\r\n     required this.progressValue,\r\n-    required this.progressColor,\r\n+    required this.progressColor, required bool isExpired,\r\n   });\r\n \r\n   final int progressValue;\r\n   final Color progressColor;\r\n"
+                },
+                {
+                    "date": 1730965790005,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -4,13 +4,14 @@\n   const ProgressColoredBar({\r\n     super.key,\r\n     required this.progressValue,\r\n     required this.progressColor,\r\n-    required bool isExpired,\r\n+    required this.isExpired,\r\n   });\r\n \r\n   final int progressValue;\r\n   final Color progressColor;\r\n+  final bool isExpired;\r\n \r\n   @override\r\n   Widget build(BuildContext context) {\r\n     return Stack(\r\n"
+                }
+            ],
+            "date": 1730962611158,
+            "name": "Commit-0",
+            "content": "import 'package:flutter/material.dart';\r\n\r\nclass ProgressColoredBar extends StatelessWidget {\r\n  const ProgressColoredBar({super.key, required this.progressValue, required this.progressColor,});\r\n\r\n  final int progressValue;\r\n  final Color progressColor;\r\n\r\n  @override\r\n  Widget build(BuildContext context) {\r\n    return  Stack(\r\n              children: [\r\n                ClipRRect(\r\n                  borderRadius: BorderRadius.circular(8),\r\n                  child: Container(\r\n                    width: double.infinity,\r\n                    height: 16,\r\n                    color: Colors.grey[100],\r\n                  ),\r\n                ),\r\n                ClipRRect(\r\n                  borderRadius: BorderRadius.circular(8),\r\n                  child: Align(\r\n                    alignment: Alignment.centerLeft,\r\n                    child: Container(\r\n                      width: (progressValue > 60 ? 1.0 : progressValue / 60) *\r\n                          MediaQuery.of(context).size.width,\r\n                      height: 16,\r\n                      decoration: BoxDecoration(\r\n                        gradient: LinearGradient(\r\n                          colors: [\r\n                            progressColor,\r\n                            progressColor.withOpacity(0.75),\r\n                          ],\r\n                          stops: const [0.0, 1.0],\r\n                        ),\r\n                      ),\r\n                    ),\r\n                  ),\r\n                ),\r\n              ],\r\n            );\r\n  }\r\n}"
+        }
+    ]
+}

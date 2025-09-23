@@ -1,0 +1,22 @@
+{
+    "sourceFile": "lib/core/widgets/auto_asig_button_full.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 1,
+            "patches": [
+                {
+                    "date": 1733148272880,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1733148442558,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -15,10 +15,10 @@\n   final Color? activeBackgroundColor;\n   final double? buttonWidth;\n   final double? buttonHeight;\n   final Widget? child;\n-  final Color? color;\n \n+\n   const AutoAsigButton({\n     required this.onPressed,\n     required this.text,\n     this.preTextIcon,\n@@ -33,9 +33,8 @@\n     this.buttonWidth,\n     this.buttonHeight,\n     this.child,\n     super.key,\n-    this.color,\n   });\n \n   @override\n   Widget build(BuildContext context) {\n"
+                }
+            ],
+            "date": 1733148272880,
+            "name": "Commit-0",
+            "content": "import 'package:auto_asig/core/data/constants.dart';\nimport 'package:flutter/material.dart';\n\nclass AutoAsigButton extends StatelessWidget {\n  final bool isActive;\n  final void Function()? onPressed;\n  final String text;\n  final Widget? preTextIcon;\n  final TextStyle? textStyle;\n  final EdgeInsetsGeometry? padding;\n  final EdgeInsetsGeometry? margin;\n  final Color? inactiveTextColor;\n  final Color? inactiveBackgroundColor;\n  final Color? activeTextColor;\n  final Color? activeBackgroundColor;\n  final double? buttonWidth;\n  final double? buttonHeight;\n  final Widget? child;\n  final Color? color;\n\n  const AutoAsigButton({\n    required this.onPressed,\n    required this.text,\n    this.preTextIcon,\n    this.isActive = true,\n    this.textStyle,\n    this.padding,\n    this.margin,\n    this.inactiveTextColor,\n    this.inactiveBackgroundColor,\n    this.activeTextColor,\n    this.activeBackgroundColor,\n    this.buttonWidth,\n    this.buttonHeight,\n    this.child,\n    super.key,\n    this.color,\n  });\n\n  @override\n  Widget build(BuildContext context) {\n    TextStyle finalTextStyle = textStyle ??\n        // const TextStyle(\n        //   fontSize: 16,\n        //   fontWeight: FontWeight.bold,\n        //   color: Colors.white,\n        // );\n        const TextStyle(\n          fontFamily: 'Poppins',\n          fontWeight: FontWeight.bold,\n          fontSize: 20,\n        );\n\n    if (!isActive) {\n      finalTextStyle = finalTextStyle.copyWith(\n        color: inactiveTextColor ?? Colors.grey[500],\n      );\n    } else if (activeTextColor != null) {\n      finalTextStyle = finalTextStyle.copyWith(color: activeTextColor);\n    }\n\n    return Container(\n      padding: padding ?? const EdgeInsets.all(16),\n      margin: margin,\n      width: buttonWidth ?? double.maxFinite,\n      height: buttonHeight,\n      child: ElevatedButton(\n        onPressed: isActive ? onPressed : null,\n        style: ElevatedButton.styleFrom(\n          backgroundColor: isActive\n              ? activeBackgroundColor ?? primaryBlue\n              : inactiveBackgroundColor ?? Colors.grey,\n          foregroundColor: Colors.white,\n          shape: RoundedRectangleBorder(\n            borderRadius: BorderRadius.circular(50),\n          ),\n          padding: const EdgeInsets.symmetric(vertical: 16),\n          textStyle: const TextStyle(\n            fontSize: 18,\n            fontWeight: FontWeight.bold,\n          ),\n        ),\n        child: Row(\n          mainAxisAlignment: MainAxisAlignment.center,\n          children: [\n            if (preTextIcon != null) ...[\n              preTextIcon!,\n              const SizedBox(width: 10),\n            ],\n            child ??\n                Flexible(\n                  child: Text(\n                    text,\n                    style: finalTextStyle,\n                    textAlign: TextAlign.center,\n                    overflow: TextOverflow.ellipsis,\n                  ),\n                ),\n          ],\n        ),\n      ),\n    );\n  }\n}\n"
+        }
+    ]
+}

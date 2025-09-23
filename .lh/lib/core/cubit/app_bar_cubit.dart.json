@@ -1,0 +1,22 @@
+{
+    "sourceFile": "lib/core/cubit/app_bar_cubit.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 1,
+            "patches": [
+                {
+                    "date": 1729705192241,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1729705445100,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -2,8 +2,8 @@\n import 'package:flutter/material.dart';\n import 'package:flutter_bloc/flutter_bloc.dart';\n \n class AppBarCubit extends Cubit<Color> {\n-  AppBarCubit() : super(Colors.transparent);\n+  AppBarCubit() : super(Colors.white);\n \n   void changeAppBarColor(Color color) => emit(color);\n }\n"
+                }
+            ],
+            "date": 1729705192241,
+            "name": "Commit-0",
+            "content": "// Example cubit for dynamic AppBar color or other states\nimport 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\n\nclass AppBarCubit extends Cubit<Color> {\n  AppBarCubit() : super(Colors.transparent);\n\n  void changeAppBarColor(Color color) => emit(color);\n}"
+        }
+    ]
+}

@@ -1,0 +1,18 @@
+{
+    "sourceFile": "lib/core/data/http_app_data.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1731331164334,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1731331164333,
+            "name": "Commit-0",
+            "content": "import 'package:auto_asig/core/app/app_data.dart';\n\nFuture<Map<String, bool>> getAppData() async {\n  late bool isUpToDate;\n  late bool isMaintenance;\n\n  await appDataCollection!.doc('settings').get().then((value) {\n    if (value.data() != null) {\n      // Access the 'current' field in the version document\n      final version = value.data()! as Map<String, dynamic>;\n\n      // Set isMaintenance\n      isMaintenance = version['in_maintenance'];\n\n      print('online version: ${version['current']}');\n      print('app version: $appVersion');\n\n      // Compare the app version with the current version\n      final int currentVersion = version['app_version'];\n\n      if (appVersion == currentVersion) {\n        print('App is up to date');\n        isOldVersion = false;\n        isUpToDate = true;\n      } else {\n        isUpToDate = false;\n      }\n\n      updateUrl = version['update_url'];\n    }\n  });\n\n  return {'isUpToDate': isUpToDate, 'isMaintenance': isMaintenance};\n}\n"
+        }
+    ]
+}

@@ -1,0 +1,30 @@
+{
+    "sourceFile": "lib/core/models/notification_model.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 3,
+            "patches": [
+                {
+                    "date": 1729849983490,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1729859023540,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,13 +1,13 @@\n class NotificationModel {\r\n   final DateTime date;\r\n   final bool sms;\r\n   final bool email;\r\n-  final bool pushNotification;\r\n+  final bool push;\r\n \r\n   NotificationModel({\r\n     required this.date,\r\n     required this.sms,\r\n     required this.email,\r\n-    required this.pushNotification,\r\n+    required this.push,\r\n   });\r\n }\r\n"
+                },
+                {
+                    "date": 1730896821265,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -9,5 +9,20 @@\n     required this.sms,\r\n     required this.email,\r\n     required this.push,\r\n   });\r\n+\r\n+  // CopyWith method to create a new instance with modified values\r\n+  NotificationModel copyWith({\r\n+    DateTime? date,\r\n+    bool? sms,\r\n+    bool? email,\r\n+    bool? push,\r\n+  }) {\r\n+    return NotificationModel(\r\n+      date: date ?? this.date,\r\n+      sms: sms ?? this.sms,\r\n+      email: email ?? this.email,\r\n+      push: push ?? this.push,\r\n+    );\r\n+  }\r\n }\r\n"
+                },
+                {
+                    "date": 1733143859708,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -2,27 +2,30 @@\n   final DateTime date;\n   final bool sms;\n   final bool email;\n   final bool push;\n+  final int notificationId;\n \n   NotificationModel({\n     required this.date,\n     required this.sms,\n     required this.email,\n-    required this.push,\n+    required this.push, required this.notificationId,\n   });\n \n   // CopyWith method to create a new instance with modified values\n   NotificationModel copyWith({\n     DateTime? date,\n     bool? sms,\n     bool? email,\n     bool? push,\n+    int? notificationId,\n   }) {\n     return NotificationModel(\n       date: date ?? this.date,\n       sms: sms ?? this.sms,\n       email: email ?? this.email,\n       push: push ?? this.push,\n+      notificationId: notificationId ?? this.notificationId,\n     );\n   }\n }\n"
+                }
+            ],
+            "date": 1729849983490,
+            "name": "Commit-0",
+            "content": "class NotificationModel {\r\n  final DateTime date;\r\n  final bool sms;\r\n  final bool email;\r\n  final bool pushNotification;\r\n\r\n  NotificationModel({\r\n    required this.date,\r\n    required this.sms,\r\n    required this.email,\r\n    required this.pushNotification,\r\n  });\r\n}\r\n"
+        }
+    ]
+}

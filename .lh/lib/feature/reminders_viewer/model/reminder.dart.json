@@ -1,0 +1,26 @@
+{
+    "sourceFile": "lib/feature/reminders_viewer/model/reminder.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 2,
+            "patches": [
+                {
+                    "date": 1729150712730,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1729354711864,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -2,12 +2,22 @@\n   final String title;\r\n   final DateTime expirationDate;\r\n   final List<DateTime> notificationDates;\r\n   final DateTime creationDate;\r\n+  final ReminderType type;\r\n \r\n   Reminder({\r\n     required this.title,\r\n     required this.expirationDate,\r\n     required this.notificationDates,\r\n     required this.creationDate,\r\n+    required this.type,\r\n   });\r\n }\r\n+\r\n+\r\n+enum ReminderType {\r\n+  IdCard,\r\n+  DrivingLicense,\r\n+  Passport,\r\n+\r\n+}\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1729355604316,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,4 +1,6 @@\n+import 'package:auto_asig/core/data/constants.dart';\r\n+\r\n class Reminder {\r\n   final String title;\r\n   final DateTime expirationDate;\r\n   final List<DateTime> notificationDates;\r\n@@ -11,11 +13,5 @@\n     required this.notificationDates,\r\n     required this.creationDate,\r\n     required this.type,\r\n   });\r\n-}\r\n-\r\n-enum ReminderType {\r\n-  IdCard,\r\n-  DrivingLicense,\r\n-  Passport,\r\n-}\r\n+}\n\\ No newline at end of file\n"
+                }
+            ],
+            "date": 1729150712730,
+            "name": "Commit-0",
+            "content": "class Reminder {\r\n  final String title;\r\n  final DateTime expirationDate;\r\n  final List<DateTime> notificationDates;\r\n  final DateTime creationDate;\r\n\r\n  Reminder({\r\n    required this.title,\r\n    required this.expirationDate,\r\n    required this.notificationDates,\r\n    required this.creationDate,\r\n  });\r\n}\r\n"
+        }
+    ]
+}

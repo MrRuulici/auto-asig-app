@@ -1,0 +1,34 @@
+{
+    "sourceFile": "lib/feature/home_screen/cubit/reminder_state.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 4,
+            "patches": [
+                {
+                    "date": 1729862364526,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1730555123952,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -15,9 +15,9 @@\n \r\n class ReminderLoaded extends ReminderState {\r\n   final List<Reminder> reminders;\r\n \r\n-  ReminderLoaded(this.reminders);\r\n+  ReminderLoaded({required this.reminders});\r\n \r\n   @override\r\n   List<Object?> get props => [reminders];\r\n }\r\n"
+                },
+                {
+                    "date": 1730555150899,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -15,9 +15,9 @@\n \r\n class ReminderLoaded extends ReminderState {\r\n   final List<Reminder> reminders;\r\n \r\n-  ReminderLoaded({required this.reminders});\r\n+  ReminderLoaded(this.reminders);\r\n \r\n   @override\r\n   List<Object?> get props => [reminders];\r\n }\r\n"
+                },
+                {
+                    "date": 1730562911239,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,10 +1,7 @@\n import 'package:auto_asig/core/models/reminder.dart';\r\n import 'package:equatable/equatable.dart';\r\n-import 'package:meta/meta.dart';\r\n \r\n-// ReminderState class that extends Equatable to manage the different states\r\n-@immutable\r\n abstract class ReminderState extends Equatable {\r\n   @override\r\n   List<Object?> get props => [];\r\n }\r\n"
+                },
+                {
+                    "date": 1730563487045,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,5 +1,6 @@\n import 'package:auto_asig/core/models/reminder.dart';\r\n+import 'package:auto_asig/core/models/vehicle_reminder.dart';\r\n import 'package:equatable/equatable.dart';\r\n \r\n abstract class ReminderState extends Equatable {\r\n   @override\r\n@@ -10,14 +11,15 @@\n \r\n class ReminderLoading extends ReminderState {}\r\n \r\n class ReminderLoaded extends ReminderState {\r\n-  final List<Reminder> reminders;\r\n+  final List<Reminder>? reminders;\r\n+  final List<VehicleReminder>? vehicleReminders;\r\n \r\n-  ReminderLoaded(this.reminders);\r\n+  ReminderLoaded({this.reminders, this.vehicleReminders});\r\n \r\n   @override\r\n-  List<Object?> get props => [reminders];\r\n+  List<Object?> get props => [reminders, vehicleReminders];\r\n }\r\n \r\n class ReminderError extends ReminderState {\r\n   final String message;\r\n"
+                }
+            ],
+            "date": 1729862364525,
+            "name": "Commit-0",
+            "content": "import 'package:auto_asig/core/models/reminder.dart';\r\nimport 'package:equatable/equatable.dart';\r\nimport 'package:meta/meta.dart';\r\n\r\n// ReminderState class that extends Equatable to manage the different states\r\n@immutable\r\nabstract class ReminderState extends Equatable {\r\n  @override\r\n  List<Object?> get props => [];\r\n}\r\n\r\nclass ReminderInitial extends ReminderState {}\r\n\r\nclass ReminderLoading extends ReminderState {}\r\n\r\nclass ReminderLoaded extends ReminderState {\r\n  final List<Reminder> reminders;\r\n\r\n  ReminderLoaded(this.reminders);\r\n\r\n  @override\r\n  List<Object?> get props => [reminders];\r\n}\r\n\r\nclass ReminderError extends ReminderState {\r\n  final String message;\r\n\r\n  ReminderError(this.message);\r\n\r\n  @override\r\n  List<Object?> get props => [message];\r\n}\r\n"
+        }
+    ]
+}

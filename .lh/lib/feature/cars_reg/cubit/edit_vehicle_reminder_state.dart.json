@@ -1,0 +1,22 @@
+{
+    "sourceFile": "lib/feature/cars_reg/cubit/edit_vehicle_reminder_state.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 1,
+            "patches": [
+                {
+                    "date": 1737291325698,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1737291336532,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -5,13 +5,14 @@\n   final VehicleReminder? vehicleReminder;\n \n   const EditVehicleReminderState({required this.vehicleReminder});\n \n+  /// Creates a copy of the state with optional updates\n   EditVehicleReminderState copyWith({VehicleReminder? vehicleReminder}) {\n     return EditVehicleReminderState(\n       vehicleReminder: vehicleReminder ?? this.vehicleReminder,\n     );\n   }\n \n   @override\n   List<Object?> get props => [vehicleReminder];\n-}\n+}\n\\ No newline at end of file\n"
+                }
+            ],
+            "date": 1737291325698,
+            "name": "Commit-0",
+            "content": "import 'package:auto_asig/core/models/vehicle_reminder.dart';\nimport 'package:equatable/equatable.dart';\n\nclass EditVehicleReminderState extends Equatable {\n  final VehicleReminder? vehicleReminder;\n\n  const EditVehicleReminderState({required this.vehicleReminder});\n\n  EditVehicleReminderState copyWith({VehicleReminder? vehicleReminder}) {\n    return EditVehicleReminderState(\n      vehicleReminder: vehicleReminder ?? this.vehicleReminder,\n    );\n  }\n\n  @override\n  List<Object?> get props => [vehicleReminder];\n}\n"
+        }
+    ]
+}

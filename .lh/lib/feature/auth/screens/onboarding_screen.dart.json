@@ -1,0 +1,54 @@
+{
+    "sourceFile": "lib/feature/auth/screens/onboarding_screen.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 9,
+            "patches": [
+                {
+                    "date": 1728305206737,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1730566364879,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -5,9 +5,9 @@\n import 'package:flutter/material.dart';\r\n import 'package:go_router/go_router.dart';\r\n \r\n class OnboardingScreen extends StatelessWidget {\r\n-  const OnboardingScreen({Key? key}) : super(key: key);\r\n+  const OnboardingScreen({super.key});\r\n \r\n   static const path = '/onboarding_screen';\r\n \r\n   @override\r\n"
+                },
+                {
+                    "date": 1730900408481,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -21,16 +21,16 @@\n         child: Center(\r\n           child: Column(\r\n             mainAxisAlignment: MainAxisAlignment.center,\r\n             children: [\r\n-              AsigButton(\r\n+              AutoAsigButton(\r\n                 onPressed: () {\r\n                   context.push(LoginScreen.absolutePath);\r\n                 },\r\n                 text: 'Autentificare',\r\n               ),\r\n               const SizedBox(height: padding),\r\n-              AsigButton(\r\n+              AutoAsigButton(\r\n                 onPressed: () {\r\n                   context.push(CreateAccountScreen.absolutPath);\r\n                 },\r\n                 text: 'Înregistrare',\r\n"
+                },
+                {
+                    "date": 1732026738464,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -25,9 +25,9 @@\n               AutoAsigButton(\n                 onPressed: () {\n                   context.push(LoginScreen.absolutePath);\n                 },\n-                text: 'Autentificare',\n+                text: 'AUTENTIFICARE',\n               ),\n               const SizedBox(height: padding),\n               AutoAsigButton(\n                 onPressed: () {\n"
+                },
+                {
+                    "date": 1732026855321,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -25,8 +25,9 @@\n               AutoAsigButton(\n                 onPressed: () {\n                   context.push(LoginScreen.absolutePath);\n                 },\n+                buttonWidth: 200,\n                 text: 'AUTENTIFICARE',\n               ),\n               const SizedBox(height: padding),\n               AutoAsigButton(\n"
+                },
+                {
+                    "date": 1732026887621,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -27,8 +27,11 @@\n                   context.push(LoginScreen.absolutePath);\n                 },\n                 buttonWidth: 200,\n                 text: 'AUTENTIFICARE',\n+                textStyle: TextStyle(\n+                  fontFamily: 'Poppins',\n+                ),\n               ),\n               const SizedBox(height: padding),\n               AutoAsigButton(\n                 onPressed: () {\n"
+                },
+                {
+                    "date": 1732026909358,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -29,8 +29,10 @@\n                 buttonWidth: 200,\n                 text: 'AUTENTIFICARE',\n                 textStyle: TextStyle(\n                   fontFamily: 'Poppins',\n+                  fontWeight: FontWeight.bold,\n+                  fontSize: 24,\n                 ),\n               ),\n               const SizedBox(height: padding),\n               AutoAsigButton(\n"
+                },
+                {
+                    "date": 1732026918486,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -25,9 +25,9 @@\n               AutoAsigButton(\n                 onPressed: () {\n                   context.push(LoginScreen.absolutePath);\n                 },\n-                buttonWidth: 200,\n+                buttonWidth: 400,\n                 text: 'AUTENTIFICARE',\n                 textStyle: TextStyle(\n                   fontFamily: 'Poppins',\n                   fontWeight: FontWeight.bold,\n"
+                },
+                {
+                    "date": 1732026932121,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -25,9 +25,9 @@\n               AutoAsigButton(\n                 onPressed: () {\n                   context.push(LoginScreen.absolutePath);\n                 },\n-                buttonWidth: 300,\n+                buttonWidth: 250,\n                 text: 'AUTENTIFICARE',\n                 textStyle: TextStyle(\n                   fontFamily: 'Poppins',\n                   fontWeight: FontWeight.bold,\n"
+                },
+                {
+                    "date": 1732026939549,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -25,9 +25,9 @@\n               AutoAsigButton(\n                 onPressed: () {\n                   context.push(LoginScreen.absolutePath);\n                 },\n-                buttonWidth: 250,\n+                buttonWidth: 275,\n                 text: 'AUTENTIFICARE',\n                 textStyle: TextStyle(\n                   fontFamily: 'Poppins',\n                   fontWeight: FontWeight.bold,\n"
+                }
+            ],
+            "date": 1728305206737,
+            "name": "Commit-0",
+            "content": "import 'package:auto_asig/core/data/constants.dart';\nimport 'package:auto_asig/core/widgets/custom_btn.dart';\nimport 'package:auto_asig/feature/auth/screens/create_account_screen.dart';\nimport 'package:auto_asig/feature/auth/screens/login_screen.dart';\nimport 'package:flutter/material.dart';\nimport 'package:go_router/go_router.dart';\n\nclass OnboardingScreen extends StatelessWidget {\n  const OnboardingScreen({Key? key}) : super(key: key);\n\n  static const path = '/onboarding_screen';\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(\n        title: const Text('Auto Asig'),\n      ),\n      body: Container(\n        padding: const EdgeInsets.all(padding),\n        child: Center(\n          child: Column(\n            mainAxisAlignment: MainAxisAlignment.center,\n            children: [\n              AsigButton(\n                onPressed: () {\n                  context.push(LoginScreen.absolutePath);\n                },\n                text: 'Autentificare',\n              ),\n              const SizedBox(height: padding),\n              AsigButton(\n                onPressed: () {\n                  context.push(CreateAccountScreen.absolutPath);\n                },\n                text: 'Înregistrare',\n              ),\n            ],\n          ),\n        ),\n      ),\n    );\n  }\n}\n"
+        }
+    ]
+}

@@ -1,0 +1,74 @@
+{
+    "sourceFile": "lib/core/data/constants.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 14,
+            "patches": [
+                {
+                    "date": 1728309523332,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1729355598998,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -17,16 +17,15 @@\n   'Sâmbătă',\r\n   'Duminică'\r\n ];\r\n \r\n-const Map<String, int> groups = {\r\n-  'General': 0,\r\n-  'Grădiniță': 1,\r\n-  // 'Adolescenți': 2,\r\n-  // 'Adulți': 3,\r\n-  // 'Seniori': 4,\r\n-};\r\n \r\n+enum ReminderType {\r\n+  idCard,\r\n+  drivingLicense,\r\n+  passport,\r\n+}\r\n+\r\n enum PaymentType {\r\n   monthly,\r\n   anual,\r\n }\r\n"
+                },
+                {
+                    "date": 1729678231103,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,11 +1,14 @@\n import 'package:auto_asig/core/models/user.dart';\r\n+import 'package:flutter/material.dart';\r\n \r\n double? screenWidth;\r\n double? screenHeight;\r\n const double padding = 32;\r\n const double theFontSize = 20;\r\n \r\n+const Color primaryColor = Color(0x024AAD);\r\n+\r\n String currentUserId = '';\r\n String? fCMToken;\r\n \r\n const List<String> weekdays = [\r\n"
+                },
+                {
+                    "date": 1729678238498,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -5,9 +5,9 @@\n double? screenHeight;\r\n const double padding = 32;\r\n const double theFontSize = 20;\r\n \r\n-const Color primaryColor = Color(0x024AAD);\r\n+const Color primaryColor = Color(0x00024aad);\r\n \r\n String currentUserId = '';\r\n String? fCMToken;\r\n \r\n"
+                },
+                {
+                    "date": 1729678314957,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -5,9 +5,9 @@\n double? screenHeight;\r\n const double padding = 32;\r\n const double theFontSize = 20;\r\n \r\n-const Color primaryColor = Color(0x00024aad);\r\n+const Color primaryColor = Color.fromRGBO(2, 74, 173, 1);\r\n \r\n String currentUserId = '';\r\n String? fCMToken;\r\n \r\n"
+                },
+                {
+                    "date": 1729678329389,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -5,9 +5,9 @@\n double? screenHeight;\r\n const double padding = 32;\r\n const double theFontSize = 20;\r\n \r\n-const Color primaryColor = Color.fromRGBO(2, 74, 173, 1);\r\n+const Color primaryBlue = Color.fromRGBO(2, 74, 173, 1);\r\n \r\n String currentUserId = '';\r\n String? fCMToken;\r\n \r\n"
+                },
+                {
+                    "date": 1729678362220,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -6,8 +6,9 @@\n const double padding = 32;\r\n const double theFontSize = 20;\r\n \r\n const Color primaryBlue = Color.fromRGBO(2, 74, 173, 1);\r\n+const Color primaryYellow = Color.fromRGBO(255, 194, 21, 1);\r\n \r\n String currentUserId = '';\r\n String? fCMToken;\r\n \r\n"
+                },
+                {
+                    "date": 1729678403769,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -7,8 +7,9 @@\n const double theFontSize = 20;\r\n \r\n const Color primaryBlue = Color.fromRGBO(2, 74, 173, 1);\r\n const Color primaryYellow = Color.fromRGBO(255, 194, 21, 1);\r\n+const Color colorGreen = Color.fromRGBO(45, 182, 50, 1);\r\n \r\n String currentUserId = '';\r\n String? fCMToken;\r\n \r\n"
+                },
+                {
+                    "date": 1729678423007,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,69 +1,68 @@\n-import 'package:auto_asig/core/models/user.dart';\n+import 'package:auto_asig/core/models/user.dart';\r\n import 'package:flutter/material.dart';\r\n-\n-double? screenWidth;\n-double? screenHeight;\n-const double padding = 32;\n-const double theFontSize = 20;\n-\n+\r\n+double? screenWidth;\r\n+double? screenHeight;\r\n+const double padding = 32;\r\n+const double theFontSize = 20;\r\n+\r\n const Color primaryBlue = Color.fromRGBO(2, 74, 173, 1);\r\n const Color primaryYellow = Color.fromRGBO(255, 194, 21, 1);\r\n const Color colorGreen = Color.fromRGBO(45, 182, 50, 1);\r\n \r\n-String currentUserId = '';\n-String? fCMToken;\n-\n-const List<String> weekdays = [\n-  'Luni',\n-  'Marți',\n-  'Miercuri',\n-  'Joi',\n-  'Vineri',\n-  'Sâmbătă',\n-  'Duminică'\n-];\n-\n-\n+String currentUserId = '';\r\n+String? fCMToken;\r\n+\r\n+const List<String> weekdays = [\r\n+  'Luni',\r\n+  'Marți',\r\n+  'Miercuri',\r\n+  'Joi',\r\n+  'Vineri',\r\n+  'Sâmbătă',\r\n+  'Duminică'\r\n+];\r\n+\r\n enum ReminderType {\r\n   idCard,\r\n   drivingLicense,\r\n   passport,\r\n }\r\n \r\n-enum PaymentType {\n-  monthly,\n-  anual,\n-}\n-\n-extension PaymentTypeExtension on PaymentType {\n-  static PaymentType fromString(String type) {\n-    return type == 'anual' ? PaymentType.anual : PaymentType.monthly;\n-  }\n-}\n-\n-enum Months {\n-  Ianuarie,\n-  Februarie,\n-  Martie,\n-  Aprilie,\n-  Mai,\n-  Iunie,\n-  Iulie,\n-  August,\n-  Septembrie,\n-  Octombrie,\n-  Noiembrie,\n-  Decembrie\n-}\n-\n-List<UserModel> allMembersGlobal = [];\n-\n-// Member? currentMember;\n-\n-UserModel emptyMember = UserModel(\n-  'NULL',\n-  fullName: '',\n-  email: '',\n-  phone: '',\n-  country: '',\n-);\n+enum PaymentType {\r\n+  monthly,\r\n+  anual,\r\n+}\r\n+\r\n+extension PaymentTypeExtension on PaymentType {\r\n+  static PaymentType fromString(String type) {\r\n+    return type == 'anual' ? PaymentType.anual : PaymentType.monthly;\r\n+  }\r\n+}\r\n+\r\n+enum Months {\r\n+  Ianuarie,\r\n+  Februarie,\r\n+  Martie,\r\n+  Aprilie,\r\n+  Mai,\r\n+  Iunie,\r\n+  Iulie,\r\n+  August,\r\n+  Septembrie,\r\n+  Octombrie,\r\n+  Noiembrie,\r\n+  Decembrie\r\n+}\r\n+\r\n+List<UserModel> allMembersGlobal = [];\r\n+\r\n+// Member? currentMember;\r\n+\r\n+UserModel emptyMember = UserModel(\r\n+  'NULL',\r\n+  fullName: '',\r\n+  email: '',\r\n+  phone: '',\r\n+  country: '',\r\n+);\r\n"
+                },
+                {
+                    "date": 1729681167042,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -5,8 +5,9 @@\n double? screenHeight;\r\n const double padding = 32;\r\n const double theFontSize = 20;\r\n \r\n+const Color logoBlue = Color.fromRGBO(24,72,151, 1);\r\n const Color primaryBlue = Color.fromRGBO(2, 74, 173, 1);\r\n const Color primaryYellow = Color.fromRGBO(255, 194, 21, 1);\r\n const Color colorGreen = Color.fromRGBO(45, 182, 50, 1);\r\n \r\n"
+                },
+                {
+                    "date": 1729756317432,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -5,10 +5,11 @@\n double? screenHeight;\r\n const double padding = 32;\r\n const double theFontSize = 20;\r\n \r\n-const Color logoBlue = Color.fromRGBO(24,72,151, 1);\r\n+const Color logoBlue = Color.fromRGBO(24, 72, 151, 1);\r\n const Color primaryBlue = Color.fromRGBO(2, 74, 173, 1);\r\n+const Color blueAccent = Colors.blueAccent;\r\n const Color primaryYellow = Color.fromRGBO(255, 194, 21, 1);\r\n const Color colorGreen = Color.fromRGBO(45, 182, 50, 1);\r\n \r\n String currentUserId = '';\r\n"
+                },
+                {
+                    "date": 1729762435528,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -0,0 +1,70 @@\n+import 'package:auto_asig/core/models/user.dart';\r\n+import 'package:flutter/material.dart';\r\n+\r\n+double? screenWidth;\r\n+double? screenHeight;\r\n+const double padding = 32;\r\n+const double theFontSize = 16;\r\n+\r\n+const Color logoBlue = Color.fromRGBO(24, 72, 151, 1);\r\n+const Color primaryBlue = Color.fromRGBO(2, 74, 173, 1);\r\n+const Color blueAccent = Colors.blueAccent;\r\n+const Color primaryYellow = Color.fromRGBO(255, 194, 21, 1);\r\n+const Color colorGreen = Color.fromRGBO(45, 182, 50, 1);\r\n+\r\n+String currentUserId = '';\r\n+String? fCMToken;\r\n+\r\n+const List<String> weekdays = [\r\n+  'Luni',\r\n+  'Marți',\r\n+  'Miercuri',\r\n+  'Joi',\r\n+  'Vineri',\r\n+  'Sâmbătă',\r\n+  'Duminică'\r\n+];\r\n+\r\n+enum ReminderType {\r\n+  idCard,\r\n+  drivingLicense,\r\n+  passport,\r\n+}\r\n+\r\n+enum PaymentType {\r\n+  monthly,\r\n+  anual,\r\n+}\r\n+\r\n+extension PaymentTypeExtension on PaymentType {\r\n+  static PaymentType fromString(String type) {\r\n+    return type == 'anual' ? PaymentType.anual : PaymentType.monthly;\r\n+  }\r\n+}\r\n+\r\n+enum Months {\r\n+  Ianuarie,\r\n+  Februarie,\r\n+  Martie,\r\n+  Aprilie,\r\n+  Mai,\r\n+  Iunie,\r\n+  Iulie,\r\n+  August,\r\n+  Septembrie,\r\n+  Octombrie,\r\n+  Noiembrie,\r\n+  Decembrie\r\n+}\r\n+\r\n+List<UserModel> allMembersGlobal = [];\r\n+\r\n+// Member? currentMember;\r\n+\r\n+UserModel emptyMember = UserModel(\r\n+  'NULL',\r\n+  fullName: '',\r\n+  email: '',\r\n+  phone: '',\r\n+  country: '',\r\n+);\r\n"
+                },
+                {
+                    "date": 1730550797331,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -35,8 +35,11 @@\n   monthly,\r\n   anual,\r\n }\r\n \r\n+enum HomeScreenState { personal, vehicles }\r\n+\r\n+\r\n extension PaymentTypeExtension on PaymentType {\r\n   static PaymentType fromString(String type) {\r\n     return type == 'anual' ? PaymentType.anual : PaymentType.monthly;\r\n   }\r\n"
+                },
+                {
+                    "date": 1730550924771,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -35,9 +35,9 @@\n   monthly,\r\n   anual,\r\n }\r\n \r\n-enum HomeScreenState {\r\n+enum HomeScreenTabState {\r\n   personal,\r\n   vehicles,\r\n }\r\n \r\n"
+                },
+                {
+                    "date": 1730560477467,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -10,8 +10,9 @@\n const Color primaryBlue = Color.fromRGBO(2, 74, 173, 1);\r\n const Color blueAccent = Colors.blueAccent;\r\n const Color primaryYellow = Color.fromRGBO(255, 194, 21, 1);\r\n const Color colorGreen = Color.fromRGBO(45, 182, 50, 1);\r\n+const Color progressYellow = Color.fromRGBO(254,185,44, 1);\r\n \r\n String currentUserId = '';\r\n String? fCMToken;\r\n \r\n"
+                }
+            ],
+            "date": 1728309523332,
+            "name": "Commit-0",
+            "content": "import 'package:auto_asig/core/models/user.dart';\n\ndouble? screenWidth;\ndouble? screenHeight;\nconst double padding = 32;\nconst double theFontSize = 20;\n\nString currentUserId = '';\nString? fCMToken;\n\nconst List<String> weekdays = [\n  'Luni',\n  'Marți',\n  'Miercuri',\n  'Joi',\n  'Vineri',\n  'Sâmbătă',\n  'Duminică'\n];\n\nconst Map<String, int> groups = {\n  'General': 0,\n  'Grădiniță': 1,\n  // 'Adolescenți': 2,\n  // 'Adulți': 3,\n  // 'Seniori': 4,\n};\n\nenum PaymentType {\n  monthly,\n  anual,\n}\n\nextension PaymentTypeExtension on PaymentType {\n  static PaymentType fromString(String type) {\n    return type == 'anual' ? PaymentType.anual : PaymentType.monthly;\n  }\n}\n\nenum Months {\n  Ianuarie,\n  Februarie,\n  Martie,\n  Aprilie,\n  Mai,\n  Iunie,\n  Iulie,\n  August,\n  Septembrie,\n  Octombrie,\n  Noiembrie,\n  Decembrie\n}\n\nList<UserModel> allMembersGlobal = [];\n\n// Member? currentMember;\n\nUserModel emptyMember = UserModel(\n  'NULL',\n  fullName: '',\n  email: '',\n  phone: '',\n  country: '',\n);\n"
+        }
+    ]
+}

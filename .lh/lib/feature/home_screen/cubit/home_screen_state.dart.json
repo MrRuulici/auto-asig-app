@@ -1,0 +1,22 @@
+{
+    "sourceFile": "lib/feature/home_screen/cubit/home_screen_state.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 1,
+            "patches": [
+                {
+                    "date": 1730550866714,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1730550976996,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,24 +1,26 @@\n+import 'package:auto_asig/core/data/constants.dart';\n+\n class HomeScreenState {\n   final bool isLoading;\n   final bool hasError;\n   final String? errorMessage;\n-  final HomeTab activeTab;\n+  final HomeScreenTabState activeTab;\n \n   HomeScreenState({\n     this.isLoading = false,\n     this.hasError = false,\n     this.errorMessage,\n-    this.activeTab = HomeTab.personal,\n+    this.activeTab = HomeScreenTabState.personal,\n   });\n \n   // The copyWith function allows us to create a new instance of HomeScreenState\n-  // with modified values while keeping the other properties unchanged.\n+  // with modified values while keeping other properties unchanged.\n   HomeScreenState copyWith({\n     bool? isLoading,\n     bool? hasError,\n     String? errorMessage,\n-    HomeTab? activeTab,\n+    HomeScreenTabState? activeTab,\n   }) {\n     return HomeScreenState(\n       isLoading: isLoading ?? this.isLoading,\n       hasError: hasError ?? this.hasError,\n@@ -26,7 +28,4 @@\n       activeTab: activeTab ?? this.activeTab,\n     );\n   }\n }\n-\n-// Define the HomeTab enum for the tab states\n-enum HomeTab { personal, vehicles }\n"
+                }
+            ],
+            "date": 1730550866714,
+            "name": "Commit-0",
+            "content": "class HomeScreenState {\n  final bool isLoading;\n  final bool hasError;\n  final String? errorMessage;\n  final HomeTab activeTab;\n\n  HomeScreenState({\n    this.isLoading = false,\n    this.hasError = false,\n    this.errorMessage,\n    this.activeTab = HomeTab.personal,\n  });\n\n  // The copyWith function allows us to create a new instance of HomeScreenState\n  // with modified values while keeping the other properties unchanged.\n  HomeScreenState copyWith({\n    bool? isLoading,\n    bool? hasError,\n    String? errorMessage,\n    HomeTab? activeTab,\n  }) {\n    return HomeScreenState(\n      isLoading: isLoading ?? this.isLoading,\n      hasError: hasError ?? this.hasError,\n      errorMessage: errorMessage ?? this.errorMessage,\n      activeTab: activeTab ?? this.activeTab,\n    );\n  }\n}\n\n// Define the HomeTab enum for the tab states\nenum HomeTab { personal, vehicles }\n"
+        }
+    ]
+}

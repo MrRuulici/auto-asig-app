@@ -1,0 +1,78 @@
+{
+    "sourceFile": "lib/feature/auth/screens/login_screen.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 15,
+            "patches": [
+                {
+                    "date": 1728305206736,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1730879266016,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -101,14 +101,20 @@\n             left: padding,\r\n             right: padding,\r\n             bottom: padding,\r\n           ),\r\n-          onPressed: () {\r\n+          onPressed: () async {\r\n+            // show the loading dialog\r\n+            showLoadingDialog(context);\r\n+\r\n             BlocProvider.of<AuthenticationCubit>(context).login(\r\n               email: emailController.text,\r\n               password: passwordController.text,\r\n               context: context,\r\n             );\r\n+\r\n+            // hide the loading dialog\r\n+            Navigator.of(context).pop();\r\n           },\r\n           text: 'Autentifică-te',\r\n         ),\r\n       ),\r\n"
+                },
+                {
+                    "date": 1730900408483,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -95,9 +95,9 @@\n           );\r\n         },\r\n       ),\r\n       bottomNavigationBar: SafeArea(\r\n-        child: AsigButton(\r\n+        child: AutoAsigButton(\r\n           padding: const EdgeInsets.only(\r\n             left: padding,\r\n             right: padding,\r\n             bottom: padding,\r\n"
+                },
+                {
+                    "date": 1732026645737,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -114,9 +114,9 @@\n \n             // hide the loading dialog\n             Navigator.of(context).pop();\n           },\n-          text: 'Autentifică-te',\n+          text: 'AUTENTIFICARE',\n         ),\n       ),\n     );\n   }\n"
+                },
+                {
+                    "date": 1732026662666,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -95,26 +95,26 @@\n           );\n         },\n       ),\n       bottomNavigationBar: SafeArea(\n-        child: AutoAsigButton(\r\n+        child: AutoAsigButton(\n           padding: const EdgeInsets.only(\n             left: padding,\n             right: padding,\n             bottom: padding,\n           ),\n-          onPressed: () async {\r\n-            // show the loading dialog\r\n-            showLoadingDialog(context);\r\n-\r\n+          onPressed: () async {\n+            // show the loading dialog\n+            showLoadingDialog(context);\n+\n             BlocProvider.of<AuthenticationCubit>(context).login(\n               email: emailController.text,\n               password: passwordController.text,\n               context: context,\n             );\n-\r\n-            // hide the loading dialog\r\n-            Navigator.of(context).pop();\r\n+\n+            // hide the loading dialog\n+            Navigator.of(context).pop();\n           },\n           text: 'AUTENTIFICARE',\n         ),\n       ),\n"
+                },
+                {
+                    "date": 1732027476012,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,7 +1,7 @@\n import 'package:auto_asig/core/data/assistants.dart';\n import 'package:auto_asig/core/data/constants.dart';\n-import 'package:auto_asig/core/widgets/custom_btn.dart';\n+import 'package:auto_asig/core/widgets/auto_asig_button_full.dart';\n import 'package:auto_asig/feature/auth/cubit/auth_cubit.dart';\n import 'package:auto_asig/feature/auth/cubit/auth_state.dart';\n import 'package:auto_asig/feature/auth/screens/forgot_password_screen.dart';\n import 'package:auto_asig/feature/auth/screens/onboarding_screen.dart';\n"
+                },
+                {
+                    "date": 1732028388934,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -21,11 +21,11 @@\n \n   @override\n   Widget build(BuildContext context) {\n     return Scaffold(\n-      appBar: AppBar(\n-        title: const Text('Autentificare'),\n-      ),\n+      // appBar: AppBar(\n+      //   title: const Text('Autentificare'),\n+      // ),\n       body: BlocConsumer<AuthenticationCubit, AuthenticationState>(\n         listener: (context, state) {\n           if (state is AuthenticationSuccess) {\n             context.go(HomeScreen.path);\n"
+                },
+                {
+                    "date": 1732028526516,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -46,8 +46,22 @@\n             child: Column(\n               mainAxisAlignment: MainAxisAlignment.center,\n               crossAxisAlignment: CrossAxisAlignment.stretch,\n               children: <Widget>[\n+                Row(\n+                  children: [\n+                    GestureDetector(\n+                      onTap: () {\n+                        context.pop();\n+                      },\n+                      child: const Icon(\n+                        Icons.arrow_back,\n+                        size: 30,\n+                      ),\n+                    )\n+                  ],\n+                ),\n+\n                 TextField(\n                   style: const TextStyle(fontSize: theFontSize),\n                   controller: emailController,\n                   decoration: const InputDecoration(\n"
+                },
+                {
+                    "date": 1732028543606,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -53,9 +53,9 @@\n                       onTap: () {\n                         context.pop();\n                       },\n                       child: const Icon(\n-                        Icons.arrow_back,\n+                        Icons.arrow_back_ios_new,\n                         size: 30,\n                       ),\n                     )\n                   ],\n"
+                },
+                {
+                    "date": 1732028552148,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -55,8 +55,9 @@\n                       },\n                       child: const Icon(\n                         Icons.arrow_back_ios_new,\n                         size: 30,\n+                        color: logoBlue,\n                       ),\n                     )\n                   ],\n                 ),\n"
+                },
+                {
+                    "date": 1732028560082,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -43,9 +43,9 @@\n \n           return Padding(\n             padding: const EdgeInsets.all(padding),\n             child: Column(\n-              mainAxisAlignment: MainAxisAlignment.center,\n+              // mainAxisAlignment: MainAxisAlignment.center,\n               crossAxisAlignment: CrossAxisAlignment.stretch,\n               children: <Widget>[\n                 Row(\n                   children: [\n"
+                },
+                {
+                    "date": 1732028578501,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -43,9 +43,9 @@\n \n           return Padding(\n             padding: const EdgeInsets.all(padding),\n             child: Column(\n-              // mainAxisAlignment: MainAxisAlignment.center,\n+              mainAxisAlignment: MainAxisAlignment.center,\n               crossAxisAlignment: CrossAxisAlignment.stretch,\n               children: <Widget>[\n                 Row(\n                   children: [\n"
+                },
+                {
+                    "date": 1732028615780,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -57,9 +57,10 @@\n                         Icons.arrow_back_ios_new,\n                         size: 30,\n                         color: logoBlue,\n                       ),\n-                    )\n+                    ),\n+                     Image.asset('assets/images/simple_logo.png', height: 50),\n                   ],\n                 ),\n \n                 TextField(\n"
+                },
+                {
+                    "date": 1732028627616,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -47,8 +47,9 @@\n               mainAxisAlignment: MainAxisAlignment.center,\n               crossAxisAlignment: CrossAxisAlignment.stretch,\n               children: <Widget>[\n                 Row(\n+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,\n                   children: [\n                     GestureDetector(\n                       onTap: () {\n                         context.pop();\n"
+                },
+                {
+                    "date": 1732028639276,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -59,9 +59,9 @@\n                         size: 30,\n                         color: logoBlue,\n                       ),\n                     ),\n-                    Image.asset('assets/images/simple_logo.png', height: 50),\n+                    Image.asset('assets/images/simple_logo.png', height: 100, ),\n                   ],\n                 ),\n \n                 TextField(\n"
+                },
+                {
+                    "date": 1732028644436,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -61,9 +61,9 @@\n                       ),\n                     ),\n                     Image.asset(\n                       'assets/images/simple_logo.png',\n-                      height: 100,\n+                      height: 175,\n                     ),\n                   ],\n                 ),\n \n"
+                }
+            ],
+            "date": 1728305206736,
+            "name": "Commit-0",
+            "content": "import 'package:auto_asig/core/data/assistants.dart';\nimport 'package:auto_asig/core/data/constants.dart';\nimport 'package:auto_asig/core/widgets/custom_btn.dart';\nimport 'package:auto_asig/feature/auth/cubit/auth_cubit.dart';\nimport 'package:auto_asig/feature/auth/cubit/auth_state.dart';\nimport 'package:auto_asig/feature/auth/screens/forgot_password_screen.dart';\nimport 'package:auto_asig/feature/auth/screens/onboarding_screen.dart';\nimport 'package:auto_asig/feature/home_screen/screens/home_screen.dart';\nimport 'package:flutter/material.dart';\nimport 'package:flutter_bloc/flutter_bloc.dart';\nimport 'package:go_router/go_router.dart';\n\nclass LoginScreen extends StatelessWidget {\n  LoginScreen({super.key});\n\n  static const path = 'login_screen';\n  static const absolutePath = '${OnboardingScreen.path}/$path';\n\n  final TextEditingController emailController = TextEditingController();\n  final TextEditingController passwordController = TextEditingController();\n\n  @override\n  Widget build(BuildContext context) {\n    return Scaffold(\n      appBar: AppBar(\n        title: const Text('Autentificare'),\n      ),\n      body: BlocConsumer<AuthenticationCubit, AuthenticationState>(\n        listener: (context, state) {\n          if (state is AuthenticationSuccess) {\n            context.go(HomeScreen.path);\n          } else if (state is AuthenticationFailure) {\n            showSnackbar(\n              context,\n              state.errorMessage,\n            );\n          }\n        },\n        builder: (context, state) {\n          final isPasswordVisible = state is PasswordVisibilityState\n              ? state.isPasswordVisible\n              : false;\n\n          return Padding(\n            padding: const EdgeInsets.all(padding),\n            child: Column(\n              mainAxisAlignment: MainAxisAlignment.center,\n              crossAxisAlignment: CrossAxisAlignment.stretch,\n              children: <Widget>[\n                TextField(\n                  style: const TextStyle(fontSize: theFontSize),\n                  controller: emailController,\n                  decoration: const InputDecoration(\n                    labelText: 'Email',\n                    labelStyle: TextStyle(fontSize: theFontSize),\n                  ),\n                  keyboardType: TextInputType.emailAddress,\n                ),\n                const SizedBox(height: 20),\n                TextField(\n                  style: const TextStyle(fontSize: theFontSize),\n                  controller: passwordController,\n                  decoration: InputDecoration(\n                    labelStyle: const TextStyle(fontSize: theFontSize),\n                    labelText: 'Parola',\n                    suffixIcon: IconButton(\n                      icon: Icon(isPasswordVisible\n                          ? Icons.visibility\n                          : Icons.visibility_off),\n                      onPressed: () {\n                        BlocProvider.of<AuthenticationCubit>(context)\n                            .togglePasswordVisibility();\n                      },\n                    ),\n                  ),\n                  obscureText: !isPasswordVisible,\n                ),\n\n                const SizedBox(height: 80),\n                // Reset Button\n                TextButton(\n                  onPressed: () {\n                    context.push(ForgotPasswordScreen.absolutePath);\n                  },\n                  child: Text(\n                    'Ai uitat parola?',\n                    style: TextStyle(\n                      fontSize: theFontSize,\n                      color: Theme.of(context).primaryColor,\n                    ),\n                  ),\n                ),\n              ],\n            ),\n          );\n        },\n      ),\n      bottomNavigationBar: SafeArea(\n        child: AsigButton(\n          padding: const EdgeInsets.only(\n            left: padding,\n            right: padding,\n            bottom: padding,\n          ),\n          onPressed: () {\n            BlocProvider.of<AuthenticationCubit>(context).login(\n              email: emailController.text,\n              password: passwordController.text,\n              context: context,\n            );\n          },\n          text: 'Autentifică-te',\n        ),\n      ),\n    );\n  }\n}\n"
+        }
+    ]
+}

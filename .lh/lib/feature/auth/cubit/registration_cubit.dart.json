@@ -1,0 +1,26 @@
+{
+    "sourceFile": "lib/feature/auth/cubit/registration_cubit.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 2,
+            "patches": [
+                {
+                    "date": 1730883658585,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1730883707022,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -13,9 +13,9 @@\n     required String email,\r\n     required String password,\r\n     required String firstName,\r\n     required String lastName,\r\n-    required String phoneNumber,\r\n+    required String phone,\r\n   }) async {\r\n     try {\r\n       await _firebaseAuth\r\n           .createUserWithEmailAndPassword(email: email, password: password)\r\n@@ -26,8 +26,11 @@\n           }\r\n           registerUser(\r\n             user.user!.uid,\r\n             email,\r\n+            firstName,\r\n+            lastName,\r\n+            phone,\r\n           );\r\n         });\r\n       });\r\n       emit(RegistrationSuccess());\r\n"
+                },
+                {
+                    "date": 1730885722647,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,8 +1,9 @@\n import 'package:auto_asig/core/app/app_data.dart';\r\n import 'package:auto_asig/core/data/http_data.dart';\r\n import 'package:auto_asig/feature/auth/cubit/registration_state.dart';\r\n import 'package:firebase_auth/firebase_auth.dart';\r\n+import 'package:fl_country_code_picker/src/models/country_code.dart';\r\n import 'package:flutter_bloc/flutter_bloc.dart';\r\n \r\n class RegistrationCubit extends Cubit<RegistrationState> {\r\n   final FirebaseAuth _firebaseAuth;\r\n@@ -13,9 +14,9 @@\n     required String email,\r\n     required String password,\r\n     required String firstName,\r\n     required String lastName,\r\n-    required String phone,\r\n+    required String phone, required CountryCode country,\r\n   }) async {\r\n     try {\r\n       await _firebaseAuth\r\n           .createUserWithEmailAndPassword(email: email, password: password)\r\n"
+                }
+            ],
+            "date": 1730883658585,
+            "name": "Commit-0",
+            "content": "import 'package:auto_asig/core/app/app_data.dart';\r\nimport 'package:auto_asig/core/data/http_data.dart';\r\nimport 'package:auto_asig/feature/auth/cubit/registration_state.dart';\r\nimport 'package:firebase_auth/firebase_auth.dart';\r\nimport 'package:flutter_bloc/flutter_bloc.dart';\r\n\r\nclass RegistrationCubit extends Cubit<RegistrationState> {\r\n  final FirebaseAuth _firebaseAuth;\r\n\r\n  RegistrationCubit(this._firebaseAuth) : super(RegistrationInitial());\r\n\r\n  Future<void> register(\r\n      {required String email, required String password,\r\n      required String firstName, required String lastName,\r\n      required String phoneNumber,}) async {\r\n    try {\r\n      await _firebaseAuth\r\n          .createUserWithEmailAndPassword(email: email, password: password)\r\n          .then((user) {\r\n        userCollection!.get().then((value) {\r\n          if (value.docs.isNotEmpty) {\r\n            // print('usersCount: ${value.docs.length}');\r\n          }\r\n          registerUser(\r\n            user.user!.uid,\r\n            email,\r\n          );\r\n        });\r\n      });\r\n      emit(RegistrationSuccess());\r\n    } on FirebaseAuthException catch (e) {\r\n      emit(RegistrationFailure(\r\n          e.message ?? 'Eroare necunoscută la înregistrare'));\r\n    }\r\n  }\r\n}\r\n"
+        }
+    ]
+}

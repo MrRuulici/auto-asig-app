@@ -1,0 +1,46 @@
+{
+    "sourceFile": "lib/core/cubit/user_data_cubit.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 7,
+            "patches": [
+                {
+                    "date": 1728038867214,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1728038947359,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -8,9 +8,14 @@\n \n part 'user_data_state.dart';\n \n class UserDataCubit extends Cubit<UserDataState> {\n-  UserDataCubit() : super(UserDataInitial(member: emptyMember, carInfo: [], idInfo: []));\n+  UserDataCubit()\n+      : super(UserDataInitial(\n+          member: emptyMember,\n+          carInfo: [],\n+          idInfo: [],\n+        ));\n \n   // Use copyWith to set a new member\n   void setMember(UserModel member) {\n     emit(state.copyWith(member: member));\n"
+                },
+                {
+                    "date": 1728038981073,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -44,5 +44,78 @@\n   // Update the member using copyWith\n   void updateMember(UserModel updatedMember) {\n     emit(state.copyWith(member: updatedMember));\n   }\n+\n+  // Add a new car to the carInfo list\n+  void addCar(CarInfo car) {\n+    final List<CarInfo> carInfo = state.carInfo;\n+\n+    // Add the new car to the list\n+    carInfo.add(car);\n+\n+    // Emit the updated state with the new carInfo list\n+    emit(state.copyWith(carInfo: carInfo));\n+  }\n+\n+  // Remove a car from the carInfo list\n+  void removeCar(CarInfo car) {\n+    final List<CarInfo> carInfo = state.carInfo;\n+\n+    // Remove the car from the list\n+    carInfo.remove(car);\n+\n+    // Emit the updated state with the new carInfo list\n+    emit(state.copyWith(carInfo: carInfo));\n+  }\n+\n+  // Update a car in the carInfo list\n+  void updateCar(CarInfo updatedCar) {\n+    final List<CarInfo> carInfo = state.carInfo;\n+\n+    // Find the index of the car to update\n+    final int index = carInfo.indexWhere((car) => car.id == updatedCar.id);\n+\n+    // Update the car at the index\n+    carInfo[index] = updatedCar;\n+\n+    // Emit the updated state with the modified carInfo list\n+    emit(state.copyWith(carInfo: carInfo));\n+  }\n+\n+  // Add a new ID to the idInfo list\n+  void addId(IdModel id) {\n+    final List<IdModel> idInfo = state.idInfo;\n+\n+    // Add the new ID to the list\n+    idInfo.add(id);\n+\n+    // Emit the updated state with the new idInfo list\n+    emit(state.copyWith(idInfo: idInfo));\n+  }\n+\n+  // Remove an ID from the idInfo list\n+  void removeId(IdModel id) {\n+    final List<IdModel> idInfo = state.idInfo;\n+\n+    // Remove the ID from the list\n+    idInfo.remove(id);\n+\n+    // Emit the updated state with the new idInfo list\n+    emit(state.copyWith(idInfo: idInfo));\n+  }\n+\n+  // Update an ID in the idInfo list\n+  void updateId(IdModel updatedId) {\n+    final List<IdModel> idInfo = state.idInfo;\n+\n+    // Find the index of the ID to update\n+    final int index = idInfo.indexWhere((id) => id.id == updatedId.id);\n+\n+    // Update the ID at the index\n+    idInfo[index] = updatedId;\n+\n+    // Emit the updated state with the modified idInfo list\n+    emit(state.copyWith(idInfo: idInfo));\n+  }\n+  \n }\n"
+                },
+                {
+                    "date": 1730566362284,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -11,10 +11,10 @@\n class UserDataCubit extends Cubit<UserDataState> {\n   UserDataCubit()\n       : super(UserDataInitial(\n           member: emptyMember,\n-          carInfo: [],\n-          idInfo: [],\n+          carInfo: const [],\n+          idInfo: const [],\n         ));\n \n   // Use copyWith to set a new member\n   void setMember(UserModel member) {\n"
+                },
+                {
+                    "date": 1730894137757,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -17,8 +17,9 @@\n         ));\n \n   // Use copyWith to set a new member\n   void setMember(UserModel member) {\n+    print('Setting member: ${member.id}');\n     emit(state.copyWith(member: member));\n   }\n \n   // Clear the user data by setting the member to emptyMember\n"
+                },
+                {
+                    "date": 1731331710660,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,6 +1,7 @@\n import 'package:auto_asig/core/data/constants.dart';\n import 'package:auto_asig/core/data/http_data.dart';\n+import 'package:auto_asig/core/data/http_user_data.dart';\n import 'package:auto_asig/core/models/car_info.dart';\n import 'package:auto_asig/core/models/id_model.dart';\n import 'package:auto_asig/core/models/user.dart';\n import 'package:bloc/bloc.dart';\n"
+                },
+                {
+                    "date": 1731331715981,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,6 +1,5 @@\n import 'package:auto_asig/core/data/constants.dart';\n-\n import 'package:auto_asig/core/data/http_user_data.dart';\n import 'package:auto_asig/core/models/car_info.dart';\n import 'package:auto_asig/core/models/id_model.dart';\n import 'package:auto_asig/core/models/user.dart';\n"
+                },
+                {
+                    "date": 1731331933782,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,6 +1,6 @@\n import 'package:auto_asig/core/data/constants.dart';\n-import 'package:auto_asig/core/data/http_user_data.dart';\n+import 'package:auto_asig/core/data/http_data.dart';\n import 'package:auto_asig/core/models/car_info.dart';\n import 'package:auto_asig/core/models/id_model.dart';\n import 'package:auto_asig/core/models/user.dart';\n import 'package:bloc/bloc.dart';\n"
+                }
+            ],
+            "date": 1728038867214,
+            "name": "Commit-0",
+            "content": "import 'package:auto_asig/core/data/constants.dart';\nimport 'package:auto_asig/core/data/http_data.dart';\nimport 'package:auto_asig/core/models/car_info.dart';\nimport 'package:auto_asig/core/models/id_model.dart';\nimport 'package:auto_asig/core/models/user.dart';\nimport 'package:bloc/bloc.dart';\nimport 'package:equatable/equatable.dart';\n\npart 'user_data_state.dart';\n\nclass UserDataCubit extends Cubit<UserDataState> {\n  UserDataCubit() : super(UserDataInitial(member: emptyMember, carInfo: [], idInfo: []));\n\n  // Use copyWith to set a new member\n  void setMember(UserModel member) {\n    emit(state.copyWith(member: member));\n  }\n\n  // Clear the user data by setting the member to emptyMember\n  void clearUserData() {\n    emit(state.copyWith(member: emptyMember));\n  }\n\n  // Update email and phone, use copyWith for state changes\n  void updateEmailAndPhone(String email, String phone) {\n    final UserModel member = state.member;\n\n    // Update the member's email and phone\n    member.email = email;\n    member.phone = phone;\n\n    // Update the backend\n    updateEmailAndPhoneForUser(member.id, email, phone);\n\n    // Emit the updated state with the modified member\n    emit(state.copyWith(member: member));\n  }\n\n  // Update the member using copyWith\n  void updateMember(UserModel updatedMember) {\n    emit(state.copyWith(member: updatedMember));\n  }\n}\n"
+        }
+    ]
+}

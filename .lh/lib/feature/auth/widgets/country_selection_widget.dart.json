@@ -1,0 +1,22 @@
+{
+    "sourceFile": "lib/feature/auth/widgets/country_selection_widget.dart",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 1,
+            "patches": [
+                {
+                    "date": 1730884324018,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1730884332193,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -4,11 +4,11 @@\n const _previewTextStyle = TextStyle(fontSize: 18.0);\r\n \r\n class CountryCodePreview extends StatelessWidget {\r\n   const CountryCodePreview({\r\n-    Key? key,\r\n+    super.key,\r\n     required this.countryCode,\r\n-  }) : super(key: key);\r\n+  });\r\n \r\n   final CountryCode countryCode;\r\n \r\n   @override\r\n"
+                }
+            ],
+            "date": 1730884324018,
+            "name": "Commit-0",
+            "content": "import 'package:fl_country_code_picker/fl_country_code_picker.dart';\r\nimport 'package:flutter/material.dart';\r\n\r\nconst _previewTextStyle = TextStyle(fontSize: 18.0);\r\n\r\nclass CountryCodePreview extends StatelessWidget {\r\n  const CountryCodePreview({\r\n    Key? key,\r\n    required this.countryCode,\r\n  }) : super(key: key);\r\n\r\n  final CountryCode countryCode;\r\n\r\n  @override\r\n  Widget build(BuildContext context) {\r\n    const kSpacer = SizedBox(height: 16.0);\r\n    return LayoutBuilder(\r\n      builder: (context, constraints) {\r\n        return Column(\r\n          mainAxisAlignment: MainAxisAlignment.center,\r\n          crossAxisAlignment: CrossAxisAlignment.start,\r\n          children: [\r\n            Text('Selected Country Name: ${countryCode.name}',\r\n                style: _previewTextStyle),\r\n            kSpacer,\r\n            Text('Selected Country Code: ${countryCode.code}',\r\n                style: _previewTextStyle),\r\n            kSpacer,\r\n            Text('Selected Country Dial Code: ${countryCode.dialCode}',\r\n                style: _previewTextStyle),\r\n            kSpacer,\r\n            Row(\r\n              children: [\r\n                const Text('Selected Country Flag Image:',\r\n                    style: _previewTextStyle),\r\n                const SizedBox(width: 16.0),\r\n                countryCode.flagImage(),\r\n              ],\r\n            ),\r\n            kSpacer,\r\n            Image.asset(\r\n              countryCode.flagUri,\r\n              width: 100.0,\r\n              fit: BoxFit.cover,\r\n              package: countryCode.flagImagePackage,\r\n            ),\r\n          ],\r\n        );\r\n      },\r\n    );\r\n  }\r\n}"
+        }
+    ]
+}
