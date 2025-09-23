@@ -24,7 +24,6 @@ Future<void> runAutoAsigApp() async {
   try {
     if (Firebase.apps.isEmpty) {
       await Firebase.initializeApp(
-        name: 'alliatAsig', // Set your custom app name here
         options: DefaultFirebaseOptions.currentPlatform,
       );
       //
