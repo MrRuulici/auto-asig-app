@@ -1,8 +1,8 @@
 import 'package:auto_asig/core/cubit/user_data_cubit.dart';
 import 'package:auto_asig/core/data/constants.dart';
-import 'package:auto_asig/feature/auth/cubit/auth_cubit.dart';
-import 'package:auto_asig/feature/auth/screens/onboarding_screen.dart';
-import 'package:auto_asig/feature/home_screen/screens/about_screen.dart';
+import 'package:auto_asig/feature/authentication/presentation/cubit/auth_cubit.dart';
+import 'package:auto_asig/feature/authentication/presentation/screens/onboarding_screen.dart';
+import 'package:auto_asig/feature/home/presentation/screens/about_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
