@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:auto_asig/core/data/constants.dart';
 import 'package:auto_asig/core/models/notification_model.dart';
-import 'package:auto_asig/feature/home_screen/widgets/notification_details_bottom_sheet.dart';
+import 'package:auto_asig/feature/home/presentation/widgets/notification_details_bottom_sheet.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 

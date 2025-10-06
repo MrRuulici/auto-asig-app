@@ -1,4 +1,4 @@
-import 'package:auto_asig/feature/auth/auth_repository.dart';
+import 'package:auto_asig/feature/authentication/data/repositories/auth_repository.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
