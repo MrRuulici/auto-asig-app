@@ -3,7 +3,7 @@ import 'package:auto_asig/core/data/http_data.dart';
 import 'package:auto_asig/core/helpers/notification_helper.dart';
 import 'package:auto_asig/core/models/notification_model.dart';
 import 'package:auto_asig/core/models/reminder.dart';
-import 'package:auto_asig/feature/documents/cubit/id_cards_state.dart';
+import 'package:auto_asig/feature/documents/presentation/cubit/id_cards_state.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
