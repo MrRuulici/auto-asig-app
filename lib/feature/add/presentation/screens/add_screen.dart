@@ -5,7 +5,7 @@ import 'package:auto_asig/feature/vehicles/presentation/screens/register_car_scr
 import 'package:auto_asig/feature/home/presentation/cubit/home_screen_cubit.dart';
 import 'package:auto_asig/feature/home/presentation/screens/home_screen.dart';
 import 'package:auto_asig/feature/home/presentation/widgets/home_bottom_navigation_bar.dart';
-import 'package:auto_asig/feature/documents/screens/id_cards_screen.dart';
+import 'package:auto_asig/feature/documents/presentation/screens/id_cards_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';

@@ -4,7 +4,7 @@ import 'package:auto_asig/core/data/constants.dart';
 import 'package:auto_asig/core/data/http_data.dart';
 import 'package:auto_asig/core/models/reminder.dart';
 import 'package:auto_asig/core/widgets/progress_colored_bar.dart';
-import 'package:auto_asig/feature/documents/screens/id_cards_screen.dart';
+import 'package:auto_asig/feature/documents/presentation/screens/id_cards_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
