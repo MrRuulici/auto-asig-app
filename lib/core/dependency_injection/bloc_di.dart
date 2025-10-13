@@ -8,7 +8,7 @@ import 'package:auto_asig/feature/vehicles/presentation/cubit/car_info_cubit.dar
 import 'package:auto_asig/feature/vehicles/presentation/cubit/edit_vehicle_reminder_cubit.dart';
 import 'package:auto_asig/feature/home/presentation/cubit/home_screen_cubit.dart';
 import 'package:auto_asig/feature/home/presentation/cubit/unified_cubit.dart';
-import 'package:auto_asig/feature/documents/cubit/id_cards_cubit.dart';
+import 'package:auto_asig/feature/documents/presentation/cubit/id_cards_cubit.dart';
 import 'package:auto_asig/feature/home/presentation/cubit/reminder_cubit.dart';
 import 'package:auto_asig/feature/vehicles/vehicle_journal/cubit/edit_journal_entry_cubit.dart';
 import 'package:auto_asig/feature/vehicles/vehicle_journal/cubit/vehicle_journals_cubit.dart';
