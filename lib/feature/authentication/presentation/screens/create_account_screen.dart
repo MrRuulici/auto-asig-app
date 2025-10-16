@@ -1,6 +1,7 @@
 import 'package:auto_asig/core/helpers/authentication_helper.dart';
 import 'package:auto_asig/core/widgets/auto_asig_button_empty.dart';
 import 'package:auto_asig/feature/home/presentation/screens/gdrp_screen.dart';
+import 'package:auto_asig/feature/home/presentation/screens/home_screen.dart';
 import 'package:auto_asig/feature/home/presentation/screens/terms_and_conditions_screen.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -35,20 +36,23 @@ class CreateAccountScreen extends StatelessWidget {
     return Scaffold(
       body: BlocConsumer<RegistrationCubit, RegistrationState>(
         listener: (context, state) {
-
-
-          //NOU: caz nou pentru stare noua, email de verificare trimis
-          if(state is RegistrationVerificationEmailSent) {
+          if (state is RegistrationGoogleSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Cont creat cu succes! Bun venit!'),
+              ),
+            );
+            context.go(HomeScreen.path); // Go directly to home
+          } else if (state is RegistrationVerificationEmailSent) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                  content: Text(
-                      'Cont creat! Te rugăm să-ți verifici emailul ${emailController.text} pentru a te putea loga!')),
+                content: Text(
+                  'Cont creat! Te rugăm să-ți verifici emailul pentru a te putea loga!',
+                ),
+              ),
             );
-            context.go('${OnboardingScreen.path}/${LoginScreen.path}'); // Redirecționează utilizatorul la ecranul de login
-          }
-
-
-          else if (state is RegistrationFailure) {
+            context.go('${OnboardingScreen.path}/${LoginScreen.path}');
+          } else if (state is RegistrationFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.errorMessage)),
             );
@@ -58,12 +62,10 @@ class CreateAccountScreen extends StatelessWidget {
           bool isChecked =
               state is RegistrationCheckboxState && state.isChecked;
 
-
           //animatie de incarcare la inregistrare
           if (state is RegistrationLoading) {
             return const Center(child: CircularProgressIndicator());
           }
-
 
           return Container(
             color: Colors.white,
@@ -170,7 +172,6 @@ class CreateAccountScreen extends StatelessWidget {
                                 ),
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () {
-                                    // Navigate to Terms
                                     context.push(
                                       TermsAndConditionsScreen.absolutePath,
                                     );
@@ -187,7 +188,6 @@ class CreateAccountScreen extends StatelessWidget {
                                 ),
                                 recognizer: TapGestureRecognizer()
                                   ..onTap = () {
-                                    // Navigate to GDPR
                                     context.push(GDPRScreen.absolutePath);
                                   },
                               ),
@@ -203,6 +203,7 @@ class CreateAccountScreen extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: Column(
                       children: [
+                        // Email/Password Registration Button
                         AutoAsigButtonEmpty(
                           buttonWidth: 275,
                           textStyle: const TextStyle(
@@ -221,14 +222,12 @@ class CreateAccountScreen extends StatelessWidget {
                                       ),
                                     );
                                     return;
-                                  }
-                                  // do the checks before registering
-                                  else if (passwordController.text !=
+                                  } else if (passwordController.text !=
                                       confirmPasswordController.text) {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                         content: Text(
-                                            'Parolele trebuie sa fie identince!'),
+                                            'Parolele trebuie sa fie identice!'),
                                       ),
                                     );
                                     return;
@@ -297,30 +296,10 @@ class CreateAccountScreen extends StatelessWidget {
                                     ),
                                   );
                                 }
-                              : null, // Disable button if checkbox is not selected
-                        ),
-                        AutoAsigButtonEmpty(
-                          buttonWidth: 275,
-                          textStyle: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: logoBlue,
-                          ),
-                          preTextIcon: const Icon(
-                            FontAwesomeIcons.apple,
-                            color: Colors.black,
-                          ),
-                          text: 'APPLE',
-                          onPressed: isChecked
-                              // ? () => handleAppleSignIn(
-                              //       context: context,
-                              //       email: emailController.text,
-                              //       firstName: firstNameController.text,
-                              //       lastName: lastNameController.text,
-                              //     )
-                              ? () {}
                               : null,
                         ),
+                        
+                        // Google Sign-In Button
                         AutoAsigButtonEmpty(
                           buttonWidth: 275,
                           textStyle: const TextStyle(
@@ -334,185 +313,47 @@ class CreateAccountScreen extends StatelessWidget {
                           ),
                           text: 'GOOGLE',
                           onPressed: isChecked
-                              ? () async {
-                                  // show loading indicator
-                                  // signInWithGoogle();
-
-                                  // hide loading indicator
+                              ? () {
+                                  // Call the Google Sign-In method
+                                  context.read<RegistrationCubit>().signInWithGoogle();
                                 }
                               : null,
                         ),
-                        // Apple Sign-In Button (only show if platform is iOS)
-                        // if (Theme.of(context).platform == TargetPlatform.iOS)
-                        // ElevatedButton.icon(
-                        //   icon: const Icon(Icons.apple, color: Colors.white),
-                        //   label: const Text('ÎNREGISTRARE CU APPLE'),
-                        //   style: ElevatedButton.styleFrom(
-                        //     backgroundColor:
-                        //         Colors.black, // Apple branding color
-                        //   ),
-                        //   onPressed: () {
-                        //     handleAppleSignIn(
-                        //       context: context,
-                        //       email: emailController.text,
-                        //       firstName: firstNameController.text,
-                        //       lastName: lastNameController.text,
-                        //     );
-                        //   },
-                        // ),
+                        
+                        // Apple Sign-In Button (placeholder for future implementation)
+                        AutoAsigButtonEmpty(
+                          buttonWidth: 275,
+                          textStyle: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: logoBlue,
+                          ),
+                          preTextIcon: const Icon(
+                            FontAwesomeIcons.apple,
+                            color: Colors.black,
+                          ),
+                          text: 'APPLE',
+                          onPressed: isChecked
+                              ? () {
+                                  // TODO: Implement Apple Sign-In
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                          'Apple Sign-In va fi disponibil în curând'),
+                                    ),
+                                  );
+                                }
+                              : null,
+                        ),
                       ],
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
           );
         },
       ),
-      // bottomNavigationBar: SafeArea(
-      //   child: BlocBuilder<RegistrationCubit, RegistrationState>(
-      //     builder: (context, state) {
-      //       bool isChecked =
-      //           state is RegistrationCheckboxState && state.isChecked;
-
-      //       return Container(
-      //         color: Colors.white,
-      //         padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      //         child: Column(
-      //           children: [
-      //             AutoAsigButtonEmpty(
-      //               buttonWidth: 275,
-      //               textStyle: const TextStyle(
-      //                 fontSize: 18,
-      //                 fontWeight: FontWeight.bold,
-      //                 color: logoBlue,
-      //               ),
-      //               text: 'ÎNREGISTRARE',
-      //               onPressed: isChecked
-      //                   ? () {
-      //                       if (passwordController.text.length < 6) {
-      //                         ScaffoldMessenger.of(context).showSnackBar(
-      //                           const SnackBar(
-      //                             content: Text(
-      //                                 'Parola trebuie sa aiba minim 6 caractere!'),
-      //                           ),
-      //                         );
-      //                         return;
-      //                       }
-      //                       // do the checks before registering
-      //                       else if (passwordController.text !=
-      //                           confirmPasswordController.text) {
-      //                         ScaffoldMessenger.of(context).showSnackBar(
-      //                           const SnackBar(
-      //                             content: Text(
-      //                                 'Parolele trebuie sa fie identince!'),
-      //                           ),
-      //                         );
-      //                         return;
-      //                       } else if (phoneController.text.length < 10) {
-      //                         ScaffoldMessenger.of(context).showSnackBar(
-      //                           const SnackBar(
-      //                             content: Text(
-      //                                 'Numarul de telefon trebuie sa aiba minim 10 caractere!'),
-      //                           ),
-      //                         );
-      //                         return;
-      //                       } else if (phoneController.text.length > 13) {
-      //                         ScaffoldMessenger.of(context).showSnackBar(
-      //                           const SnackBar(
-      //                             content: Text(
-      //                                 'Numarul de telefon trebuie sa aiba maxim 13 caractere!'),
-      //                           ),
-      //                         );
-      //                         return;
-      //                       } else if (emailController.text.isEmpty) {
-      //                         ScaffoldMessenger.of(context).showSnackBar(
-      //                           const SnackBar(
-      //                             content: Text('Email-ul nu poate fi gol!'),
-      //                           ),
-      //                         );
-      //                         return;
-      //                       } else if (firstNameController.text.isEmpty) {
-      //                         ScaffoldMessenger.of(context).showSnackBar(
-      //                           const SnackBar(
-      //                             content: Text('Numele nu poate fi gol!'),
-      //                           ),
-      //                         );
-      //                         return;
-      //                       } else if (lastNameController.text.isEmpty) {
-      //                         ScaffoldMessenger.of(context).showSnackBar(
-      //                           const SnackBar(
-      //                             content: Text('Prenumele nu poate fi gol!'),
-      //                           ),
-      //                         );
-      //                         return;
-      //                       } else if (phoneController.text.isEmpty) {
-      //                         ScaffoldMessenger.of(context).showSnackBar(
-      //                           const SnackBar(
-      //                             content: Text(
-      //                                 'Numarul de telefon nu poate fi gol!'),
-      //                           ),
-      //                         );
-      //                         return;
-      //                       }
-
-      //                       final cubit = context.read<RegistrationCubit>();
-      //                       cubit.register(
-      //                         email: emailController.text,
-      //                         password: passwordController.text,
-      //                         firstName: firstNameController.text,
-      //                         lastName: lastNameController.text,
-      //                         phone: phoneController.text,
-      //                         country: const CountryCode(
-      //                           name: 'Romania',
-      //                           code: 'RO',
-      //                           dialCode: '+40',
-      //                         ),
-      //                       );
-      //                     }
-      //                   : null, // Disable button if checkbox is not selected
-      //             ),
-      //             SizedBox(height: 20),
-      //             // Google Sign-In Button
-      //             ElevatedButton.icon(
-      //               icon: Icon(Icons.g_mobiledata, color: Colors.white),
-      //               label: Text('ÎNREGISTRARE CU GOOGLE'),
-      //               style: ElevatedButton.styleFrom(
-      //                 backgroundColor: Colors.red, // Google branding color
-      //               ),
-      //               onPressed: () {
-      //                 handleGoogleSignIn(
-      //                   context: context,
-      //                   email: emailController.text,
-      //                   firstName: firstNameController.text,
-      //                   lastName: lastNameController.text,
-      //                 );
-      //               },
-      //             ),
-      //             const SizedBox(height: 10),
-      //             // Apple Sign-In Button (only show if platform is iOS)
-      //             if (Theme.of(context).platform == TargetPlatform.iOS)
-      //               ElevatedButton.icon(
-      //                 icon: const Icon(Icons.apple, color: Colors.white),
-      //                 label: const Text('ÎNREGISTRARE CU APPLE'),
-      //                 style: ElevatedButton.styleFrom(
-      //                   backgroundColor: Colors.black, // Apple branding color
-      //                 ),
-      //                 onPressed: () {
-      //                   handleAppleSignIn(
-      //                     context: context,
-      //                     email: emailController.text,
-      //                     firstName: firstNameController.text,
-      //                     lastName: lastNameController.text,
-      //                   );
-      //                 },
-      //               ),
-      //           ],
-      //         ),
-      //       );
-      //     },
-      //   ),
-      // ),
     );
   }
 }
