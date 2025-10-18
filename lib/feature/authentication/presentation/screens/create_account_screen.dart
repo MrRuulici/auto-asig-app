@@ -319,6 +319,26 @@ class CreateAccountScreen extends StatelessWidget {
                                 }
                               : null,
                         ),
+
+                        // Facebook Sign-In Button
+                        AutoAsigButtonEmpty(
+                          buttonWidth: 275,
+                          textStyle: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.blueAccent, // Facebook brand blue color
+                          ),
+                          preTextIcon: const Icon(
+                            FontAwesomeIcons.facebook,
+                            color: Colors.blueAccent,
+                          ),
+                          text: 'FACEBOOK',
+                          onPressed: isChecked
+                              ? () {
+                                  context.read<RegistrationCubit>().signInWithFacebook();
+                                }
+                              : null,
+                        ),
                         
                         // Apple Sign-In Button (placeholder for future implementation)
                         AutoAsigButtonEmpty(
