@@ -4,6 +4,7 @@ import 'package:auto_asig/feature/authentication/presentation/cubit/auth_cubit.d
 import 'package:auto_asig/feature/authentication/presentation/cubit/forgot_password_cubit.dart';
 import 'package:auto_asig/feature/authentication/presentation/cubit/reg_country_picker_cubit.dart';
 import 'package:auto_asig/feature/authentication/presentation/cubit/registration_cubit.dart';
+import 'package:auto_asig/feature/user/presentation/cubit/profile_cubit.dart';
 import 'package:auto_asig/feature/vehicles/presentation/cubit/car_info_cubit.dart';
 import 'package:auto_asig/feature/vehicles/presentation/cubit/edit_vehicle_reminder_cubit.dart';
 import 'package:auto_asig/feature/home/presentation/cubit/home_screen_cubit.dart';
@@ -70,6 +71,9 @@ class BlocDI extends StatelessWidget {
         ),
         BlocProvider<EditVehicleReminderCubit>(
           create: (context) => EditVehicleReminderCubit(),
+        ),
+        BlocProvider<ProfileCubit>(
+          create: (context) => ProfileCubit(),
         ),
       ],
       child: child,

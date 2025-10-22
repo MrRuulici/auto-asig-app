@@ -54,6 +54,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
           context.read<UserDataCubit>().setMember(member);
 
           print('THE MEMBER: ${member.id}');
+          print('THE PICTURE PROFILE: ${member.profilePictureUrl}');
 
           // Fetch reminders only after setting the member successfully
           await context.read<ReminderCubit>().fetchAllReminders(member.id);

@@ -1,7 +1,11 @@
 import 'package:auto_asig/core/cubit/user_data_cubit.dart';
 import 'package:auto_asig/core/data/constants.dart';
+import 'package:auto_asig/feature/home/presentation/screens/home_screen.dart';
+import 'package:auto_asig/feature/user/presentation/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'dart:convert';
 
 class ProfileButton extends StatelessWidget {
   const ProfileButton({super.key});
@@ -10,9 +14,23 @@ class ProfileButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final userData = context.read<UserDataCubit>().state;
 
+    print("profile picture: " + userData.member.profilePictureUrl);
+    // Determine which image to show
+    ImageProvider profileImage;
+    if (userData.member.profilePictureUrl.isNotEmpty &&
+        userData.member.profilePictureUrl.startsWith('data:image')) {
+      // Base64 image
+      profileImage = MemoryImage(
+        base64Decode(userData.member.profilePictureUrl.split(',')[1]),
+      );
+    } else {
+      // Default image
+      profileImage = const NetworkImage(defaultProfilePictureUrl);
+    }
+
     return GestureDetector(
       onTap: () {
-        // Todo - Load the profile page
+        context.go('${HomeScreen.path}/${ProfileScreen.path}');
       },
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -20,14 +38,8 @@ class ProfileButton extends StatelessWidget {
           // Circular profile picture
           CircleAvatar(
             radius: 20,
-            // Todo - Replace with the actual profile picture URL
-            backgroundImage: const NetworkImage(
-              defaultProfilePictureUrl,
-              // userData.member
-              //     .profilePictureUrl,
-            ),
-            backgroundColor:
-                Colors.grey[200], // Fallback color if no image is available
+            backgroundImage: profileImage,
+            backgroundColor: Colors.grey[200],
           ),
           const SizedBox(width: 8),
           RichText(

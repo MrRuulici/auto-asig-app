@@ -5,6 +5,7 @@ class UserModel {
   String email;
   String phone;
   String country;
+  String profilePictureUrl;
 
   UserModel(
     this.id, {
@@ -13,15 +14,16 @@ class UserModel {
     required this.email,
     required this.phone,
     required this.country,
+    this.profilePictureUrl = '',
   });
 
-  // @override
   List<Object> get props => [
         firstName,
         id,
         email,
         phone,
         country,
+        profilePictureUrl,
       ];
 
   static UserModel empty = UserModel(
@@ -31,29 +33,29 @@ class UserModel {
     email: '',
     phone: '',
     country: '',
+    profilePictureUrl: '',
   );
 
   Map<String, dynamic> toJson() {
     return {
-      'firstName':
-          firstName, // Todo: Trebuie actualizat deoarece nu exista parametrul firstName
-
+      'firstName': firstName,
       'id': id,
       'email': email,
       'phone': phone,
       'country': country,
+      'profilePictureUrl': profilePictureUrl,
     };
   }
 
   static UserModel fromJson(Map<String, dynamic> json) {
     return UserModel(
-      json['id']
-          as String, // Todo: Trebuie actualizat deoarece nu exista parametrul id
+      json['id'] as String,
       firstName: json['firstName'] as String,
       lastName: json['lastName'] as String,
       email: json['email'] as String,
       phone: json['phone'] as String,
       country: json['country'] as String,
+      profilePictureUrl: json['profilePictureUrl'] as String? ?? '',
     );
   }
 }
