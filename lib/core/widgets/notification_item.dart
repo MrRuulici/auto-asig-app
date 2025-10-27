@@ -432,7 +432,7 @@ class _NotificationItemState extends State<NotificationItem> {
 
             // Checkbox Row for SMS, Email, Push Notifications
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Flexible(
                   child: Column(
@@ -468,29 +468,30 @@ class _NotificationItemState extends State<NotificationItem> {
                     ],
                   ),
                 ),
-                Flexible(
-                  child: Column(
-                    children: [
-                      Checkbox(
-                        value: isSmsSelected,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            isSmsSelected = value ?? false;
-                          });
-                          widget.onNotificationUpdate(widget.selectedDate,
-                              isSmsSelected, isEmailSelected, isPushSelected);
-                        },
-                      ),
-                      const Text(
-                        'SMS',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontFamily: 'Poppins',
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                // We're not sending sms notifications in v.1
+                // Flexible(
+                //   child: Column(
+                //     children: [
+                //       Checkbox(
+                //         value: isSmsSelected,
+                //         onChanged: (bool? value) {
+                //           setState(() {
+                //             isSmsSelected = value ?? false;
+                //           });
+                //           widget.onNotificationUpdate(widget.selectedDate,
+                //               isSmsSelected, isEmailSelected, isPushSelected);
+                //         },
+                //       ),
+                //       const Text(
+                //         'SMS',
+                //         style: TextStyle(
+                //           color: Colors.black,
+                //           fontFamily: 'Poppins',
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
               ],
             ),
           ],
