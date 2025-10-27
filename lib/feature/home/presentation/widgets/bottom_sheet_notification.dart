@@ -80,10 +80,10 @@ class BottomSheetNotification extends StatelessWidget {
         children: [
           Row(
             children: [
-              _buildStatusIcon(notification.sms),
-              const SizedBox(width: 8),
-              const Text('SMS'),
-              const SizedBox(width: 16),
+              // _buildStatusIcon(notification.sms),
+              // const SizedBox(width: 8),
+              // const Text('SMS'),
+              //const SizedBox(width: 16),
               _buildStatusIcon(notification.email),
               const SizedBox(width: 8),
               const Text('Email'),
