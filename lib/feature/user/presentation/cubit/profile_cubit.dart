@@ -1,7 +1,7 @@
-import 'package:auto_asig/core/data/http_data.dart';
-import 'package:auto_asig/core/data/http_user_data.dart';
 import 'package:auto_asig/core/models/user.dart';
 import 'package:bloc/bloc.dart';
+import 'package:auto_asig/core/data/http_data.dart';
+import 'package:auto_asig/core/data/http_user_data.dart';
 
 part 'profile_state.dart';
 
@@ -22,9 +22,7 @@ class ProfileCubit extends Cubit<ProfileState> {
   Future<void> fetchProfile(String userId) async {
     try {
       emit(ProfileLoading());
-
       final user = await readUserData(userId);
-
       if (user != null) {
         emit(ProfileLoaded(user: user));
       } else {
@@ -35,49 +33,49 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
   }
 
-Future<void> updateProfile({
-  required String userId,
-  required String firstName,
-  required String lastName,
-  required String email,
-  required String phone,
-  required String country,
-  String? profilePictureUrl,
-}) async {
-  try {
-    final currentState = state;
-    
-    emit(ProfileLoading());
+  Future<void> updateProfile({
+    required String userId,
+    required String firstName,
+    required String lastName,
+    required String email,
+    required String phone,
+    required String country,
+    String? profilePictureUrl,
+  }) async {
+    try {
+      final currentState = state;
+      emit(ProfileLoading());
 
-    if (currentState is ProfileLoaded) {
-      await updateUserData(
-        userId,
-        firstName,
-        lastName,
-        email,
-        phone,
-        country,
-        profilePictureUrl,
-      );
+      if (currentState is ProfileLoaded) {
+        await updateUserData(
+          userId,
+          firstName,
+          lastName,
+          email,
+          phone,
+          country,
+          profilePictureUrl,
+        );
 
-      final updatedUser = UserModel(
-        currentState.user.id,
-        firstName: firstName,
-        lastName: lastName,
-        email: email,
-        phone: phone,
-        country: country,
-        profilePictureUrl: profilePictureUrl ?? currentState.user.profilePictureUrl,
-      );
+        final updatedUser = UserModel(
+          currentState.user.id,
+          firstName: firstName,
+          lastName: lastName,
+          email: email,
+          phone: phone,
+          country: country,
+          profilePictureUrl:
+              profilePictureUrl ?? currentState.user.profilePictureUrl,
+        );
 
-      emit(currentState.copyWith(user: updatedUser));
+        emit(currentState.copyWith(user: updatedUser));
+      }
+    } catch (e) {
+      emit(ProfileError('Failed to update profile: ${e.toString()}'));
     }
-  } catch (e) {
-    emit(ProfileError('Failed to update profile: ${e.toString()}'));
   }
-}
 
-  // Update individual fields
+  // Update individual fields (optional utilities)
   void updateFirstName(String firstName) {
     if (state is ProfileLoaded) {
       final currentState = state as ProfileLoaded;
@@ -88,6 +86,7 @@ Future<void> updateProfile({
         email: currentState.user.email,
         phone: currentState.user.phone,
         country: currentState.user.country,
+        profilePictureUrl: currentState.user.profilePictureUrl,
       );
       emit(currentState.copyWith(user: updatedUser));
     }
@@ -103,6 +102,7 @@ Future<void> updateProfile({
         email: currentState.user.email,
         phone: currentState.user.phone,
         country: currentState.user.country,
+        profilePictureUrl: currentState.user.profilePictureUrl,
       );
       emit(currentState.copyWith(user: updatedUser));
     }
