@@ -1,13 +1,17 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:auto_asig/core/cubit/user_data_cubit.dart';
 import 'package:auto_asig/core/data/constants.dart';
 import 'package:auto_asig/core/models/user.dart';
+import 'package:auto_asig/feature/authentication/presentation/cubit/auth_cubit.dart';
+import 'package:auto_asig/feature/authentication/presentation/screens/onboarding_screen.dart';
+import 'package:auto_asig/feature/home/presentation/screens/about_screen.dart';
 import 'package:auto_asig/feature/user/presentation/cubit/profile_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
-import 'dart:convert';
 
 class ProfileScreen extends StatefulWidget {
   static const String path = 'profile';
@@ -35,8 +39,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final userData = context.read<UserDataCubit>().state;
     final profileCubit = context.read<ProfileCubit>();
     profileCubit.initializeWithUser(userData.member);
-    _firstNameController =
-        TextEditingController(text: userData.member.firstName);
+    _firstNameController = TextEditingController(text: userData.member.firstName);
     _lastNameController = TextEditingController(text: userData.member.lastName);
     _emailController = TextEditingController(text: userData.member.email);
     _phoneController = TextEditingController(text: userData.member.phone);
@@ -60,7 +63,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     String? profilePictureUrl;
 
-    // Convert image to base64 if one was selected
     if (_selectedImage != null) {
       try {
         final bytes = await _selectedImage!.readAsBytes();
@@ -85,7 +87,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       profilePictureUrl: profilePictureUrl,
     )
         .then((_) {
-      // Update the UserDataCubit with the new profile data
       final updatedMember = UserModel(
         userData.member.id,
         firstName: _firstNameController.text,
@@ -93,16 +94,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
         email: _emailController.text,
         phone: _phoneController.text,
         country: _countryController.text,
-        profilePictureUrl: profilePictureUrl ?? userData.member.profilePictureUrl,
+        profilePictureUrl:
+            profilePictureUrl ?? userData.member.profilePictureUrl,
       );
-      
+
       userDataCubit.updateMember(updatedMember);
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Profile updated successfully')),
+        const SnackBar(
+          backgroundColor: Colors.grey,
+          content: Text('Profil actualizat cu succes')),
       );
       Future.delayed(const Duration(milliseconds: 500), () {
-        context.go('/');
+        context.go('/'); // back to home
       });
     }).catchError((error) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -132,11 +136,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  void _openAbout() {
+    context.push(AboutScreen.absolutePath);
+  }
+
+  void _confirmLogout() {
+    showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delogare', style: TextStyle(fontSize: theFontSize)),
+        content: const Text(
+          'Ești sigur că vrei să te deloghezi?',
+          style: TextStyle(fontSize: theFontSize),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Nu', style: TextStyle(fontSize: theFontSize)),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Da', style: TextStyle(fontSize: theFontSize)),
+          ),
+        ],
+      ),
+    ).then((value) {
+      if (value == true) {
+        context.read<UserDataCubit>().clearUserData();
+        context.read<AuthenticationCubit>().signOut();
+        context.go(OnboardingScreen.path);
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final userData = context.read<UserDataCubit>().state;
 
-    // Determine which image to show
     ImageProvider profileImage;
     if (_selectedImage != null) {
       profileImage = FileImage(_selectedImage!);
@@ -189,7 +225,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Profile Picture with edit button
+                    // Avatar with edit overlay
                     Stack(
                       children: [
                         CircleAvatar(
@@ -224,11 +260,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ],
                     ),
                     const SizedBox(height: 32),
-                    // User Info Section
+                    // Single boxed details or edit fields
                     if (!_isEditing)
-                      _buildViewMode(userData)
+                      _buildSingleDetailsBox(userData)
                     else
                       _buildEditMode(),
+                    const SizedBox(height: 128),
+                    // Show action buttons only when not editing
+                    if (!_isEditing) _buildActionButtons(),
                   ],
                 ),
               ),
@@ -239,32 +278,60 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildViewMode(var userData) {
-    return Column(
+  // Single “box” for all details
+  Widget _buildSingleDetailsBox(var userData) {
+    return Card(
+      elevation: 0,
+      color: Colors.grey[50],
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: Colors.grey[200]!, width: 1),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            _labeledRow('Prenume', userData.member.firstName),
+            const Divider(height: 24),
+            _labeledRow('Nume de familie', userData.member.lastName),
+            const Divider(height: 24),
+            _labeledRow('Email', userData.member.email),
+            const Divider(height: 24),
+            _labeledRow('Telefon', userData.member.phone),
+            const Divider(height: 24),
+            _labeledRow('Țară', userData.member.country),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _labeledRow(String label, String value) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildInfoCard(
-          label: 'First Name',
-          value: userData.member.firstName,
+        SizedBox(
+          width: 100,
+          child: Text(
+            label,
+            style: const TextStyle(
+              fontSize: 13,
+              color: Colors.grey,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 0.5,
+            ),
+          ),
         ),
-        const SizedBox(height: 16),
-        _buildInfoCard(
-          label: 'Last Name',
-          value: userData.member.lastName,
-        ),
-        const SizedBox(height: 16),
-        _buildInfoCard(
-          label: 'Email',
-          value: userData.member.email,
-        ),
-        const SizedBox(height: 16),
-        _buildInfoCard(
-          label: 'Phone',
-          value: userData.member.phone,
-        ),
-        const SizedBox(height: 16),
-        _buildInfoCard(
-          label: 'Country',
-          value: userData.member.country,
+        const SizedBox(width: 12),
+        Expanded(
+          child: Text(
+            value,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+              color: Colors.black87,
+            ),
+          ),
         ),
       ],
     );
@@ -274,12 +341,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Column(
       children: [
         _buildTextField(
-          label: 'First Name',
+          label: 'Prenume',
           controller: _firstNameController,
         ),
         const SizedBox(height: 16),
         _buildTextField(
-          label: 'Last Name',
+          label: 'Nume de familie',
           controller: _lastNameController,
         ),
         const SizedBox(height: 16),
@@ -290,13 +357,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ),
         const SizedBox(height: 16),
         _buildTextField(
-          label: 'Phone',
+          label: 'Telefon',
           controller: _phoneController,
           keyboardType: TextInputType.phone,
         ),
         const SizedBox(height: 16),
         _buildTextField(
-          label: 'Country',
+          label: 'Țară',
           controller: _countryController,
         ),
         const SizedBox(height: 32),
@@ -319,48 +386,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         color: Colors.white,
                       ),
                     )
-                  : const Text('Save Changes'),
+                  : const Text('Salvează modificările'),
             );
           },
         ),
       ],
-    );
-  }
-
-  Widget _buildInfoCard({required String label, required String value}) {
-    return Card(
-      elevation: 0,
-      color: Colors.grey[50],
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: Colors.grey[200]!, width: 1),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              label,
-              style: const TextStyle(
-                fontSize: 13,
-                color: Colors.grey,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.5,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              value,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -381,8 +411,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide(color: primaryBlue, width: 2),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       ),
+    );
+  }
+
+  Widget _buildActionButtons() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        ElevatedButton.icon(
+          onPressed: _openAbout,
+          icon: const Icon(Icons.info_rounded),
+          label: const Text('Despre aplicație'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.grey[50],
+            minimumSize: const Size(double.infinity, 50),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        ElevatedButton.icon(
+          onPressed: _confirmLogout,
+          icon: const Icon(Icons.logout),
+          label: const Text('Delogare'),
+          style: ElevatedButton.styleFrom(
+            minimumSize: const Size(double.infinity, 50),
+            backgroundColor: Colors.redAccent,
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
