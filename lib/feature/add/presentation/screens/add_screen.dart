@@ -103,16 +103,16 @@ class AddScreen extends StatelessWidget {
           ),
         ),
       ),
-      bottomNavigationBar: HomeBottomNavigationBar(homeCubit: homeCubit),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // FAB logic
-          context.push(AddScreen.absolutePath);
-        },
-        backgroundColor: logoBlue,
-        child: const Icon(Icons.add, color: Colors.white),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+      // bottomNavigationBar: HomeBottomNavigationBar(homeCubit: homeCubit),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () {
+      //     // FAB logic
+      //     context.push(AddScreen.absolutePath);
+      //   },
+      //   backgroundColor: logoBlue,
+      //   child: const Icon(Icons.add, color: Colors.white),
+      // ),
+      // floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }

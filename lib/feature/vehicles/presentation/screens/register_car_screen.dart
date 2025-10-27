@@ -11,6 +11,7 @@ import 'package:auto_asig/feature/vehicles/presentation/widgets/journal_section.
 import 'package:auto_asig/feature/home/presentation/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class RegisterCarScreen extends StatelessWidget {
   const RegisterCarScreen({super.key});
@@ -348,59 +349,52 @@ class RegisterCarScreen extends StatelessWidget {
           );
         }),
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: padding),
-        child: AutoAsigButton(
-          onPressed: () async {
-            // show loading dialog
-            showDialog(
-              context: context,
-              builder: (context) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              },
-            );
+     bottomNavigationBar: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: padding),
+      child: AutoAsigButton(
+        onPressed: () async {
+          // show loading dialog
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => const Center(child: CircularProgressIndicator()),
+          );
 
-            if (nrCar.text.isEmpty) {
-              Navigator.of(context).pop();
-              showSnackbar(
-                  context, 'Te rugăm să introduci numărul de înmatriculare.');
-              return;
-            } else if (vehicleModelController.text.isEmpty) {
-              Navigator.of(context).pop();
-              showSnackbar(
-                  context, 'Te rugăm să introduci modelul vehiculului.');
+          // Validate inputs
+          if (nrCar.text.isEmpty) {
+            Navigator.of(context).pop(); // close loading
+            showSnackbar(context, 'Te rugăm să introduci numărul de înmatriculare.');
+            return;
+          } else if (vehicleModelController.text.isEmpty) {
+            Navigator.of(context).pop(); // close loading
+            showSnackbar(context, 'Te rugăm să introduci modelul vehiculului.');
+            return;
+          }
+
+          try {
+            final userData = context.read<UserDataCubit>();
+            final res = await context.read<CarInfoCubit>().addCar(userData.state.member.id);
+
+            Navigator.of(context).pop();
+
+            if (!res) {
+              showSnackbar(context, 'Te rugăm să introduci cel puțin o dată de expirare.');
               return;
             }
 
-            try {
-              final userData = context.read<UserDataCubit>();
-              bool res = await context
-                  .read<CarInfoCubit>()
-                  .addCar(userData.state.member.id);
+            showSnackbar(context, 'Vehiculul a fost înregistrat cu succes.');
 
-              Navigator.of(context).pop();
-
-              if (!res) {
-                showSnackbar(context,
-                    'Te rugăm să introduci cel puțin o dată de expirare.');
-              } else {
-                Navigator.of(context).pop();
-                showSnackbar(
-                    context, 'Vehiculul a fost înregistrat cu succes.');
-              }
-            } catch (e) {
-              print(e);
-
-              Navigator.of(context).pop();
-              showSnackbar(
-                  context, 'A apărut o eroare. Te rugăm să încerci din nou.');
-            }
-          },
-          text: 'ÎNREGISTREAZĂ VEHICUL',
-        ),
+            context.go(HomeScreen.path);
+          } catch (e) {
+            // Close loading if shown
+            Navigator.of(context).pop();
+            showSnackbar(context, 'A apărut o eroare. Te rugăm să încerci din nou.');
+          }
+        },
+        text: 'ÎNREGISTREAZĂ VEHICUL',
       ),
+    ),
+
     );
   }
 }

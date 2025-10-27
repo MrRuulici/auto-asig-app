@@ -17,6 +17,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
 
 class ReminderScreen extends StatelessWidget {
   const ReminderScreen({
@@ -270,39 +271,28 @@ class ReminderScreen extends StatelessWidget {
 
             try {
               if (reminder == null) {
-                // Save new reminder to database
                 await idCardsCubit.save(userId, type);
                 showSnackbar(context, 'Reminder salvat cu succes');
               } else {
-                // Update existing reminder
                 await idCardsCubit.update(userId, reminder!.id, type);
                 showSnackbar(context, 'Reminder actualizat cu succes');
-                Navigator.of(context).pop();
               }
 
+              // Close the loading dialog
               Navigator.of(context).pop();
 
-              // Update the reminders list
-              context.read<ReminderCubit>().addOrUpdateReminder(
-                    idCardsCubit.state.name,
-                    idCardsCubit.state.expirationDate,
-                    idCardsCubit.state.notificationDates,
-                    type,
-                    isEditing, // Pass isEditing flag
-                    reminder?.id ?? '', // Pass ID if updating
-                  );
-
-              idCardsCubit.reset();
+              context.go(HomeScreen.path);
             } catch (e) {
+              // Close the loading dialog if it's open
               Navigator.of(context).pop();
               print('Error at creating/updating reminder: $e');
-              showSnackbar(context,
-                  'Eroare la salvarea datelor. Te rugam sa incerci mai tarziu');
+              showSnackbar(context, 'Eroare la salvarea datelor. Te rugam sa incerci mai tarziu');
             }
           },
           text: reminder == null ? 'SALVEAZĂ' : 'ACTUALIZEAZĂ',
         ),
-      ),
+      )
+
     );
   }
 }
