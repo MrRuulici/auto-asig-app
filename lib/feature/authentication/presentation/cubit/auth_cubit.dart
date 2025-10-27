@@ -9,12 +9,32 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthenticationCubit extends Cubit<AuthenticationState> {
   final FirebaseAuth _firebaseAuth;
+  final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
   bool _isPasswordVisible = false;
+  bool _isGoogleSignInInitialized = false;
 
-  AuthenticationCubit(this._firebaseAuth) : super(AuthenticationInitial());
+  AuthenticationCubit(this._firebaseAuth) : super(AuthenticationInitial()) {
+    _initializeGoogleSignIn();
+  }
+
+  Future<void> _initializeGoogleSignIn() async {
+    try {
+      await _googleSignIn.initialize();
+      _isGoogleSignInInitialized = true;
+    } catch (e) {
+      print('Failed to initialize Google Sign-In: $e');
+    }
+  }
+
+  Future<void> _ensureGoogleSignInInitialized() async {
+    if (!_isGoogleSignInInitialized) {
+      await _initializeGoogleSignIn();
+    }
+  }
 
   Future<bool> login({
     required String email,
@@ -33,7 +53,6 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
       if (user != null) {
         await user.reload(); //reincarca starea pt. emailVerified
 
-
         // acces doar cu email verificat
         if (user != null && !user.emailVerified) {
           print('Login respins: Emailul nu este verificat pentru ${user.email}');
@@ -45,9 +64,8 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
         // Dacă emailul este verificat, continuă cu logica ta existentă:
         UserModel? member = await loadUserData(
           user, // Trimite obiectul Firebase User
-              () => context.go(LoginScreen.absolutePath),
+          () => context.go(LoginScreen.absolutePath),
         );
-
 
         if (member != null) {
           // Set the member in the cubit only after loading the data successfully
@@ -68,8 +86,6 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
         }
       }
 
-
-
       emit(AuthenticationSuccess());
       return true;
     } on FirebaseAuthException catch (e) {
@@ -78,6 +94,90 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
         e.message ?? 'Unknown error during authentication',
       ));
       return false;
+    }
+  }
+
+  Future<void> signInWithGoogle(BuildContext context) async {
+    try {
+      emit(AuthenticationLoading());
+
+      // Ensure Google Sign-In is initialized
+      await _ensureGoogleSignInInitialized();
+
+      // Authenticate with Google (v7 uses authenticate() instead of signIn())
+      final GoogleSignInAccount googleUser = await _googleSignIn.authenticate(
+        scopeHint: ['email'],
+      );
+
+      // Get authentication tokens (synchronous in v7, not async)
+      final GoogleSignInAuthentication googleAuth = googleUser.authentication;
+
+      // Get authorization for scopes
+      final authClient = _googleSignIn.authorizationClient;
+      final authorization = await authClient.authorizationForScopes(['email']);
+
+      // Create Firebase credential
+      final credential = GoogleAuthProvider.credential(
+        accessToken: authorization?.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // Sign in to Firebase with the Google credential
+      final userCredential = await _firebaseAuth.signInWithCredential(credential);
+
+      final user = userCredential.user;
+
+      if (user != null) {
+        // Load user data from Firestore
+        UserModel? member = await loadUserData(
+          user,
+          () => context.go(LoginScreen.absolutePath),
+        );
+
+        if (member != null) {
+          // Set the member in the cubit
+          context.read<UserDataCubit>().setMember(member);
+
+          print('THE MEMBER: ${member.id}');
+
+          // Fetch reminders
+          await context.read<ReminderCubit>().fetchAllReminders(member.id);
+
+          print('Logged in with Google');
+
+          emit(AuthenticationSuccess());
+        } else {
+          print('Member data is missing');
+          await _firebaseAuth.signOut();
+          context.go(OnboardingScreen.path);
+          emit(AuthenticationFailure('Eroare la încărcarea datelor utilizatorului'));
+        }
+      }
+    } on GoogleSignInException catch (e) {
+      String errorMessage;
+      switch (e.code) {
+        case GoogleSignInExceptionCode.canceled:
+          errorMessage = 'Autentificarea a fost anulată';
+          break;
+        case GoogleSignInExceptionCode.clientConfigurationError:
+          errorMessage = 'Eroare de configurare. Contactați suportul.';
+          break;
+        case GoogleSignInExceptionCode.interrupted:
+          errorMessage = 'Autentificarea a fost întreruptă';
+          break;
+        default:
+          errorMessage = e.description ?? 'Eroare Google Sign-In';
+          break;
+      }
+      emit(AuthenticationFailure(errorMessage));
+    } on FirebaseAuthException catch (e) {
+      print('Firebase Error: ${e.code} - ${e.message}');
+      emit(AuthenticationFailure(
+        e.message ?? 'Eroare necunoscută la autentificare',
+      ));
+    } catch (e) {
+      print('Error during Google Sign-In: $e');
+      emit(AuthenticationFailure('A apărut o eroare: $e'));
     }
   }
 
@@ -90,6 +190,7 @@ class AuthenticationCubit extends Cubit<AuthenticationState> {
 
   void signOut() {
     _firebaseAuth.signOut();
+    _googleSignIn.signOut(); // Also sign out from Google
     emit(AuthenticationInitial());
   }
 }

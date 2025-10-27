@@ -20,6 +20,8 @@ class RegistrationCheckboxState extends RegistrationState {
 
 class RegistrationSuccess extends RegistrationState {}
 
+class RegistrationGoogleSuccess extends RegistrationState {}
+
 class RegistrationVerificationEmailSent extends RegistrationState {} //clasa noua
 
 class RegistrationFailure extends RegistrationState {
