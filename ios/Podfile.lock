@@ -1199,6 +1199,36 @@ PODS:
     - firebase_core
     - Flutter
   - Firebase/Auth (11.15.0):
+  - abseil/xcprivacy (1.20240116.2)
+  - AppAuth (2.0.0):
+    - AppAuth/Core (= 2.0.0)
+    - AppAuth/ExternalUserAgent (= 2.0.0)
+  - AppAuth/Core (2.0.0)
+  - AppAuth/ExternalUserAgent (2.0.0):
+    - AppAuth/Core
+  - AppCheckCore (11.2.0):
+    - GoogleUtilities/Environment (~> 8.0)
+    - GoogleUtilities/UserDefaults (~> 8.0)
+    - PromisesObjC (~> 2.4)
+  - BoringSSL-GRPC (0.0.36):
+    - BoringSSL-GRPC/Implementation (= 0.0.36)
+    - BoringSSL-GRPC/Interface (= 0.0.36)
+  - BoringSSL-GRPC/Implementation (0.0.36):
+    - BoringSSL-GRPC/Interface (= 0.0.36)
+  - BoringSSL-GRPC/Interface (0.0.36)
+  - cloud_firestore (5.4.3):
+    - Firebase/Firestore (= 11.2.0)
+    - firebase_core
+    - Flutter
+  - FBAEMKit (18.0.1):
+    - FBSDKCoreKit_Basics (= 18.0.1)
+  - FBSDKCoreKit (18.0.1):
+    - FBAEMKit (= 18.0.1)
+    - FBSDKCoreKit_Basics (= 18.0.1)
+  - FBSDKCoreKit_Basics (18.0.1)
+  - FBSDKLoginKit (18.0.1):
+    - FBSDKCoreKit (= 18.0.1)
+  - Firebase/Auth (11.2.0):
     - Firebase/CoreOnly
     - FirebaseAuth (~> 11.15.0)
   - Firebase/CoreOnly (11.15.0):
@@ -1315,13 +1345,26 @@ PODS:
     - GoogleUtilities/Environment (~> 8.1)
     - GTMSessionFetcher/Core (< 5.0, >= 3.4)
   - Flutter (1.0.0)
+  - flutter_facebook_auth (7.1.2):
+    - FBSDKLoginKit (~> 18.0.0)
+    - Flutter
   - flutter_local_notifications (0.0.1):
     - Flutter
   - flutter_secure_storage (6.0.0):
     - Flutter
+  - google_sign_in_ios (0.0.1):
+    - Flutter
+    - FlutterMacOS
+    - GoogleSignIn (~> 9.0)
+    - GTMSessionFetcher (>= 3.4.0)
   - GoogleDataTransport (10.1.0):
     - nanopb (~> 3.30910.0)
     - PromisesObjC (~> 2.4)
+  - GoogleSignIn (9.0.0):
+    - AppAuth (~> 2.0)
+    - AppCheckCore (~> 11.0)
+    - GTMAppAuth (~> 5.0)
+    - GTMSessionFetcher/Core (~> 3.3)
   - GoogleUtilities/AppDelegateSwizzler (8.1.0):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
@@ -1468,12 +1511,15 @@ PODS:
 
 DEPENDENCIES:
   - cloud_firestore (from `.symlinks/plugins/cloud_firestore/ios`)
+  - FBSDKCoreKit
+  - FBSDKLoginKit
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_crashlytics (from `.symlinks/plugins/firebase_crashlytics/ios`)
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
   - firebase_storage (from `.symlinks/plugins/firebase_storage/ios`)
   - Flutter (from `Flutter`)
+  - flutter_facebook_auth (from `.symlinks/plugins/flutter_facebook_auth/ios`)
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
@@ -1486,7 +1532,13 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - abseil
+    - AppAuth
+    - AppCheckCore
     - BoringSSL-GRPC
+    - FBAEMKit
+    - FBSDKCoreKit
+    - FBSDKCoreKit_Basics
+    - FBSDKLoginKit
     - Firebase
     - FirebaseAppCheckInterop
     - FirebaseAuth
@@ -1504,9 +1556,11 @@ SPEC REPOS:
     - FirebaseSharedSwift
     - FirebaseStorage
     - GoogleDataTransport
+    - GoogleSignIn
     - GoogleUtilities
     - "gRPC-C++"
     - gRPC-Core
+    - GTMAppAuth
     - GTMSessionFetcher
     - leveldb-library
     - nanopb
@@ -1530,6 +1584,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_storage/ios"
   Flutter:
     :path: Flutter
+  flutter_facebook_auth:
+    :path: ".symlinks/plugins/flutter_facebook_auth/ios"
   flutter_local_notifications:
     :path: ".symlinks/plugins/flutter_local_notifications/ios"
   flutter_secure_storage:
@@ -1573,9 +1629,12 @@ SPEC CHECKSUMS:
   FirebaseSharedSwift: e17c654ef1f1a616b0b33054e663ad1035c8fd40
   FirebaseStorage: 50fc9ee147392943e492467db6b52759b0447037
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  flutter_facebook_auth: fa503a7103e482577bf50694ceefe6b61a78ef1a
   flutter_local_notifications: df98d66e515e1ca797af436137b4459b160ad8c9
   flutter_secure_storage: d33dac7ae2ea08509be337e775f6b59f1ff45f12
+  google_sign_in_ios: 4bb0e529b167cadc6ac785b6ed943c0a0a4cc1c9
   GoogleDataTransport: aae35b7ea0c09004c3797d53c8c41f66f219d6a7
+  GoogleSignIn: c7f09cfbc85a1abf69187be091997c317cc33b77
   GoogleUtilities: 00c88b9a86066ef77f0da2fab05f65d7768ed8e1
   "gRPC-C++": cc207623316fb041a7a3e774c252cf68a058b9e8
   gRPC-Core: 860978b7db482de8b4f5e10677216309b5ff6330
@@ -1593,6 +1652,6 @@ SPEC CHECKSUMS:
   sentry_flutter: 0eb93e5279eb41e2392212afe1ccd2fecb4f8cbe
   url_launcher_ios: 5334b05cef931de560670eeae103fd3e431ac3fe
 
-PODFILE CHECKSUM: 4f1c12611da7338d21589c0b2ecd6bd20b109694
+PODFILE CHECKSUM: da898f6f67b8e66c8442af7f88e893c9b860d79c
 
 COCOAPODS: 1.16.2

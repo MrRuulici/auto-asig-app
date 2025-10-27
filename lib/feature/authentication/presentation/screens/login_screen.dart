@@ -1,6 +1,7 @@
 import 'package:auto_asig/core/data/assistants.dart';
 import 'package:auto_asig/core/data/constants.dart';
 import 'package:auto_asig/core/widgets/auto_asig_button_full.dart';
+import 'package:auto_asig/core/widgets/auto_asig_button_empty.dart';
 import 'package:auto_asig/feature/authentication/presentation/cubit/auth_cubit.dart';
 import 'package:auto_asig/feature/authentication/presentation/cubit/auth_state.dart';
 import 'package:auto_asig/feature/authentication/presentation/screens/create_account_screen.dart';
@@ -10,6 +11,7 @@ import 'package:auto_asig/feature/home/presentation/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
@@ -151,9 +153,10 @@ class LoginScreen extends StatelessWidget {
 
                         const SizedBox(height: 30),
 
-                        // Authentication Button and Sign-Up Text
+                        // Authentication Buttons
                         Column(
                           children: [
+                            // Email/Password Login Button
                             AutoAsigButton(
                               buttonWidth: 200,
                               textStyle: const TextStyle(
@@ -164,8 +167,6 @@ class LoginScreen extends StatelessWidget {
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               onPressed: () async {
                                 showLoadingDialog(context);
-
-                                //print(emailController.text);
 
                                 BlocProvider.of<AuthenticationCubit>(context)
                                     .login(
@@ -178,7 +179,30 @@ class LoginScreen extends StatelessWidget {
                               },
                               text: 'AUTENTIFICARE',
                             ),
+                            
                             const SizedBox(height: 16),
+                            
+                            // Google Sign-In Button
+                            AutoAsigButtonEmpty(
+                              buttonWidth: 275,
+                              textStyle: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: logoBlue,
+                              ),
+                              preTextIcon: const Icon(
+                                FontAwesomeIcons.google,
+                                color: Color.fromRGBO(199, 22, 16, 1),
+                              ),
+                              text: 'GOOGLE',
+                              onPressed: () {
+                                context.read<AuthenticationCubit>().signInWithGoogle(context);
+                              },
+                            ),
+                            
+                            const SizedBox(height: 32),
+                            
+                            // Sign Up Link - Moved to bottom
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -192,8 +216,7 @@ class LoginScreen extends StatelessWidget {
                                 ),
                                 TextButton(
                                   onPressed: () {
-                                    context
-                                        .push(CreateAccountScreen.absolutPath);
+                                    context.push(CreateAccountScreen.absolutPath);
                                   },
                                   child: const Text(
                                     'Creazã acum unul.',
