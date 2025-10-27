@@ -47,7 +47,7 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: backgroundGreyColor,
       appBar: AlliatAppBar(),
-      drawer: const AutoAsigDrawer(),
+      //drawer: const AutoAsigDrawer(),
       body: BlocListener<HomeScreenCubit, HomeScreenState>(
         listener: (context, state) async {
           if (state.activeTab == HomeScreenTabState.personal) {
