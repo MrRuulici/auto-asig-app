@@ -44,6 +44,8 @@ class UserDataCubit extends Cubit<UserDataState> {
 
   // Update the member using copyWith
   void updateMember(UserModel updatedMember) {
+    print('🟢 UserDataCubit.updateMember called');
+    print('🟢 New profilePictureUrl: ${updatedMember.profilePictureUrl}');    
     emit(state.copyWith(member: updatedMember));
   }
 

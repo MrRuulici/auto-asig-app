@@ -4,6 +4,7 @@ import 'package:auto_asig/feature/authentication/presentation/screens/create_acc
 import 'package:auto_asig/feature/authentication/presentation/screens/forgot_password_screen.dart';
 import 'package:auto_asig/feature/authentication/presentation/screens/login_screen.dart';
 import 'package:auto_asig/feature/authentication/presentation/screens/onboarding_screen.dart';
+import 'package:auto_asig/feature/user/presentation/screens/profile_screen.dart';
 import 'package:auto_asig/feature/vehicles/presentation/screens/edit_car_screen.dart';
 import 'package:auto_asig/feature/vehicles/presentation/screens/register_car_screen.dart';
 import 'package:auto_asig/feature/home/presentation/screens/about_screen.dart';
@@ -105,6 +106,10 @@ final appRouter = GoRouter(
         GoRoute(
           path: EditCarScreen.path,
           builder: (context, state) => const EditCarScreen(),
+        ),
+         GoRoute(
+          path: ProfileScreen.path,
+          builder: (context, state) => const ProfileScreen(),
         ),
         GoRoute(
             path: VehicleJournalScreen.path,

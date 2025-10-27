@@ -52,6 +52,8 @@ dependencies:
   bloc: ^8.1.4
   flutter_secure_storage: ^9.2.2
   permission_handler:
+  image_picker: ^1.2.0
+  firebase_storage: ^12.4.10
   google_sign_in: ^7.2.0
   flutter_facebook_auth: ^7.1.2
 

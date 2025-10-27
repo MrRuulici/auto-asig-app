@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:auto_asig/core/app/app_data.dart';
 import 'package:auto_asig/core/data/http_data.dart';
 import 'package:auto_asig/core/models/reminder.dart';
@@ -5,6 +8,7 @@ import 'package:auto_asig/core/models/user.dart';
 import 'package:auto_asig/core/models/vehicle_reminder.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:fl_country_code_picker/fl_country_code_picker.dart';
 
 Future<UserModel?> readUserData(String id) async {
@@ -27,9 +31,10 @@ Future<UserModel?> readUserData(String id) async {
       email: data['email'] ?? '',
       phone: data['phone'] ?? '',
       country: data['country'] ?? '',
+      profilePictureUrl: data['profilePictureUrl'] ?? '',
     );
 
-    // print('User data: $data');
+    print('User data: $data');
   } else {
     print('No user found with accountId: $id');
 
@@ -100,6 +105,7 @@ Future<UserModel?> loadUserData(
       email: member.email,
       phone: member.phone,
       country: member.country,
+      profilePictureUrl: member.profilePictureUrl,
     );
 
     return userModel;
@@ -123,4 +129,39 @@ Future<Map<String, dynamic>> getFullUserData(String userId) async {
   fullReminders['vehicleReminders'] = vehicleReminders;
 
   return fullReminders;
+}
+
+Future<void> updateUserData(
+  String id,
+  String firstName,
+  String lastName,
+  String email,
+  String phone,
+  String country,
+  String? profilePictureUrl,
+) async {
+  Map<String, dynamic> updateData = {
+    'firstName': firstName,
+    'lastName': lastName,
+    'email': email,
+    'phone': phone,
+    'country': country,
+  };
+
+  if (profilePictureUrl != null) {
+    updateData['profilePictureUrl'] = profilePictureUrl;
+  }
+
+  await userCollection!.doc(id).update(updateData);
+}
+
+Future<String?> uploadProfilePicture(String userId, File imageFile) async {
+  try {
+    final bytes = await imageFile.readAsBytes();
+    String base64Image = base64Encode(bytes);
+    return 'data:image/jpeg;base64,$base64Image';
+  } catch (e) {
+    print('Error converting image: $e');
+    return null;
+  }
 }
