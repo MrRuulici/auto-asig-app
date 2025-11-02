@@ -363,11 +363,11 @@ class RegisterCarScreen extends StatelessWidget {
           // Validate inputs
           if (nrCar.text.isEmpty) {
             Navigator.of(context).pop(); // close loading
-            showSnackbar(context, 'Te rugăm să introduci numărul de înmatriculare.');
+            showErrorSnackbar(context, 'Te rugăm să introduci numărul de înmatriculare.');
             return;
           } else if (vehicleModelController.text.isEmpty) {
             Navigator.of(context).pop(); // close loading
-            showSnackbar(context, 'Te rugăm să introduci modelul vehiculului.');
+            showErrorSnackbar(context, 'Te rugăm să introduci modelul vehiculului.');
             return;
           }
 
@@ -378,17 +378,17 @@ class RegisterCarScreen extends StatelessWidget {
             Navigator.of(context).pop();
 
             if (!res) {
-              showSnackbar(context, 'Te rugăm să introduci cel puțin o dată de expirare.');
+              showErrorSnackbar(context, 'Te rugăm să introduci cel puțin o dată de expirare.');
               return;
             }
 
-            showSnackbar(context, 'Vehiculul a fost înregistrat cu succes.');
+            showInfoSnackbar(context, 'Vehiculul a fost înregistrat cu succes.');
 
             context.go(HomeScreen.path);
           } catch (e) {
             // Close loading if shown
             Navigator.of(context).pop();
-            showSnackbar(context, 'A apărut o eroare. Te rugăm să încerci din nou.');
+            showErrorSnackbar(context, 'A apărut o eroare. Te rugăm să încerci din nou.');
           }
         },
         text: 'ÎNREGISTREAZĂ VEHICUL',

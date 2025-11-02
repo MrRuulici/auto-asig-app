@@ -22,7 +22,7 @@ class AboutScreen extends StatelessWidget {
       try {
         await launch(backupUrl);
       } catch (e) {
-        showSnackbar(context, "Ups... adresa nu poate fi accesata.");
+        showErrorSnackbar(context, "Ups... adresa nu poate fi accesata.");
       }
     }
   }

@@ -347,19 +347,28 @@ PaymentType getPaymentType(String period) {
   }
 }
 
-void showSnackbar(BuildContext context, String message) {
+void showInfoSnackbar(BuildContext context, String message) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
+      backgroundColor: Colors.grey[850],
+      behavior: SnackBarBehavior.floating,
       content: Text(
         message,
-        style: const TextStyle(fontSize: theFontSize),
+        style: const TextStyle(fontSize: theFontSize, color: Colors.white),
       ),
-      // action: SnackBarAction(
-      //   label: 'OK',
-      //   onPressed: () {
-      //     ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      //   },
-      // ),
+    ),
+  );
+}
+
+void showErrorSnackbar(BuildContext context, String message) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      backgroundColor: Colors.red.shade700,
+      behavior: SnackBarBehavior.floating,
+      content: Text(
+        message,
+        style: const TextStyle(fontSize: theFontSize, color: Colors.white),
+      ),
     ),
   );
 }
