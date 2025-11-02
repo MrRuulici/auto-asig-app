@@ -30,7 +30,7 @@ class LoginScreen extends StatelessWidget {
           if (state is AuthenticationSuccess) {
             context.go(HomeScreen.path);
           } else if (state is AuthenticationFailure) {
-            showSnackbar(
+            showErrorSnackbar(
               context,
               state.errorMessage,
             );

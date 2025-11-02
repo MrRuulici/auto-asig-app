@@ -16,9 +16,6 @@ class AutoAsig extends StatelessWidget {
           backgroundColor: logoBlue,
           shape: CircleBorder(),
         ),
-        snackBarTheme: const SnackBarThemeData(
-          backgroundColor: Colors.red,
-        )
       ),
       // onGenerateTitle: (context) => context.l10n.appName,
       // localizationsDelegates: AppLocalizations.localizationsDelegates,

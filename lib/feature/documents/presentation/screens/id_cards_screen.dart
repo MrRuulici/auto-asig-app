@@ -198,7 +198,7 @@ class ReminderScreen extends StatelessWidget {
                   onPressed: () async {
                     if (state.notificationDates.length >=
                         maxNrOfNotifications) {
-                      showSnackbar(context,
+                      showInfoSnackbar(context,
                           'Numărul maxim de notificări a fost atins. Poți șterge notificări existente pentru a adaugă altele noi');
                       return;
                     }
@@ -255,12 +255,12 @@ class ReminderScreen extends StatelessWidget {
         child: AutoAsigButton(
           onPressed: () async {
             if (titleController.text.isEmpty) {
-              showSnackbar(context, 'Numele nu poate fi gol');
+              showErrorSnackbar(context, 'Numele nu poate fi gol');
               return;
             }
 
             if (!checkIfDateIsInFuture(idCardsCubit.state.expirationDate)) {
-              showSnackbar(context, 'Data expirarii trebuie sa fie in viitor');
+              showErrorSnackbar(context, 'Data expirarii trebuie sa fie in viitor');
               return;
             }
 
@@ -272,10 +272,10 @@ class ReminderScreen extends StatelessWidget {
             try {
               if (reminder == null) {
                 await idCardsCubit.save(userId, type);
-                showSnackbar(context, 'Reminder salvat cu succes');
+                showInfoSnackbar(context, 'Reminder salvat cu succes');
               } else {
                 await idCardsCubit.update(userId, reminder!.id, type);
-                showSnackbar(context, 'Reminder actualizat cu succes');
+                showInfoSnackbar(context, 'Reminder actualizat cu succes');
               }
 
               // Close the loading dialog
@@ -286,7 +286,7 @@ class ReminderScreen extends StatelessWidget {
               // Close the loading dialog if it's open
               Navigator.of(context).pop();
               print('Error at creating/updating reminder: $e');
-              showSnackbar(context, 'Eroare la salvarea datelor. Te rugam sa incerci mai tarziu');
+              showErrorSnackbar(context, 'Eroare la salvarea datelor. Te rugam sa incerci mai tarziu');
             }
           },
           text: reminder == null ? 'SALVEAZĂ' : 'ACTUALIZEAZĂ',
