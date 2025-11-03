@@ -98,80 +98,131 @@ class UnifiedReminderList extends StatelessWidget {
                       )
                     ]
                   : vehicleReminders.expand<Widget>((vehicleReminder) {
-                      // Combine all notifications into one list with their types
-                      final List<Map<String, dynamic>> notificationsWithType = [
-                        {
-                          'type': 'ITP',
-                          'notifications': vehicleReminder.notificationsITP,
-                          'expirationDate': vehicleReminder.expirationDateITP,
-                        },
-                        {
-                          'type': 'RCA',
-                          'notifications': vehicleReminder.notificationsRCA,
-                          'expirationDate': vehicleReminder.expirationDateRCA,
-                        },
-                        {
-                          'type': 'CASCO',
-                          'notifications': vehicleReminder.notificationsCASCO,
-                          'expirationDate': vehicleReminder.expirationDateCASCO,
-                        },
-                        {
-                          'type': 'Rovinieta',
-                          'notifications':
-                              vehicleReminder.notificationsRovinieta,
-                          'expirationDate':
-                              vehicleReminder.expirationDateRovinieta,
-                        },
-                        {
-                          'type': 'Tahograf',
-                          'notifications':
-                              vehicleReminder.notificationsTahograf,
-                          'expirationDate':
-                              vehicleReminder.expirationDateTahograf,
-                        },
-                      ];
-
-                      // Generate a list of VehicleReminderCards for each type
-                      return notificationsWithType.expand<Widget>((entry) {
-                        final type = entry['type'];
-                        final notifications =
-                            entry['notifications'] as List<NotificationModel>;
-                        final expirationDate =
-                            entry['expirationDate'] as DateTime?;
-
-                        return notifications.map<Widget>((notification) {
-                          final remainingTime = expirationDate != null
-                              ? expirationDate.difference(DateTime.now()).inDays
-                              : 0;
-
-                          return VehicleReminderCards(
-                            reminderId: '${vehicleReminder.id}-$type',
-                            title: type,
+                      // Build the cards for this vehicle
+                      final List<Widget> vehicleCards = [];
+                      
+                      if (vehicleReminder.expirationDateITP != null) {
+                        final remainingTime = vehicleReminder.expirationDateITP!
+                            .difference(DateTime.now())
+                            .inDays;
+                        vehicleCards.add(
+                          VehicleReminderCards(
+                            reminderId: '${vehicleReminder.id}-ITP',
+                            title: 'ITP',
                             subtitle:
                                 '${vehicleReminder.registrationNumber} - ${vehicleReminder.carModel}',
                             progressValue: remainingTime.abs(),
                             actionText: 'Detalii',
-                            notifications: [notification],
-                            isExpired: expirationDate != null
-                                ? expirationDate.isBefore(DateTime.now())
-                                : false,
-                          );
-                        }).toList();
-                      }).toList();
-                    }).toList()
-                // Sort widgets by expiration date
-                ..sort((a, b) {
-                  final aExpirationDate =
-                      (a as VehicleReminderCards).notifications[0].date;
-                  final bExpirationDate =
-                      (b as VehicleReminderCards).notifications[0].date;
+                            notifications: vehicleReminder.notificationsITP,
+                            isExpired: vehicleReminder.expirationDateITP!
+                                .isBefore(DateTime.now()),
+                          ),
+                        );
+                      }
 
-                  if (aExpirationDate == null && bExpirationDate == null) {
-                    return 0;
-                  }
+                      if (vehicleReminder.expirationDateRCA != null) {
+                        final remainingTime = vehicleReminder.expirationDateRCA!
+                            .difference(DateTime.now())
+                            .inDays;
+                        vehicleCards.add(
+                          VehicleReminderCards(
+                            reminderId: '${vehicleReminder.id}-RCA',
+                            title: 'RCA',
+                            subtitle:
+                                '${vehicleReminder.registrationNumber} - ${vehicleReminder.carModel}',
+                            progressValue: remainingTime.abs(),
+                            actionText: 'Detalii',
+                            notifications: vehicleReminder.notificationsRCA,
+                            isExpired: vehicleReminder.expirationDateRCA!
+                                .isBefore(DateTime.now()),
+                          ),
+                        );
+                      }
 
-                  return aExpirationDate.compareTo(bExpirationDate);
-                }),
+                      if (vehicleReminder.expirationDateCASCO != null) {
+                        final remainingTime = vehicleReminder.expirationDateCASCO!
+                            .difference(DateTime.now())
+                            .inDays;
+                        vehicleCards.add(
+                          VehicleReminderCards(
+                            reminderId: '${vehicleReminder.id}-CASCO',
+                            title: 'CASCO',
+                            subtitle:
+                                '${vehicleReminder.registrationNumber} - ${vehicleReminder.carModel}',
+                            progressValue: remainingTime.abs(),
+                            actionText: 'Detalii',
+                            notifications: vehicleReminder.notificationsCASCO,
+                            isExpired: vehicleReminder.expirationDateCASCO!
+                                .isBefore(DateTime.now()),
+                          ),
+                        );
+                      }
+
+                      if (vehicleReminder.expirationDateRovinieta != null) {
+                        final remainingTime = vehicleReminder.expirationDateRovinieta!
+                            .difference(DateTime.now())
+                            .inDays;
+                        vehicleCards.add(
+                          VehicleReminderCards(
+                            reminderId: '${vehicleReminder.id}-Rovinieta',
+                            title: 'Rovinieta',
+                            subtitle:
+                                '${vehicleReminder.registrationNumber} - ${vehicleReminder.carModel}',
+                            progressValue: remainingTime.abs(),
+                            actionText: 'Detalii',
+                            notifications: vehicleReminder.notificationsRovinieta,
+                            isExpired: vehicleReminder.expirationDateRovinieta!
+                                .isBefore(DateTime.now()),
+                          ),
+                        );
+                      }
+
+                      if (vehicleReminder.expirationDateTahograf != null) {
+                        final remainingTime = vehicleReminder.expirationDateTahograf!
+                            .difference(DateTime.now())
+                            .inDays;
+                        vehicleCards.add(
+                          VehicleReminderCards(
+                            reminderId: '${vehicleReminder.id}-Tahograf',
+                            title: 'Tahograf',
+                            subtitle:
+                                '${vehicleReminder.registrationNumber} - ${vehicleReminder.carModel}',
+                            progressValue: remainingTime.abs(),
+                            actionText: 'Detalii',
+                            notifications: vehicleReminder.notificationsTahograf,
+                            isExpired: vehicleReminder.expirationDateTahograf!
+                                .isBefore(DateTime.now()),
+                          ),
+                        );
+                      }
+
+                      // Wrap all cards for this vehicle in a Column with a header
+                      return [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                          child: Row(
+                            children: [
+                              const Icon(
+                                Icons.directions_car,
+                                color: Colors.blue,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                '${vehicleReminder.registrationNumber.toUpperCase()} - ${vehicleReminder.carModel.toUpperCase()}',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: Colors.blue,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        ...vehicleCards,
+                        const SizedBox(height: 8),
+                      ];
+                    }).toList(),
             ),
             const SizedBox(height: 40),
           ],

@@ -8,6 +8,7 @@ import 'package:auto_asig/feature/home/presentation/cubit/home_screen_state.dart
 import 'package:auto_asig/feature/home/presentation/cubit/reminder_cubit.dart';
 import 'package:auto_asig/feature/home/presentation/cubit/reminder_state.dart';
 import 'package:auto_asig/feature/home/presentation/cubit/unified_cubit.dart';
+import 'package:auto_asig/feature/home/presentation/cubit/unified_state.dart';
 import 'package:auto_asig/feature/home/presentation/screens/reminder_list.dart';
 import 'package:auto_asig/feature/home/presentation/screens/vehicle_reminder_list.dart';
 import 'package:auto_asig/feature/home/presentation/widgets/home_bottom_navigation_bar.dart';
@@ -27,12 +28,10 @@ class HomeScreen extends StatelessWidget {
     final homeCubit = context.read<HomeScreenCubit>();
     final reminderCubit = context.read<ReminderCubit>();
 
-    // Fetch reminders based on the initial active tab when the widget first builds
     if (homeCubit.state.activeTab == HomeScreenTabState.home &&
         !homeCubit.state.isInitialized) {
       final unifiedCubit = context.read<UnifiedCubit>();
-      reminderCubit.fetchReminders(userId, unifiedCubit: unifiedCubit);
-      // reminderCubit.fetchVehicleReminders(userId);
+      unifiedCubit.initialize(userId);
       homeCubit.initialize();
     } else if (homeCubit.state.activeTab == HomeScreenTabState.personal &&
         !homeCubit.state.isInitialized) {
@@ -57,21 +56,33 @@ class HomeScreen extends StatelessWidget {
           } else if (state.activeTab == HomeScreenTabState.support) {
             // Todo - load the support chat screen
           } else if (state.activeTab == HomeScreenTabState.home) {
-            // Todo - load the home screen
-            // reminderCubit.fetchVehicleReminders(userId);
             final unifiedCubit = context.read<UnifiedCubit>();
             await unifiedCubit.initialize(userId);
           }
         },
-        child: BlocBuilder<ReminderCubit, ReminderState>(
-          builder: (context, reminderState) {
-            if (reminderState is ReminderLoading) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (reminderState is ReminderError) {
-              return Center(child: Text(reminderState.message));
-            } else if (reminderState is ReminderLoaded) {
-              return BlocBuilder<HomeScreenCubit, HomeScreenState>(
-                builder: (context, homeState) {
+        child: BlocBuilder<HomeScreenCubit, HomeScreenState>(
+          builder: (context, homeState) {
+            if (homeState.activeTab == HomeScreenTabState.home) {
+              // For unified view, use UnifiedCubit instead of ReminderCubit
+              return BlocBuilder<UnifiedCubit, UnifiedState>(
+                builder: (context, unifiedState) {
+                  if (unifiedState.reminders == null &&
+                      unifiedState.vehicleReminders == null) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                  return const UnifiedReminderList();
+                },
+              );
+            }
+
+            // For other tabs, use ReminderCubit as before
+            return BlocBuilder<ReminderCubit, ReminderState>(
+              builder: (context, reminderState) {
+                if (reminderState is ReminderLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (reminderState is ReminderError) {
+                  return Center(child: Text(reminderState.message));
+                } else if (reminderState is ReminderLoaded) {
                   if (homeState.activeTab == HomeScreenTabState.personal) {
                     return const ReminderList();
                   } else if (homeState.activeTab ==
@@ -80,19 +91,16 @@ class HomeScreen extends StatelessWidget {
                   } else if (homeState.activeTab ==
                       HomeScreenTabState.support) {
                     return const Center(child: Text('Chat support'));
-                  } else if (homeState.activeTab == HomeScreenTabState.home) {
-                    // return const Center(child: Text('Home'));
-                    return const UnifiedReminderList();
                   } else {
                     return const Center(child: Text('Eroare necunoscuta.'));
                   }
-                },
-              );
-            } else {
-              return const Center(
-                child: Text('Eroare necunoscuta.'),
-              );
-            }
+                } else {
+                  return const Center(
+                    child: Text('Eroare necunoscuta.'),
+                  );
+                }
+              },
+            );
           },
         ),
       ),

@@ -3,7 +3,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
 import 'package:auto_asig/core/models/vehicle_jorunal_model.dart';
-import 'package:auto_asig/core/data/http_data.dart'; // Assuming this is where getJournalsForVehicle is defined
+import 'package:auto_asig/core/data/http_data.dart';
 
 part 'vehicle_journals_state.dart';
 
