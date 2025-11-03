@@ -45,28 +45,35 @@ class ReminderCubit extends Cubit<ReminderState> {
   }
 
   // Fetch vehicle-specific reminders
-  Future<void> fetchVehicleReminders(String userId,
-      {UnifiedCubit? unifiedCubit}) async {
-    try {
+Future<void> fetchVehicleReminders(String userId,
+    {UnifiedCubit? unifiedCubit}) async {
+  try {
+    // Only emit loading if we're not updating an existing state
+    if (unifiedCubit == null) {
       emit(ReminderLoading());
+    }
 
-      // Fetch vehicle-specific reminders
-      final vehicleReminders = await getAllVehiclesForUser(userId);
+    // Fetch vehicle-specific reminders
+    final vehicleReminders = await getAllVehiclesForUser(userId);
 
+    if (unifiedCubit != null) {
+      // For unified view, preserve existing state and add vehicle reminders
       if (state is ReminderLoaded) {
         final currentState = state as ReminderLoaded;
         emit(currentState.copyWith(vehicleReminders: vehicleReminders));
-        if (unifiedCubit != null) {
-          unifiedCubit.loadVehicleReminders(vehicleReminders);
-        }
       } else {
         emit(ReminderLoaded(vehicleReminders: vehicleReminders));
       }
-    } catch (e) {
-      emit(ReminderError(
-          'Nu s-a reușit încărcarea notificărilor pentru vehicule: ${e.toString()}'));
+      unifiedCubit.loadVehicleReminders(vehicleReminders);
+    } else {
+      // For vehicle-only view
+      emit(ReminderLoaded(vehicleReminders: vehicleReminders));
     }
+  } catch (e) {
+    emit(ReminderError(
+        'Nu s-a reușit încărcarea notificărilor pentru vehicule: ${e.toString()}'));
   }
+}
 
   Future<void> fetchAllReminders(String userId) async {
     try {
