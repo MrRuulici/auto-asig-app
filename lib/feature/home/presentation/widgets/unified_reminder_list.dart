@@ -4,6 +4,7 @@ import 'package:auto_asig/core/widgets/vehicle_notification_cards.dart';
 import 'package:auto_asig/feature/home/presentation/cubit/unified_cubit.dart';
 import 'package:auto_asig/feature/home/presentation/cubit/unified_state.dart';
 import 'package:auto_asig/feature/home/presentation/widgets/no_elements.dart';
+import 'package:auto_asig/feature/home/presentation/widgets/no_vehicles.dart';
 import 'package:auto_asig/feature/home/presentation/widgets/notif_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -41,6 +42,7 @@ class UnifiedReminderList extends StatelessWidget {
               initiallyExpanded: state.showDocuments,
               onExpansionChanged: (_) =>
                   context.read<UnifiedCubit>().toggleDocuments(),
+              shape: const Border(),
               children: reminders == null || reminders.isEmpty
                   ? [
                       const NoElements(
@@ -88,9 +90,10 @@ class UnifiedReminderList extends StatelessWidget {
               initiallyExpanded: state.showVehicles,
               onExpansionChanged: (_) =>
                   context.read<UnifiedCubit>().toggleVehicles(),
+              shape: const Border(),
               children: vehicleReminders == null || vehicleReminders.isEmpty
                   ? [
-                      const NoElements(
+                      const NoVehicles(
                         topPadding: 10,
                       )
                     ]
