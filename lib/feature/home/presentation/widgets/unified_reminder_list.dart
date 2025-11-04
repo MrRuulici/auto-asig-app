@@ -31,13 +31,17 @@ class UnifiedReminderList extends StatelessWidget {
         final DateFormat dateFormatter = DateFormat('dd.MM.yyyy');
         final DateFormat timeFormatter = DateFormat('HH:mm');
 
+        // Count documents and vehicles
+        final int documentCount = reminders?.length ?? 0;
+        final int vehicleCount = vehicleReminders?.length ?? 0;
+
         return ListView(
           children: [
             // Documente Section
             ExpansionTile(
-              title: const Text(
-                'Documente',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              title: Text(
+                'Documente ($documentCount)',
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               initiallyExpanded: state.showDocuments,
               onExpansionChanged: (_) =>
@@ -80,12 +84,11 @@ class UnifiedReminderList extends StatelessWidget {
                     }).toList(),
             ),
 
-            // TODO - To implement the vehicle reminders section
             // Vehicule Section
             ExpansionTile(
-              title: const Text(
-                'Vehicule',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              title: Text(
+                'Vehicule ($vehicleCount)',
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               initiallyExpanded: state.showVehicles,
               onExpansionChanged: (_) =>
