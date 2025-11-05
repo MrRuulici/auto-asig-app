@@ -26,7 +26,7 @@ class AddScreen extends StatelessWidget {
         // path: AddScreen.absolutePath,
         path:
             '${ReminderScreen.absolutePath}/${ReminderType.idCard.toString().split('.').last}',
-        title: 'Carte de identitate',
+        title: 'Carte de\nidentitate',
         image: Image.asset(
           'assets/images/ci_img.jpg',
           width: 50,
@@ -36,7 +36,7 @@ class AddScreen extends StatelessWidget {
         // path: AddScreen.absolutePath,
         path:
             '${ReminderScreen.absolutePath}/${ReminderType.drivingLicense.toString().split('.').last}',
-        title: 'Permis de conducere',
+        title: 'Permis de\nconducere',
         image: Image.asset(
           'assets/images/driving_lic.png',
           width: 50,
