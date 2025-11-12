@@ -42,14 +42,6 @@ class IdCardsInitial extends IdCardsState {
       : super(
           name: '',
           expirationDate: DateTime.now(),
-          notificationDates: [
-            NotificationModel(
-              date: DateTime.now().add(const Duration(days: 1)),
-              sms: false,
-              email: false,
-              push: false,
-              notificationId: 111111,
-            ),
-          ], // Default notification set 1 day before expiration with push enabled
+          notificationDates: [], // Start with empty list
         );
 }

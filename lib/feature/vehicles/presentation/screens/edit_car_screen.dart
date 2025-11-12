@@ -75,120 +75,141 @@ class EditCarScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 20),
+              
+              // ITP Section
               ExpirationSection(
                 label: "ITP",
                 type: VehicleNotificationType.ITP,
-                selectedDate: vehicleReminder?.expirationDateITP,
+                selectedDate: vehicleReminder.expirationDateITP,
                 updateDate: (date) => cubit.updateExpirationDateITP(date),
                 clearDate: () => cubit.updateExpirationDateITP(null),
-                notifications: vehicleReminder?.notificationsITP ?? [],
-                addNotification: (date, sms, email, push) async {
-                  int notificationId =
-                      await cubit.generateUniqueNotificationId();
-                  cubit.addNotification(
+                notifications: vehicleReminder.notificationsITP ?? [],
+                updateNotificationPeriods: (index, monthBefore, weekBefore, dayBefore, email, push) {
+                  cubit.updateNotificationPeriods(
                     VehicleNotificationType.ITP,
-                    date,
-                    sms,
+                    index,
+                    monthBefore,
+                    weekBefore,
+                    dayBefore,
                     email,
                     push,
-                    notificationId,
                   );
                 },
                 removeNotification: (index) => cubit.removeNotification(
-                    VehicleNotificationType.ITP, index),
+                  VehicleNotificationType.ITP, 
+                  index,
+                ),
               ),
+              
               const SizedBox(height: 20),
+              
+              // RCA Section
               ExpirationSection(
                 label: "RCA",
                 type: VehicleNotificationType.RCA,
-                selectedDate: vehicleReminder?.expirationDateRCA,
+                selectedDate: vehicleReminder.expirationDateRCA,
                 updateDate: (date) => cubit.updateExpirationDateRCA(date),
                 clearDate: () => cubit.updateExpirationDateRCA(null),
-                notifications: vehicleReminder?.notificationsRCA ?? [],
-                addNotification: (date, sms, email, push) async {
-                  int notificationId =
-                      await cubit.generateUniqueNotificationId();
-                  cubit.addNotification(
+                notifications: vehicleReminder.notificationsRCA ?? [],
+                updateNotificationPeriods: (index, monthBefore, weekBefore, dayBefore, email, push) {
+                  cubit.updateNotificationPeriods(
                     VehicleNotificationType.RCA,
-                    date,
-                    sms,
+                    index,
+                    monthBefore,
+                    weekBefore,
+                    dayBefore,
                     email,
                     push,
-                    notificationId,
                   );
                 },
                 removeNotification: (index) => cubit.removeNotification(
-                    VehicleNotificationType.RCA, index),
+                  VehicleNotificationType.RCA,
+                  index,
+                ),
               ),
+              
               const SizedBox(height: 20),
+              
+              // CASCO Section
               ExpirationSection(
                 label: "CASCO",
                 type: VehicleNotificationType.CASCO,
-                selectedDate: vehicleReminder?.expirationDateCASCO,
+                selectedDate: vehicleReminder.expirationDateCASCO,
                 updateDate: (date) => cubit.updateExpirationDateCASCO(date),
                 clearDate: () => cubit.updateExpirationDateCASCO(null),
-                notifications: vehicleReminder?.notificationsCASCO ?? [],
-                addNotification: (date, sms, email, push) async {
-                  int notificationId =
-                      await cubit.generateUniqueNotificationId();
-                  cubit.addNotification(
+                notifications: vehicleReminder.notificationsCASCO ?? [],
+                updateNotificationPeriods: (index, monthBefore, weekBefore, dayBefore, email, push) {
+                  cubit.updateNotificationPeriods(
                     VehicleNotificationType.CASCO,
-                    date,
-                    sms,
+                    index,
+                    monthBefore,
+                    weekBefore,
+                    dayBefore,
                     email,
                     push,
-                    notificationId,
                   );
                 },
                 removeNotification: (index) => cubit.removeNotification(
-                    VehicleNotificationType.CASCO, index),
+                  VehicleNotificationType.CASCO,
+                  index,
+                ),
               ),
+              
               const SizedBox(height: 20),
+              
+              // Rovinieta Section
               ExpirationSection(
                 label: "Rovinieta",
                 type: VehicleNotificationType.Rovinieta,
-                selectedDate: vehicleReminder?.expirationDateRovinieta,
+                selectedDate: vehicleReminder.expirationDateRovinieta,
                 updateDate: (date) => cubit.updateExpirationDateRovinieta(date),
                 clearDate: () => cubit.updateExpirationDateRovinieta(null),
-                notifications: vehicleReminder?.notificationsRovinieta ?? [],
-                addNotification: (date, sms, email, push) async {
-                  int notificationId =
-                      await cubit.generateUniqueNotificationId();
-                  cubit.addNotification(
+                notifications: vehicleReminder.notificationsRovinieta ?? [],
+                updateNotificationPeriods: (index, monthBefore, weekBefore, dayBefore, email, push) {
+                  cubit.updateNotificationPeriods(
                     VehicleNotificationType.Rovinieta,
-                    date,
-                    sms,
+                    index,
+                    monthBefore,
+                    weekBefore,
+                    dayBefore,
                     email,
                     push,
-                    notificationId,
                   );
                 },
                 removeNotification: (index) => cubit.removeNotification(
-                    VehicleNotificationType.Rovinieta, index),
+                  VehicleNotificationType.Rovinieta,
+                  index,
+                ),
               ),
+              
               const SizedBox(height: 20),
+              
+              // Tahograf Section
               ExpirationSection(
                 label: "Tahograf",
                 type: VehicleNotificationType.Tahograf,
-                selectedDate: vehicleReminder?.expirationDateTahograf,
+                selectedDate: vehicleReminder.expirationDateTahograf,
                 updateDate: (date) => cubit.updateExpirationDateTahograf(date),
                 clearDate: () => cubit.updateExpirationDateTahograf(null),
-                notifications: vehicleReminder?.notificationsTahograf ?? [],
-                addNotification: (date, sms, email, push) async {
-                  int notificationId =
-                      await cubit.generateUniqueNotificationId();
-                  cubit.addNotification(
+                notifications: vehicleReminder.notificationsTahograf ?? [],
+                updateNotificationPeriods: (index, monthBefore, weekBefore, dayBefore, email, push) {
+                  cubit.updateNotificationPeriods(
                     VehicleNotificationType.Tahograf,
-                    date,
-                    sms,
+                    index,
+                    monthBefore,
+                    weekBefore,
+                    dayBefore,
                     email,
                     push,
-                    notificationId,
                   );
                 },
                 removeNotification: (index) => cubit.removeNotification(
-                    VehicleNotificationType.Tahograf, index),
+                  VehicleNotificationType.Tahograf,
+                  index,
+                ),
               ),
+              
+              const SizedBox(height: 20),
             ],
           ),
         ),
@@ -200,6 +221,7 @@ class EditCarScreen extends StatelessWidget {
             // Show loading dialog
             showDialog(
               context: context,
+              barrierDismissible: false,
               builder: (context) => const Center(
                 child: CircularProgressIndicator(),
               ),
@@ -210,15 +232,19 @@ class EditCarScreen extends StatelessWidget {
 
               await cubit.saveChanges(userId);
 
-              context.pop();
+              // Close loading dialog
+              Navigator.of(context).pop();
 
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text('Vehiculul a fost actualizat cu succes.'),
                 ),
               );
+
+              // Navigate back to home
+              context.go(HomeScreen.path);
             } catch (e) {
-              print(e);
+              print('Error saving vehicle changes: $e');
               Navigator.of(context).pop();
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(

@@ -15,40 +15,64 @@ class IdCardsCubit extends Cubit<IdCardsState> {
     emit(state.copyWith(name: name));
   }
 
-  Future<void> updateExpirationDate(DateTime? expirationDate) async {
-    if (expirationDate == null || expirationDate == state.expirationDate) {
-      return;
-    }
+Future<void> updateExpirationDate(DateTime? expirationDate) async {
+  if (expirationDate == null || expirationDate == state.expirationDate) {
+    return;
+  }
 
-    print('New expiration date: $expirationDate'); // Debug print
+  print('New expiration date: $expirationDate'); // Debug print
 
-    // Adjust notifications to ensure they are before the expiration date
-    final adjustedNotifications = state.notificationDates
+  // Only create default notification if there are no notifications yet
+  List<NotificationModel> notificationsToUse;
+  
+  if (state.notificationDates.isEmpty) {
+    // First time setting expiration date - create default notification
+    int notifId = await NotificationHelper.generateUniqueNotificationId();
+    notificationsToUse = [
+      NotificationModel(
+        date: expirationDate.subtract(const Duration(days: 1)),
+        sms: false,
+        email: false,
+        push: true,
+        notificationId: notifId,
+        monthBefore: false,
+        weekBefore: false,
+        dayBefore: true,
+      )
+    ];
+  } else {
+    // Already have notifications - adjust them to be before the new expiration date
+    notificationsToUse = state.notificationDates
         .where((notification) => notification.date.isBefore(expirationDate))
         .toList();
-
-    print(
-        'Adjusted notifications: $adjustedNotifications with notificationId 000000'); // Debug print
-
-    int notifId = await NotificationHelper.generateUniqueNotificationId();
-
-    emit(state.copyWith(
-      expirationDate: expirationDate,
-      notificationDates: adjustedNotifications.isNotEmpty
-          ? adjustedNotifications
-          : [
-              NotificationModel(
-                date: expirationDate.subtract(const Duration(days: 1)),
-                sms: false,
-                email: false,
-                push: true,
-                notificationId: notifId,
-              )
-            ], // Default one day before expiration with push enabled
-    ));
-
-    print('New state emitted: ${state.expirationDate}'); // Debug print
+    
+    // If all notifications got filtered out, add a default one
+    if (notificationsToUse.isEmpty) {
+      int notifId = await NotificationHelper.generateUniqueNotificationId();
+      notificationsToUse = [
+        NotificationModel(
+          date: expirationDate.subtract(const Duration(days: 1)),
+          sms: false,
+          email: false,
+          push: true,
+          notificationId: notifId,
+          monthBefore: false,
+          weekBefore: false,
+          dayBefore: true,
+        )
+      ];
+    }
   }
+
+  print('Notifications to use: $notificationsToUse'); // Debug print
+
+  emit(state.copyWith(
+    expirationDate: expirationDate,
+    notificationDates: notificationsToUse,
+  ));
+
+  print('New state emitted: ${state.expirationDate}'); // Debug print
+}
 
   void updateNotification(int index, NotificationModel updatedNotification) {
     if (updatedNotification.date.isBefore(DateTime.now()) ||
@@ -75,6 +99,32 @@ class IdCardsCubit extends Cubit<IdCardsState> {
     ));
   }
 
+  Future<void> updateNotificationPeriods(
+    int index,
+    bool monthBefore,
+    bool weekBefore,
+    bool dayBefore,
+    bool email,
+    bool push,
+  ) async {
+    // Simply update the flags on the existing notification
+    // The actual notification scheduling should happen when saving
+    final updatedNotifications = List<NotificationModel>.from(state.notificationDates);
+    
+    // Just update the single notification with the selected flags
+    updatedNotifications[index] = NotificationModel(
+      date: state.expirationDate.subtract(const Duration(days: 1)), // Keep a reference date
+      sms: false,
+      email: email,
+      push: push,
+      notificationId: updatedNotifications[index].notificationId,
+      monthBefore: monthBefore,
+      weekBefore: weekBefore,
+      dayBefore: dayBefore,
+    );
+    
+    emit(state.copyWith(notificationDates: updatedNotifications));
+  }
   // void removeNotification(BuildContext context, int index) {
   //   if (state.notificationDates.length <= 1) {
   //     // Show snackbar if trying to remove the last notification
@@ -115,32 +165,83 @@ class IdCardsCubit extends Cubit<IdCardsState> {
     emit(IdCardsInitial());
   }
 
-  Future<void> save(String userId, ReminderType type) async {
-    String id = '';
+Future<void> save(String userId, ReminderType type) async {
+  String id = '';
 
-    // Convert List<NotificationModel> to a format compatible with Firestore
-    List<Map<String, dynamic>> notificationsData = state.notificationDates
-        .map((notification) => {
-              'date': Timestamp.fromDate(notification.date),
-              'sms': notification.sms,
-              'email': notification.email,
-              'push': notification.push,
-              'notifId': notification.notificationId,
-            })
-        .toList();
-
-    // Prepare data for saving
-    Map<String, dynamic> ids = {
-      'name': state.name,
-      'exp': state.expirationDate,
-      'notifications': notificationsData,
-      'timestamp': FieldValue.serverTimestamp(),
-    };
-
-    id = await addReminderForUser(userId, ids, type);
-    // update the reminder id
-    emit(state.copyWith(id: id));
+  // Expand notifications based on period flags
+  List<NotificationModel> expandedNotifications = [];
+  
+  for (var notification in state.notificationDates) {
+    if (notification.monthBefore ?? false) {
+      final monthBeforeDate = state.expirationDate.subtract(const Duration(days: 30));
+      if (monthBeforeDate.isAfter(DateTime.now())) {
+        expandedNotifications.add(
+          NotificationModel(
+            date: monthBeforeDate,
+            sms: false,
+            email: notification.email,
+            push: notification.push,
+            notificationId: await NotificationHelper.generateUniqueNotificationId(),
+            monthBefore: true,
+            weekBefore: false,
+            dayBefore: false,
+          ),
+        );
+      }
+    }
+    
+    if (notification.weekBefore ?? false) {
+      final weekBeforeDate = state.expirationDate.subtract(const Duration(days: 7));
+      if (weekBeforeDate.isAfter(DateTime.now())) {
+        expandedNotifications.add(
+          NotificationModel(
+            date: weekBeforeDate,
+            sms: false,
+            email: notification.email,
+            push: notification.push,
+            notificationId: await NotificationHelper.generateUniqueNotificationId(),
+            monthBefore: false,
+            weekBefore: true,
+            dayBefore: false,
+          ),
+        );
+      }
+    }
+    
+    if (notification.dayBefore ?? false) {
+      final dayBeforeDate = state.expirationDate.subtract(const Duration(days: 1));
+      if (dayBeforeDate.isAfter(DateTime.now())) {
+        expandedNotifications.add(
+          NotificationModel(
+            date: dayBeforeDate,
+            sms: false,
+            email: notification.email,
+            push: notification.push,
+            notificationId: await NotificationHelper.generateUniqueNotificationId(),
+            monthBefore: false,
+            weekBefore: false,
+            dayBefore: true,
+          ),
+        );
+      }
+    }
   }
+
+  // Convert to map format for Firestore
+  List<Map<String, dynamic>> notificationsData = expandedNotifications
+      .map((notification) => notification.toMap())
+      .toList();
+
+  Map<String, dynamic> ids = {
+    'name': state.name,
+    'exp': state.expirationDate,
+    'notifications': notificationsData,
+    'timestamp': FieldValue.serverTimestamp(),
+  };
+
+  id = await addReminderForUser(userId, ids, type);
+  emit(state.copyWith(id: id));
+}
 
   void initializeForEdit(Reminder reminder) {
     emit(state.copyWith(
@@ -152,32 +253,22 @@ class IdCardsCubit extends Cubit<IdCardsState> {
   }
 
   Future<void> update(String userId, String documentId, type) async {
-    // Convert List<NotificationModel> to a format compatible with Firestore
-    List<Map<String, dynamic>> notificationsData = state.notificationDates
-        .map((notification) => {
-              'date': Timestamp.fromDate(notification.date),
-              'sms': notification.sms,
-              'email': notification.email,
-              'push': notification.push,
-              'notifId': notification.notificationId,
-            })
-        .toList();
+  // Convert List<NotificationModel> to a format compatible with Firestore
+  List<Map<String, dynamic>> notificationsData = state.notificationDates
+      .map((notification) => notification.toMap()) // Use the toMap method
+      .toList();
 
-    // Prepare data for updating
-    Map<String, dynamic> updatedData = {
-      'name': state.name,
-      'exp': state.expirationDate,
-      'notifications': notificationsData,
-      'timestamp': FieldValue
-          .serverTimestamp(), // Optional: Update timestamp to current time
-    };
+  // Prepare data for updating
+  Map<String, dynamic> updatedData = {
+    'name': state.name,
+    'exp': state.expirationDate,
+    'notifications': notificationsData,
+    'timestamp': FieldValue.serverTimestamp(),
+  };
 
-    // Use the update function to modify the document with the given ID
-    await updateTheReminderForUser(userId, documentId, updatedData, type);
-
-    // Optionally, emit a state if needed to reflect that the document was updated
-    emit(state.copyWith(id: documentId));
-  }
+  await updateTheReminderForUser(userId, documentId, updatedData, type);
+  emit(state.copyWith(id: documentId));
+}
 
   void clearReminderData() {
     emit(state.copyWith(

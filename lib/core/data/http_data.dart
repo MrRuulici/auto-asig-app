@@ -296,6 +296,9 @@ Future<List<VehicleReminder>> getAllVehiclesForUser(String userId) async {
           email: notif['email'] ?? false,
           push: notif['push'] ?? false,
           notificationId: notif['notifId'] ?? 99999,
+          monthBefore: notif['monthBefore'] ?? false,
+          weekBefore: notif['weekBefore'] ?? false,
+          dayBefore: notif['dayBefore'] ?? false,
         );
       }).toList();
     }
@@ -401,6 +404,9 @@ _removeReminderNotificationFromFirestore({
         'email': notification.email,
         'push': notification.push,
         'notifId': notification.notificationId,
+        'monthBefore': notification.monthBefore,
+        'weekBefore': notification.weekBefore,
+        'dayBefore': notification.dayBefore,
       }
     ])
   });
@@ -423,6 +429,9 @@ Future<void> _removeVehicleNotificationFromFirestore(
         'email': notification.email,
         'push': notification.push,
         'notifId': notification.notificationId,
+        'monthBefore': notification.monthBefore,
+        'weekBefore': notification.weekBefore,
+        'dayBefore': notification.dayBefore,
       }
     ])
   });
@@ -554,6 +563,9 @@ Future<bool> updateVehicleReminder(
                     'email': notif.email,
                     'push': notif.push,
                     'notifId': notif.notificationId,
+                    'monthBefore': notif.monthBefore,
+                    'weekBefore': notif.weekBefore,
+                    'dayBefore': notif.dayBefore,
                   })
               .toList(),
         },
@@ -568,6 +580,9 @@ Future<bool> updateVehicleReminder(
                     'email': notif.email,
                     'push': notif.push,
                     'notifId': notif.notificationId,
+                    'monthBefore': notif.monthBefore,
+                    'weekBefore': notif.weekBefore,
+                    'dayBefore': notif.dayBefore,
                   })
               .toList(),
         },
@@ -582,6 +597,9 @@ Future<bool> updateVehicleReminder(
                     'email': notif.email,
                     'push': notif.push,
                     'notifId': notif.notificationId,
+                    'monthBefore': notif.monthBefore,
+                    'weekBefore': notif.weekBefore,
+                    'dayBefore': notif.dayBefore,
                   })
               .toList(),
         },
@@ -596,6 +614,9 @@ Future<bool> updateVehicleReminder(
                     'email': notif.email,
                     'push': notif.push,
                     'notifId': notif.notificationId,
+                    'monthBefore': notif.monthBefore,
+                    'weekBefore': notif.weekBefore,
+                    'dayBefore': notif.dayBefore,
                   })
               .toList(),
         },
@@ -610,6 +631,9 @@ Future<bool> updateVehicleReminder(
                     'email': notif.email,
                     'push': notif.push,
                     'notifId': notif.notificationId,
+                    'monthBefore': notif.monthBefore,
+                    'weekBefore': notif.weekBefore,
+                    'dayBefore': notif.dayBefore,
                   })
               .toList(),
         },
@@ -652,6 +676,9 @@ void extractDataFromSnapshot(
               email: notificationData['email'] ?? false,
               push: notificationData['push'] ?? false,
               notificationId: notificationData['notifId'] ?? 99999,
+              monthBefore: notificationData['monthBefore'] ?? false,
+              weekBefore: notificationData['weekBefore'] ?? false,
+              dayBefore: notificationData['dayBefore'] ?? false,
             );
           }).toList()
         : [];

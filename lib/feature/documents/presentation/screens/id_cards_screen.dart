@@ -19,38 +19,56 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
-class ReminderScreen extends StatelessWidget {
+class ReminderScreen extends StatefulWidget {
   const ReminderScreen({
     super.key,
-    this.reminder, // Optional parameter for edit mode
-    required this.type, // Required reminder type for context
+    this.reminder,
+    required this.type,
   });
 
   static const path = 'reminder_screen';
   static const absolutePath = '${HomeScreen.path}/$path';
 
-  final Reminder? reminder; // The reminder to edit, if in edit mode
+  final Reminder? reminder;
   final ReminderType type;
 
   @override
-  Widget build(BuildContext context) {
-    final TextEditingController titleController = TextEditingController(
-      text: reminder?.title ?? '', // Prepopulate if editing
-    );
+  State<ReminderScreen> createState() => _ReminderScreenState();
+}
+
+class _ReminderScreenState extends State<ReminderScreen> {
+  late final TextEditingController titleController;
+
+  @override
+  void initState() {
+    super.initState();
+    
     final idCardsCubit = context.read<IdCardsCubit>();
-    bool isEditing = false;
-
-    // Initialize state for edit mode
-    if (reminder != null) {
-      isEditing = true;
-
-      idCardsCubit.initializeForEdit(reminder!);
+    
+    // Reset or initialize based on mode
+    if (widget.reminder != null) {
+      // Edit mode: initialize with existing data
+      idCardsCubit.initializeForEdit(widget.reminder!);
+      titleController = TextEditingController(text: widget.reminder!.title);
+    } else {
+      // Add mode: reset to initial state
+      idCardsCubit.reset();
+      titleController = TextEditingController();
     }
+  }
 
+  @override
+  void dispose() {
+    titleController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     // Determine dynamic title and label based on ReminderType
     final String titleText;
     final String labelName;
-    switch (type) {
+    switch (widget.type) {
       case ReminderType.idCard:
         titleText = 'Carte de identitate';
         labelName = 'Nume Carte de identitate';
@@ -68,20 +86,6 @@ class ReminderScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AlliatAppBar(),
-      // AppBar(
-      //   title: Text(reminder == null
-      //       ? 'Inregistrare $titleText'
-      //       : 'Editare $titleText'),
-      //   centerTitle: true,
-      //   backgroundColor: Colors.transparent,
-      //   elevation: 0,
-      //   titleTextStyle: const TextStyle(
-      //     color: Colors.black,
-      //     fontSize: 24,
-      //     fontWeight: FontWeight.w600,
-      //   ),
-      //   iconTheme: const IconThemeData(color: Colors.black),
-      // ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 20),
         child: BlocBuilder<IdCardsCubit, IdCardsState>(
@@ -115,7 +119,7 @@ class ReminderScreen extends StatelessWidget {
                   controller: titleController,
                   style: const TextStyle(fontSize: 16),
                   inputFormatters: [
-                    UpperCaseTextFormatter(), // Ensure all text is uppercase
+                    UpperCaseTextFormatter(),
                   ],
                   decoration: InputDecoration(
                     labelText: '     $labelName',
@@ -132,18 +136,15 @@ class ReminderScreen extends StatelessWidget {
                     ),
                   ),
                   onChanged: (value) {
-                    idCardsCubit.updateName(value
-                        .toUpperCase()); // Optional: Ensure uppercase in the Cubit
+                    context.read<IdCardsCubit>().updateName(value.toUpperCase());
                   },
                 ),
 
                 const SizedBox(height: 20),
 
-                // Expiration Date Field
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    // color: Colors.grey.shade100,
                     color: textFieldGrey,
                     borderRadius: BorderRadius.circular(15),
                   ),
@@ -151,101 +152,85 @@ class ReminderScreen extends StatelessWidget {
                     label: "Data Expirării",
                     selectedDate: state.expirationDate,
                     onDateSelected: (date) {
-                      idCardsCubit.updateExpirationDate(date);
+                      context.read<IdCardsCubit>().updateExpirationDate(date);
                     },
                   ),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 20),
 
-                // Notification Section
-                // const Text(
-                //   'Notificări',
-                //   style: TextStyle(
-                //     fontSize: 20,
-                //     fontWeight: FontWeight.bold,
-                //     color: Colors.black,
-                //   ),
-                // ),
-                // const SizedBox(height: 10),
-
-                // Display Notification Pickers using NotificationItem
-                for (int i = 0; i < state.notificationDates.length; i++)
-                  NotificationItem(
-                    index: i,
-                    selectedDate: state.notificationDates[i].date,
-                    sms: state.notificationDates[i].sms,
-                    email: state.notificationDates[i].email,
-                    push: state.notificationDates[i].push,
-                    onNotificationRemove: () =>
-                        idCardsCubit.removeNotification(context, i),
-                    onNotificationUpdate: (date, sms, email, push) {
-                      idCardsCubit.updateNotification(
-                        i,
-                        NotificationModel(
-                          date: date,
-                          sms: sms,
-                          email: email,
-                          push: push,
-                          notificationId:
-                              state.notificationDates[i].notificationId,
-                        ),
-                      );
-                    },
-                  ),
-
-                // Add Notification Button
-                TextButton.icon(
-                  onPressed: () async {
-                    if (state.notificationDates.length >=
-                        maxNrOfNotifications) {
-                      showInfoSnackbar(context,
-                          'Numărul maxim de notificări a fost atins. Poți șterge notificări existente pentru a adaugă altele noi');
-                      return;
-                    }
-
-                    // @todo: vezi de ce nu cere permisiuni la notificari
-                    await FirebaseMessaging.instance.requestPermission();
-
-                    // aici generam token fcm
-                    final fcmToken = await FirebaseMessaging.instance.getToken();
-                    if (fcmToken != null) {
-                      print('FCM Token: $fcmToken');
-
-                      // Salvează token-ul în Firestore-ul emulat
-                      // Asigură-te că ai un utilizator autentificat prin FirebaseAuth emulator
-                      // if (FirebaseAuth.instance.currentUser != null) {
-                      //   await FirebaseFirestore.instance
-                      //       .collection('users')
-                      //       .doc(FirebaseAuth.instance.currentUser!.uid)
-                      //       .set({'fcmToken': fcmToken}, SetOptions(merge: true));
-                      //   print('FCM Token salvat în Firestore emulator.');
-                      // }
-                    }
-
-                    int notifId =
-                        await NotificationHelper.generateUniqueNotificationId();
-
-                    idCardsCubit.addNotification(NotificationModel(
-                      date: state.expirationDate
-                          .subtract(const Duration(days: 1)),
-                      sms: false,
-                      email: false,
-                      push: true,
-                      notificationId: notifId,
-                    ));
-                  },
-                  icon: const Icon(
-                    Icons.add,
-                    color: logoBlue,
-                  ),
-                  label: const Text(
-                    'Adaugă notificare',
-                    style: TextStyle(
-                      color: logoBlue,
-                      fontWeight: FontWeight.bold,
+                // Notification Section - Only show if notifications exist
+                if (state.notificationDates.isEmpty)
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+                    decoration: BoxDecoration(
+                      color: Colors.grey[100],
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(
+                        color: Colors.grey[300]!,
+                        width: 1,
+                      ),
                     ),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.info_outline,
+                          color: Colors.grey[600],
+                          size: 24,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            'Selectează o dată de expirare pentru a configura notificările',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Colors.grey[700],
+                              fontStyle: FontStyle.italic,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                else
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'Notificări',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: logoBlue,
+                          fontFamily: 'Poppins',
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      for (int i = 0; i < state.notificationDates.length; i++)
+                        NotificationItem(
+                          index: i,
+                          expirationDate: state.expirationDate,
+                          monthBefore: state.notificationDates[i].monthBefore ?? false,
+                          weekBefore: state.notificationDates[i].weekBefore ?? false,
+                          dayBefore: state.notificationDates[i].dayBefore ?? false,
+                          email: state.notificationDates[i].email,
+                          push: state.notificationDates[i].push,
+                          onNotificationRemove: () =>
+                              context.read<IdCardsCubit>().removeNotification(context, i),
+                          onNotificationUpdate: (monthBefore, weekBefore, dayBefore, email, push) {
+                            context.read<IdCardsCubit>().updateNotificationPeriods(
+                              i,
+                              monthBefore,
+                              weekBefore,
+                              dayBefore,
+                              email,
+                              push,
+                            );
+                          },
+                        ),
+                    ],
                   ),
-                ),
+                
+                const SizedBox(height: 20),
               ],
             );
           },
@@ -259,40 +244,41 @@ class ReminderScreen extends StatelessWidget {
               return;
             }
 
-            if (!checkIfDateIsInFuture(idCardsCubit.state.expirationDate)) {
+            if (!checkIfDateIsInFuture(context.read<IdCardsCubit>().state.expirationDate)) {
               showErrorSnackbar(context, 'Data expirarii trebuie sa fie in viitor');
               return;
             }
 
-            // show loading dialog
+            // Validate that at least one notification exists
+            if (context.read<IdCardsCubit>().state.notificationDates.isEmpty) {
+              showErrorSnackbar(context, 'Selectează o dată de expirare validă');
+              return;
+            }
+
             showLoadingDialog(context);
 
             final userId = context.read<UserDataCubit>().state.member.id;
 
             try {
-              if (reminder == null) {
-                await idCardsCubit.save(userId, type);
+              if (widget.reminder == null) {
+                await context.read<IdCardsCubit>().save(userId, widget.type);
                 showInfoSnackbar(context, 'Reminder salvat cu succes');
               } else {
-                await idCardsCubit.update(userId, reminder!.id, type);
+                await context.read<IdCardsCubit>().update(userId, widget.reminder!.id, widget.type);
                 showInfoSnackbar(context, 'Reminder actualizat cu succes');
               }
 
-              // Close the loading dialog
               Navigator.of(context).pop();
-
               context.go(HomeScreen.path);
             } catch (e) {
-              // Close the loading dialog if it's open
               Navigator.of(context).pop();
               print('Error at creating/updating reminder: $e');
               showErrorSnackbar(context, 'Eroare la salvarea datelor. Te rugam sa incerci mai tarziu');
             }
           },
-          text: reminder == null ? 'SALVEAZĂ' : 'ACTUALIZEAZĂ',
+          text: widget.reminder == null ? 'SALVEAZĂ' : 'ACTUALIZEAZĂ',
         ),
-      )
-
+      ),
     );
   }
 }
