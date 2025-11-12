@@ -1,5 +1,6 @@
 import 'package:auto_asig/core/data/constants.dart';
 import 'package:auto_asig/core/data/http_data.dart';
+import 'package:auto_asig/core/helpers/notification_helper.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:auto_asig/core/models/vehicle_reminder.dart';
 import 'package:auto_asig/core/models/notification_model.dart';
@@ -15,11 +16,62 @@ class EditVehicleReminderCubit extends Cubit<EditVehicleReminderState> {
   }
 
   /// Updates the expiration date for a specific type
-  void updateExpirationDate({
+  Future<void> updateExpirationDate({
     required VehicleNotificationType type,
     DateTime? date,
-  }) {
+  }) async {
     if (state.vehicleReminder == null) return;
+    
+    // Get current notifications for this type
+    List<NotificationModel> currentNotifications = _getNotificationsByType(type);
+    DateTime? currentExpirationDate = _getExpirationDateByType(type);
+    
+    // Determine notifications to use
+    List<NotificationModel> notificationsToUse;
+    
+    if (date == null) {
+      // Clearing the date - clear notifications too
+      notificationsToUse = [];
+    } else if (date == currentExpirationDate) {
+      // No change in date
+      return;
+    } else if (currentNotifications.isEmpty) {
+      // First time setting expiration date - create default notification
+      int notifId = await NotificationHelper.generateUniqueNotificationId();
+      notificationsToUse = [
+        NotificationModel(
+          date: date.subtract(const Duration(days: 1)),
+          sms: false,
+          email: false,
+          push: true,
+          notificationId: notifId,
+          monthBefore: false,
+          weekBefore: false,
+          dayBefore: true,
+        )
+      ];
+    } else {
+      // Already have notifications - adjust them to be before the new expiration date
+      notificationsToUse = currentNotifications
+          .where((notification) => notification.date.isBefore(date))
+          .toList();
+      
+      if (notificationsToUse.isEmpty) {
+        int notifId = await NotificationHelper.generateUniqueNotificationId();
+        notificationsToUse = [
+          NotificationModel(
+            date: date.subtract(const Duration(days: 1)),
+            sms: false,
+            email: false,
+            push: true,
+            notificationId: notifId,
+            monthBefore: false,
+            weekBefore: false,
+            dayBefore: true,
+          )
+        ];
+      }
+    }
 
     final updatedReminder = state.vehicleReminder!.copyWith(
       expirationDateITP: type == VehicleNotificationType.ITP
@@ -37,50 +89,72 @@ class EditVehicleReminderCubit extends Cubit<EditVehicleReminderState> {
       expirationDateTahograf: type == VehicleNotificationType.Tahograf
           ? date
           : state.vehicleReminder!.expirationDateTahograf,
+      notificationsITP: type == VehicleNotificationType.ITP
+          ? notificationsToUse
+          : state.vehicleReminder!.notificationsITP,
+      notificationsRCA: type == VehicleNotificationType.RCA
+          ? notificationsToUse
+          : state.vehicleReminder!.notificationsRCA,
+      notificationsCASCO: type == VehicleNotificationType.CASCO
+          ? notificationsToUse
+          : state.vehicleReminder!.notificationsCASCO,
+      notificationsRovinieta: type == VehicleNotificationType.Rovinieta
+          ? notificationsToUse
+          : state.vehicleReminder!.notificationsRovinieta,
+      notificationsTahograf: type == VehicleNotificationType.Tahograf
+          ? notificationsToUse
+          : state.vehicleReminder!.notificationsTahograf,
     );
 
     emit(state.copyWith(vehicleReminder: updatedReminder));
   }
 
   /// Type-specific methods for updating expiration dates
-  void updateExpirationDateITP(DateTime? date) =>
+  Future<void> updateExpirationDateITP(DateTime? date) =>
       updateExpirationDate(type: VehicleNotificationType.ITP, date: date);
 
-  void updateExpirationDateRCA(DateTime? date) =>
+  Future<void> updateExpirationDateRCA(DateTime? date) =>
       updateExpirationDate(type: VehicleNotificationType.RCA, date: date);
 
-  void updateExpirationDateCASCO(DateTime? date) =>
+  Future<void> updateExpirationDateCASCO(DateTime? date) =>
       updateExpirationDate(type: VehicleNotificationType.CASCO, date: date);
 
-  void updateExpirationDateRovinieta(DateTime? date) =>
+  Future<void> updateExpirationDateRovinieta(DateTime? date) =>
       updateExpirationDate(type: VehicleNotificationType.Rovinieta, date: date);
 
-  void updateExpirationDateTahograf(DateTime? date) =>
+  Future<void> updateExpirationDateTahograf(DateTime? date) =>
       updateExpirationDate(type: VehicleNotificationType.Tahograf, date: date);
 
-  /// Adds a notification for a specific type
-  void addNotification(
+  /// Simplified notification update - just updates flags, doesn't create multiple notifications
+  void updateNotificationPeriods(
     VehicleNotificationType type,
-    DateTime date,
-    bool sms,
+    int index,
+    bool monthBefore,
+    bool weekBefore,
+    bool dayBefore,
     bool email,
     bool push,
-    int notificationId,
   ) {
     if (state.vehicleReminder == null) return;
 
-    final notification = NotificationModel(
-      date: date,
-      sms: sms,
+    List<NotificationModel> notifications = List<NotificationModel>.from(_getNotificationsByType(type));
+    DateTime? expirationDate = _getExpirationDateByType(type);
+    
+    if (expirationDate == null || index >= notifications.length) return;
+    
+    // Simply update the flags on the existing notification
+    notifications[index] = NotificationModel(
+      date: expirationDate.subtract(const Duration(days: 1)), // Keep a reference date
+      sms: false,
       email: email,
       push: push,
-      notificationId: notificationId,
+      notificationId: notifications[index].notificationId,
+      monthBefore: monthBefore,
+      weekBefore: weekBefore,
+      dayBefore: dayBefore,
     );
-
-    final updatedNotifications = _getNotificationsByType(type)
-      ..add(notification);
-
-    _updateNotifications(type, updatedNotifications);
+    
+    _updateNotifications(type, notifications);
   }
 
   /// Removes a notification by index for a specific type
@@ -94,27 +168,123 @@ class EditVehicleReminderCubit extends Cubit<EditVehicleReminderState> {
     _updateNotifications(type, updatedNotifications);
   }
 
-  /// Generates a unique notification ID
-  Future<int> generateUniqueNotificationId() async {
-    // Simulate unique ID generation
-    return DateTime.now().millisecondsSinceEpoch;
+  /// Helper method to expand notifications based on flags
+  Future<List<Map<String, dynamic>>> _expandNotifications(
+    List<NotificationModel> notifications,
+    DateTime? expirationDate,
+  ) async {
+    if (expirationDate == null) return [];
+    
+    List<NotificationModel> expandedNotifications = [];
+    
+    for (var notification in notifications) {
+      if (notification.monthBefore ?? false) {
+        final monthBeforeDate = expirationDate.subtract(const Duration(days: 30));
+        if (monthBeforeDate.isAfter(DateTime.now())) {
+          expandedNotifications.add(
+            NotificationModel(
+              date: monthBeforeDate,
+              sms: false,
+              email: notification.email,
+              push: notification.push,
+              notificationId: await NotificationHelper.generateUniqueNotificationId(),
+              monthBefore: true,
+              weekBefore: false,
+              dayBefore: false,
+            ),
+          );
+        }
+      }
+      
+      if (notification.weekBefore ?? false) {
+        final weekBeforeDate = expirationDate.subtract(const Duration(days: 7));
+        if (weekBeforeDate.isAfter(DateTime.now())) {
+          expandedNotifications.add(
+            NotificationModel(
+              date: weekBeforeDate,
+              sms: false,
+              email: notification.email,
+              push: notification.push,
+              notificationId: await NotificationHelper.generateUniqueNotificationId(),
+              monthBefore: false,
+              weekBefore: true,
+              dayBefore: false,
+            ),
+          );
+        }
+      }
+      
+      if (notification.dayBefore ?? false) {
+        final dayBeforeDate = expirationDate.subtract(const Duration(days: 1));
+        if (dayBeforeDate.isAfter(DateTime.now())) {
+          expandedNotifications.add(
+            NotificationModel(
+              date: dayBeforeDate,
+              sms: false,
+              email: notification.email,
+              push: notification.push,
+              notificationId: await NotificationHelper.generateUniqueNotificationId(),
+              monthBefore: false,
+              weekBefore: false,
+              dayBefore: true,
+            ),
+          );
+        }
+      }
+    }
+
+    return expandedNotifications.map((n) => n.toMap()).toList();
   }
 
-  /// Saves the updated vehicle reminder (implement your save logic here)
+  /// Saves the updated vehicle reminder with expanded notifications
   Future<void> saveChanges(String userId) async {
-    // print the updated vehicle reminder
+    if (state.vehicleReminder == null) return;
+
     print('Saving vehicle reminder: ${state.vehicleReminder}');
 
-    updateVehicleReminder(
+    // Expand notifications for each type before saving
+    final expandedITP = await _expandNotifications(
+      state.vehicleReminder!.notificationsITP ?? [],
+      state.vehicleReminder!.expirationDateITP,
+    );
+    final expandedRCA = await _expandNotifications(
+      state.vehicleReminder!.notificationsRCA ?? [],
+      state.vehicleReminder!.expirationDateRCA,
+    );
+    final expandedCASCO = await _expandNotifications(
+      state.vehicleReminder!.notificationsCASCO ?? [],
+      state.vehicleReminder!.expirationDateCASCO,
+    );
+    final expandedRovinieta = await _expandNotifications(
+      state.vehicleReminder!.notificationsRovinieta ?? [],
+      state.vehicleReminder!.expirationDateRovinieta,
+    );
+    final expandedTahograf = await _expandNotifications(
+      state.vehicleReminder!.notificationsTahograf ?? [],
+      state.vehicleReminder!.expirationDateTahograf,
+    );
+
+    // Create a copy with expanded notifications for saving
+    final reminderToSave = state.vehicleReminder!.copyWith(
+      notificationsITP: expandedITP.map((n) => NotificationModel.fromMap(n)).toList(),
+      notificationsRCA: expandedRCA.map((n) => NotificationModel.fromMap(n)).toList(),
+      notificationsCASCO: expandedCASCO.map((n) => NotificationModel.fromMap(n)).toList(),
+      notificationsRovinieta: expandedRovinieta.map((n) => NotificationModel.fromMap(n)).toList(),
+      notificationsTahograf: expandedTahograf.map((n) => NotificationModel.fromMap(n)).toList(),
+    );
+
+    await updateVehicleReminder(
       userId,
-      state.vehicleReminder!.id,
-      state.vehicleReminder!,
+      reminderToSave.id,
+      reminderToSave,
     );
   }
 
   /// Helper: Updates notifications for a specific type
   void _updateNotifications(
-      VehicleNotificationType type, List<NotificationModel> notifications) {
+    VehicleNotificationType type,
+    List<NotificationModel> notifications,
+  ) {
     if (state.vehicleReminder == null) return;
 
     final updatedReminder = state.vehicleReminder!.copyWith(
@@ -139,8 +309,7 @@ class EditVehicleReminderCubit extends Cubit<EditVehicleReminderState> {
   }
 
   /// Helper: Retrieves notifications for a specific type
-  List<NotificationModel> _getNotificationsByType(
-      VehicleNotificationType type) {
+  List<NotificationModel> _getNotificationsByType(VehicleNotificationType type) {
     switch (type) {
       case VehicleNotificationType.ITP:
         return state.vehicleReminder?.notificationsITP ?? [];
@@ -152,6 +321,22 @@ class EditVehicleReminderCubit extends Cubit<EditVehicleReminderState> {
         return state.vehicleReminder?.notificationsRovinieta ?? [];
       case VehicleNotificationType.Tahograf:
         return state.vehicleReminder?.notificationsTahograf ?? [];
+    }
+  }
+
+  /// Helper: Retrieves expiration date for a specific type
+  DateTime? _getExpirationDateByType(VehicleNotificationType type) {
+    switch (type) {
+      case VehicleNotificationType.ITP:
+        return state.vehicleReminder?.expirationDateITP;
+      case VehicleNotificationType.RCA:
+        return state.vehicleReminder?.expirationDateRCA;
+      case VehicleNotificationType.CASCO:
+        return state.vehicleReminder?.expirationDateCASCO;
+      case VehicleNotificationType.Rovinieta:
+        return state.vehicleReminder?.expirationDateRovinieta;
+      case VehicleNotificationType.Tahograf:
+        return state.vehicleReminder?.expirationDateTahograf;
     }
   }
 }

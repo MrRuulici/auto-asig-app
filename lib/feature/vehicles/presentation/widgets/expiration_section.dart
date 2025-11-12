@@ -15,7 +15,7 @@ class ExpirationSection extends StatelessWidget {
   final void Function(DateTime) updateDate;
   final void Function() clearDate;
   final List<NotificationModel> notifications;
-  final void Function(DateTime, bool, bool, bool) addNotification;
+  final void Function(int index, bool monthBefore, bool weekBefore, bool dayBefore, bool email, bool push) updateNotificationPeriods;
   final void Function(int) removeNotification;
 
   const ExpirationSection({
@@ -26,7 +26,7 @@ class ExpirationSection extends StatelessWidget {
     required this.updateDate,
     required this.clearDate,
     required this.notifications,
-    required this.addNotification,
+    required this.updateNotificationPeriods,
     required this.removeNotification,
   });
 
@@ -73,8 +73,7 @@ class ExpirationSection extends StatelessWidget {
                   style: const TextStyle(fontWeight: FontWeight.bold),
                 ),
                 TextButton(
-                  onPressed:
-                      clearDate, // Clear the selected date and notifications
+                  onPressed: clearDate,
                   child: const Text(
                     'Șterge',
                     style: TextStyle(color: Colors.red),
@@ -92,67 +91,65 @@ class ExpirationSection extends StatelessWidget {
           const SizedBox(height: 8),
         ],
 
-        // Notifications list and add button
-        for (int i = 0; i < notifications.length; i++)
-          NotificationItem(
-            index: i,
-            selectedDate: notifications[i].date,
-            sms: notifications[i].sms,
-            email: notifications[i].email,
-            push: notifications[i].push,
-            onNotificationUpdate: (date, sms, email, push) {
-              context.read<CarInfoCubit>().updateNotification(
-                    type,
-                    i,
-                    date,
-                    sms,
-                    email,
-                    push,
-                    notifications[i].notificationId,
-                  );
-            },
-            onNotificationRemove: () => removeNotification(i),
-          ),
-        if (selectedDate != null)
-          // Row(
-          //   children: [
-          TextButton.icon(
-            onPressed: () {
-              if (selectedDate != null) {
-                addNotification(
-                  selectedDate!.subtract(const Duration(days: 1)),
-                  false,
-                  false,
-                  true,
-                );
-              }
-            },
-            icon: const Icon(
-              Icons.add,
-              // color: Colors.indigoAccent,
-              // color: logoBlue,
-              color: Colors.indigoAccent,
-            ),
-            label: const Text(
-              'Adaugă notificare',
-              style: TextStyle(
-                color: Colors.indigoAccent,
-                // color: logoBlue,
-                fontWeight: FontWeight.bold,
+        // Show info message when no notifications exist
+        if (notifications.isEmpty && selectedDate != null)
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+            margin: const EdgeInsets.only(bottom: 12),
+            decoration: BoxDecoration(
+              color: Colors.grey[100],
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: Colors.grey[300]!,
+                width: 1,
               ),
             ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.info_outline,
+                  color: Colors.grey[600],
+                  size: 20,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'Notificare configurată implicit pentru o zi înainte',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.grey[700],
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        // const Spacer(),
-        // TextButton(
-        //   onPressed:
-        //       clearDate, // Clear the selected date and notifications
-        //   child: const Text(
-        //     'Șterge',
-        //     style: TextStyle(color: Colors.red),
-        //   ),
-        // ),
-        //   ],
-        // ),
+
+        // Notifications list
+        if (notifications.isNotEmpty)
+          for (int i = 0; i < notifications.length; i++)
+            NotificationItem(
+              index: i,
+              expirationDate: selectedDate ?? DateTime.now(),
+              monthBefore: notifications[i].monthBefore ?? false,
+              weekBefore: notifications[i].weekBefore ?? false,
+              dayBefore: notifications[i].dayBefore ?? false,
+              email: notifications[i].email,
+              push: notifications[i].push,
+              onNotificationUpdate: (monthBefore, weekBefore, dayBefore, email, push) {
+                updateNotificationPeriods(
+                  i,
+                  monthBefore,
+                  weekBefore,
+                  dayBefore,
+                  email,
+                  push,
+                );
+              },
+              onNotificationRemove: () => removeNotification(i),
+            ),
+
         const SizedBox(height: 20),
       ],
     );

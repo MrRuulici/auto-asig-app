@@ -1,288 +1,26 @@
-// import 'package:flutter/material.dart';
-// import 'package:intl/intl.dart';
-
-// class NotificationItem extends StatefulWidget {
-//   final int index;
-//   final DateTime selectedDate;
-//   final bool sms;
-//   final bool email;
-//   final bool push;
-//   final void Function(DateTime, bool, bool, bool) onNotificationUpdate;
-//   final VoidCallback onNotificationRemove;
-
-//   const NotificationItem({
-//     super.key,
-//     required this.index,
-//     required this.selectedDate,
-//     required this.sms,
-//     required this.email,
-//     required this.push,
-//     required this.onNotificationUpdate,
-//     required this.onNotificationRemove,
-//   });
-
-//   @override
-//   _NotificationItemState createState() => _NotificationItemState();
-// }
-
-// class _NotificationItemState extends State<NotificationItem> {
-//   late bool isSmsSelected;
-//   late bool isEmailSelected;
-//   late bool isPushSelected;
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     isSmsSelected = widget.sms;
-//     isEmailSelected = widget.email;
-//     isPushSelected = widget.push;
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Card(
-//       margin: const EdgeInsets.symmetric(vertical: 8),
-//       elevation: 3,
-//       shape: RoundedRectangleBorder(
-//         borderRadius: BorderRadius.circular(15),
-//       ),
-//       child: Padding(
-//         padding: const EdgeInsets.all(16),
-//         child: Column(
-//           crossAxisAlignment: CrossAxisAlignment.start,
-//           children: [
-//             // Row for Date Picker and Time Picker
-//             Row(
-//               children: [
-//                 Expanded(
-//                   flex: 3,
-//                   child: InkWell(
-//                     onTap: () async {
-//                       DateTime? newDate = await showDatePicker(
-//                         context: context,
-//                         // initialDate: widget.selectedDate ??
-//                         //     DateTime
-//                         //         .now(), // Default to today if selectedDate is null
-//                         initialDate:
-//                             widget.selectedDate.isBefore(DateTime.now())
-//                                 ? DateTime.now()
-//                                 : widget.selectedDate,
-//                         firstDate: DateTime.now(), // Minimum date is today
-//                         lastDate: DateTime(2101), // Maximum date
-//                       );
-
-//                       if (newDate != null) {
-//                         widget.onNotificationUpdate(
-//                           newDate,
-//                           isSmsSelected,
-//                           isEmailSelected,
-//                           isPushSelected,
-//                         );
-//                       } else {
-//                         widget.onNotificationUpdate(
-//                           // widget.selectedDate ??
-//                           //     DateTime
-//                           //         .now(), // Default to today if selectedDate is null
-//                           widget.selectedDate,
-//                           isSmsSelected,
-//                           isEmailSelected,
-//                           isPushSelected,
-//                         );
-//                       }
-//                     },
-//                     borderRadius: BorderRadius.circular(8),
-//                     splashColor: Colors.indigoAccent.withOpacity(0.1),
-//                     child: Container(
-//                       padding: const EdgeInsets.symmetric(
-//                           horizontal: 12, vertical: 8),
-//                       decoration: BoxDecoration(
-//                         color: Colors.indigoAccent.withOpacity(0.1),
-//                         borderRadius: BorderRadius.circular(8),
-//                       ),
-//                       child: Row(
-//                         children: [
-//                           const Icon(Icons.calendar_today_outlined,
-//                               color: Colors.indigoAccent),
-//                           const SizedBox(width: 8),
-//                           Expanded(
-//                             child: Text(
-//                               DateFormat('dd.MM.yyyy')
-//                                   .format(widget.selectedDate),
-//                               style: const TextStyle(
-//                                 fontSize: 16,
-//                                 color: Colors.indigoAccent,
-//                                 fontWeight: FontWeight.bold,
-//                                 decoration: TextDecoration.underline,
-//                               ),
-//                               overflow: TextOverflow.ellipsis,
-//                             ),
-//                           ),
-//                         ],
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-//                 const SizedBox(width: 16),
-//                 Expanded(
-//                   flex: 2,
-//                   child: InkWell(
-//                     onTap: () async {
-//                       TimeOfDay? time = await showTimePicker(
-//                         context: context,
-//                         initialTime:
-//                             TimeOfDay.fromDateTime(widget.selectedDate),
-//                       );
-//                       if (time != null) {
-//                         DateTime updatedDateTime = DateTime(
-//                           widget.selectedDate.year,
-//                           widget.selectedDate.month,
-//                           widget.selectedDate.day,
-//                           time.hour,
-//                           time.minute,
-//                         );
-//                         widget.onNotificationUpdate(updatedDateTime,
-//                             isSmsSelected, isEmailSelected, isPushSelected);
-//                       }
-//                     },
-//                     borderRadius: BorderRadius.circular(8),
-//                     splashColor: Colors.indigoAccent.withOpacity(0.1),
-//                     child: Container(
-//                       padding: const EdgeInsets.symmetric(
-//                           horizontal: 12, vertical: 8),
-//                       decoration: BoxDecoration(
-//                         color: Colors.indigoAccent.withOpacity(0.1),
-//                         borderRadius: BorderRadius.circular(8),
-//                       ),
-//                       child: Row(
-//                         children: [
-//                           const Icon(Icons.access_time,
-//                               color: Colors.indigoAccent),
-//                           const SizedBox(width: 8),
-//                           Text(
-//                             DateFormat('HH:mm').format(widget.selectedDate),
-//                             style: const TextStyle(
-//                               fontSize: 16,
-//                               color: Colors.indigoAccent,
-//                               fontWeight: FontWeight.bold,
-//                             ),
-//                             overflow: TextOverflow.ellipsis,
-//                           ),
-//                         ],
-//                       ),
-//                     ),
-//                   ),
-//                 ),
-//               ],
-//             ),
-//             const SizedBox(height: 20),
-
-//             // Checkbox Row for SMS, Email, Push Notifications
-//             Row(
-//               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//               children: [
-//                 Flexible(
-//                   child: Column(
-//                     children: [
-//                       Checkbox(
-//                         value: isSmsSelected,
-//                         onChanged: (bool? value) {
-//                           setState(() {
-//                             isSmsSelected = value ?? false;
-//                           });
-//                           widget.onNotificationUpdate(widget.selectedDate,
-//                               isSmsSelected, isEmailSelected, isPushSelected);
-//                         },
-//                       ),
-//                       const Text('SMS'),
-//                     ],
-//                   ),
-//                 ),
-//                 Flexible(
-//                   child: Column(
-//                     children: [
-//                       Checkbox(
-//                         value: isEmailSelected,
-//                         onChanged: (bool? value) {
-//                           setState(() {
-//                             isEmailSelected = value ?? false;
-//                           });
-//                           widget.onNotificationUpdate(widget.selectedDate,
-//                               isSmsSelected, isEmailSelected, isPushSelected);
-//                         },
-//                       ),
-//                       const Text('Email'),
-//                     ],
-//                   ),
-//                 ),
-//                 Flexible(
-//                   child: Column(
-//                     children: [
-//                       Checkbox(
-//                         value: isPushSelected,
-//                         onChanged: (bool? value) {
-//                           setState(() {
-//                             isPushSelected = value ?? false;
-//                           });
-//                           widget.onNotificationUpdate(widget.selectedDate,
-//                               isSmsSelected, isEmailSelected, isPushSelected);
-//                         },
-//                       ),
-//                       const Text('Notificări Push'),
-//                     ],
-//                   ),
-//                 ),
-//               ],
-//             ),
-
-//             const Divider(height: 24),
-
-//             // Remove Notification Button
-//             Align(
-//               alignment: Alignment.centerRight,
-//               child: TextButton.icon(
-//                 onPressed: widget.onNotificationRemove,
-//                 icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
-//                 label: const Text(
-//                   'Sterge',
-//                   style: TextStyle(
-//                     color: Colors.redAccent,
-//                     fontSize: 14,
-//                     fontWeight: FontWeight.bold,
-//                   ),
-//                 ),
-//                 style: TextButton.styleFrom(
-//                   padding: EdgeInsets.zero,
-//                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-//                 ),
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
-
 import 'package:auto_asig/core/data/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class NotificationItem extends StatefulWidget {
   final int index;
-  final DateTime selectedDate;
-  final bool sms;
+  final DateTime expirationDate;
+  final bool monthBefore;
+  final bool weekBefore;
+  final bool dayBefore;
   final bool email;
   final bool push;
-  final void Function(DateTime, bool, bool, bool) onNotificationUpdate;
+  final void Function(bool monthBefore, bool weekBefore, bool dayBefore, bool email, bool push) onNotificationUpdate;
   final VoidCallback onNotificationRemove;
 
   const NotificationItem({
     super.key,
     required this.index,
-    required this.selectedDate,
-    required this.sms,
-    required this.email,
-    required this.push,
+    required this.expirationDate,
+    this.monthBefore = false,
+    this.weekBefore = false,
+    this.dayBefore = false,
+    this.email = false,
+    this.push = false,
     required this.onNotificationUpdate,
     required this.onNotificationRemove,
   });
@@ -292,16 +30,47 @@ class NotificationItem extends StatefulWidget {
 }
 
 class _NotificationItemState extends State<NotificationItem> {
-  late bool isSmsSelected;
   late bool isEmailSelected;
   late bool isPushSelected;
+  late bool isMonthBefore;
+  late bool isWeekBefore;
+  late bool isDayBefore;
 
   @override
   void initState() {
     super.initState();
-    isSmsSelected = widget.sms;
+    _syncWithWidget();
+  }
+
+  @override
+  void didUpdateWidget(NotificationItem oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Sync internal state when widget props change
+    if (oldWidget.email != widget.email ||
+        oldWidget.push != widget.push ||
+        oldWidget.monthBefore != widget.monthBefore ||
+        oldWidget.weekBefore != widget.weekBefore ||
+        oldWidget.dayBefore != widget.dayBefore) {
+      _syncWithWidget();
+    }
+  }
+
+  void _syncWithWidget() {
     isEmailSelected = widget.email;
     isPushSelected = widget.push;
+    isMonthBefore = widget.monthBefore;
+    isWeekBefore = widget.weekBefore;
+    isDayBefore = widget.dayBefore;
+  }
+
+  void _notifyUpdate() {
+    widget.onNotificationUpdate(
+      isMonthBefore,
+      isWeekBefore,
+      isDayBefore,
+      isEmailSelected,
+      isPushSelected,
+    );
   }
 
   @override
@@ -319,179 +88,127 @@ class _NotificationItemState extends State<NotificationItem> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Top Row with Title and Remove Button
-            Row(
+            const Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Notificare ${widget.index + 1}',
-                  style: const TextStyle(
+                  'Notificare',
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
                   ),
                 ),
-                IconButton(
-                  onPressed: widget.onNotificationRemove,
-                  icon: const Icon(
-                    Icons.close_rounded,
-                  ),
-                  splashRadius: 20,
-                ),
               ],
             ),
+            const SizedBox(height: 12),
 
-            // Row for Date Picker and Time Picker
-            Row(
-              children: [
-                Expanded(
-                  flex: 3,
-                  child: InkWell(
-                    onTap: () async {
-                      DateTime? newDate = await showDatePicker(
-                        context: context,
-                        initialDate:
-                            widget.selectedDate.isBefore(DateTime.now())
-                                ? DateTime.now()
-                                : widget.selectedDate,
-                        firstDate: DateTime.now(),
-                        lastDate: DateTime(2101),
-                      );
-
-                      if (newDate != null) {
-                        widget.onNotificationUpdate(
-                          newDate,
-                          isSmsSelected,
-                          isEmailSelected,
-                          isPushSelected,
-                        );
-                      }
-                    },
-                    borderRadius: BorderRadius.circular(8),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.calendar_today_outlined,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          DateFormat('dd.MM.yyyy').format(widget.selectedDate),
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: buttonBlue,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  flex: 2,
-                  child: InkWell(
-                    onTap: () async {
-                      TimeOfDay? time = await showTimePicker(
-                        context: context,
-                        initialTime:
-                            TimeOfDay.fromDateTime(widget.selectedDate),
-                      );
-                      if (time != null) {
-                        DateTime updatedDateTime = DateTime(
-                          widget.selectedDate.year,
-                          widget.selectedDate.month,
-                          widget.selectedDate.day,
-                          time.hour,
-                          time.minute,
-                        );
-                        widget.onNotificationUpdate(updatedDateTime,
-                            isSmsSelected, isEmailSelected, isPushSelected);
-                      }
-                    },
-                    borderRadius: BorderRadius.circular(8),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.access_time,
-                        ),
-                        const SizedBox(width: 8),
-                        Text(
-                          DateFormat('HH:mm').format(widget.selectedDate),
-                          style: const TextStyle(
-                            fontSize: 16,
-                            color: buttonBlue,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+            // Time Period Selection
+            const Text(
+              'Alege când să primești notificarea:',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
             ),
+            const SizedBox(height: 12),
+
+            // Checkbox for Month Before
+            CheckboxListTile(
+              value: isMonthBefore,
+              onChanged: (bool? value) {
+                setState(() {
+                  isMonthBefore = value ?? false;
+                });
+                _notifyUpdate();
+              },
+              title: const Text('O lună înainte'),
+              contentPadding: EdgeInsets.zero,
+              controlAffinity: ListTileControlAffinity.leading,
+            ),
+
+            // Checkbox for Week Before
+            CheckboxListTile(
+              value: isWeekBefore,
+              onChanged: (bool? value) {
+                setState(() {
+                  isWeekBefore = value ?? false;
+                });
+                _notifyUpdate();
+              },
+              title: const Text('O săptămână înainte'),
+              contentPadding: EdgeInsets.zero,
+              controlAffinity: ListTileControlAffinity.leading,
+            ),
+
+            // Checkbox for Day Before
+            CheckboxListTile(
+              value: isDayBefore,
+              onChanged: (bool? value) {
+                setState(() {
+                  isDayBefore = value ?? false;
+                });
+                _notifyUpdate();
+              },
+              title: const Text('O zi înainte'),
+              contentPadding: EdgeInsets.zero,
+              controlAffinity: ListTileControlAffinity.leading,
+            ),
+
             const SizedBox(height: 20),
+            const Divider(),
+            const SizedBox(height: 12),
 
-            // Checkbox Row for SMS, Email, Push Notifications
+            // Notification Type Selection
+            const Text(
+              'Tip notificare:',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Colors.black87,
+              ),
+            ),
+            const SizedBox(height: 8),
+
+            // Checkbox Row for Email and Push Notifications
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Flexible(
-                  child: Column(
-                    children: [
-                      Checkbox(
-                        value: isPushSelected,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            isPushSelected = value ?? false;
-                          });
-                          widget.onNotificationUpdate(widget.selectedDate,
-                              isSmsSelected, isEmailSelected, isPushSelected);
-                        },
-                      ),
-                      const Text('Notificări Push'),
-                    ],
+                  child: CheckboxListTile(
+                    value: isPushSelected,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        isPushSelected = value ?? false;
+                      });
+                      _notifyUpdate();
+                    },
+                    title: const Text(
+                      'Push',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    contentPadding: EdgeInsets.zero,
+                    controlAffinity: ListTileControlAffinity.leading,
                   ),
                 ),
                 Flexible(
-                  child: Column(
-                    children: [
-                      Checkbox(
-                        value: isEmailSelected,
-                        onChanged: (bool? value) {
-                          setState(() {
-                            isEmailSelected = value ?? false;
-                          });
-                          widget.onNotificationUpdate(widget.selectedDate,
-                              isSmsSelected, isEmailSelected, isPushSelected);
-                        },
-                      ),
-                      const Text('Email'),
-                    ],
+                  child: CheckboxListTile(
+                    value: isEmailSelected,
+                    onChanged: (bool? value) {
+                      setState(() {
+                        isEmailSelected = value ?? false;
+                      });
+                      _notifyUpdate();
+                    },
+                    title: const Text(
+                      'Email',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    contentPadding: EdgeInsets.zero,
+                    controlAffinity: ListTileControlAffinity.leading,
                   ),
                 ),
-                // We're not sending sms notifications in v.1
-                // Flexible(
-                //   child: Column(
-                //     children: [
-                //       Checkbox(
-                //         value: isSmsSelected,
-                //         onChanged: (bool? value) {
-                //           setState(() {
-                //             isSmsSelected = value ?? false;
-                //           });
-                //           widget.onNotificationUpdate(widget.selectedDate,
-                //               isSmsSelected, isEmailSelected, isPushSelected);
-                //         },
-                //       ),
-                //       const Text(
-                //         'SMS',
-                //         style: TextStyle(
-                //           color: Colors.black,
-                //           fontFamily: 'Poppins',
-                //         ),
-                //       ),
-                //     ],
-                //   ),
-                // ),
               ],
             ),
           ],
