@@ -1,5 +1,6 @@
 import 'package:auto_asig/core/app/router.dart';
 import 'package:auto_asig/core/cubit/user_data_cubit.dart';
+import 'package:auto_asig/core/data/assistants.dart';
 import 'package:auto_asig/feature/home/presentation/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -235,11 +236,7 @@ class EditCarScreen extends StatelessWidget {
               // Close loading dialog
               Navigator.of(context).pop();
 
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Vehiculul a fost actualizat cu succes.'),
-                ),
-              );
+              showSuccessSnackbar(context,'Vehiculul a fost actualizat cu succes.');
 
               // Navigate back to home
               context.go(HomeScreen.path);

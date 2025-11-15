@@ -262,10 +262,10 @@ class _ReminderScreenState extends State<ReminderScreen> {
             try {
               if (widget.reminder == null) {
                 await context.read<IdCardsCubit>().save(userId, widget.type);
-                showInfoSnackbar(context, 'Reminder salvat cu succes');
+                showSuccessSnackbar(context, 'Reminder salvat cu succes');
               } else {
                 await context.read<IdCardsCubit>().update(userId, widget.reminder!.id, widget.type);
-                showInfoSnackbar(context, 'Reminder actualizat cu succes');
+                showSuccessSnackbar(context, 'Reminder actualizat cu succes');
               }
 
               Navigator.of(context).pop();
