@@ -40,9 +40,9 @@ class BottomSheetNotification extends StatelessWidget {
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            'Notificare ${index + 1}',
-            style: const TextStyle(fontWeight: FontWeight.bold),
+          const Text(
+            'Notificare',
+            style: TextStyle(fontWeight: FontWeight.bold),
           ),
           IconButton(
             icon: const Icon(Icons.close, color: Colors.red),
@@ -100,13 +100,6 @@ class BottomSheetNotification extends StatelessWidget {
               const Text('Data Notificării: '),
               Text(
                 '${notification.date.day}-${notification.date.month}-${notification.date.year}',
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const Text(', ora: '),
-              Text(
-                '${notification.date.hour}:${notification.date.minute}',
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                 ),

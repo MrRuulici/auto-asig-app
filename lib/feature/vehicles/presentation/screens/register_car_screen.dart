@@ -401,7 +401,7 @@ class _RegisterCarScreenState extends State<RegisterCarScreen> {
                 return;
               }
 
-              showInfoSnackbar(context, 'Vehiculul a fost înregistrat cu succes.');
+              showSuccessSnackbar(context, 'Vehiculul a fost înregistrat cu succes.');
 
               // Navigate to home
               context.go(HomeScreen.path);

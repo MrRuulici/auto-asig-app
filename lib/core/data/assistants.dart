@@ -347,6 +347,19 @@ PaymentType getPaymentType(String period) {
   }
 }
 
+void showSuccessSnackbar(BuildContext context, String message) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      backgroundColor: Colors.green.shade700,
+      behavior: SnackBarBehavior.floating,
+      content: Text(
+        message,
+        style: const TextStyle(fontSize: theFontSize, color: Colors.white),
+      ),
+    ),
+  );
+}
+
 void showInfoSnackbar(BuildContext context, String message) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(

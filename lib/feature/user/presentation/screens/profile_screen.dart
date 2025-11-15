@@ -102,7 +102,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          backgroundColor: Colors.grey,
+          backgroundColor: Colors.green,
           content: Text('Profil actualizat cu succes')),
       );
       Future.delayed(const Duration(milliseconds: 500), () {
