@@ -17,6 +17,9 @@ class CarInfoState extends Equatable {
     this.distributionJournalEntry,
     this.breaksJournalEntry,
     this.serviceJournalEntry,
+    this.journalEntriesService = const [],
+    this.journalEntriesBreaks = const [],
+    this.journalEntriesDistribution = const [],
   });
 
   final String carNr;
@@ -34,10 +37,15 @@ class CarInfoState extends Equatable {
   final List<NotificationModel> notificationsRovinieta;
   final List<NotificationModel> notificationsTahograf;
 
-  // Journal
+  // Journal - old single entries (kept for compatibility)
   final JournalEntry? distributionJournalEntry;
   final JournalEntry? breaksJournalEntry;
   final JournalEntry? serviceJournalEntry;
+
+  // Journal - new lists for multiple entries
+  final List<JournalEntry> journalEntriesService;
+  final List<JournalEntry> journalEntriesBreaks;
+  final List<JournalEntry> journalEntriesDistribution;
 
   CarInfoState copyWith({
     String? carNr,
@@ -52,6 +60,9 @@ class CarInfoState extends Equatable {
     List<NotificationModel>? notificationsCASCO,
     List<NotificationModel>? notificationsRovinieta,
     List<NotificationModel>? notificationsTahograf,
+    List<JournalEntry>? journalEntriesService,
+    List<JournalEntry>? journalEntriesBreaks,
+    List<JournalEntry>? journalEntriesDistribution,
   }) {
     return CarInfoState(
       carNr: carNr ?? this.carNr,
@@ -70,6 +81,12 @@ class CarInfoState extends Equatable {
           notificationsRovinieta ?? this.notificationsRovinieta,
       notificationsTahograf:
           notificationsTahograf ?? this.notificationsTahograf,
+      distributionJournalEntry: distributionJournalEntry,
+      breaksJournalEntry: breaksJournalEntry,
+      serviceJournalEntry: serviceJournalEntry,
+      journalEntriesService: journalEntriesService ?? this.journalEntriesService,
+      journalEntriesBreaks: journalEntriesBreaks ?? this.journalEntriesBreaks,
+      journalEntriesDistribution: journalEntriesDistribution ?? this.journalEntriesDistribution,
     );
   }
 
@@ -93,6 +110,12 @@ class CarInfoState extends Equatable {
       notificationsCASCO: clearCASCO ? [] : notificationsCASCO,
       notificationsRovinieta: clearRovinieta ? [] : notificationsRovinieta,
       notificationsTahograf: clearTahograf ? [] : notificationsTahograf,
+      distributionJournalEntry: distributionJournalEntry,
+      breaksJournalEntry: breaksJournalEntry,
+      serviceJournalEntry: serviceJournalEntry,
+      journalEntriesService: journalEntriesService,
+      journalEntriesBreaks: journalEntriesBreaks,
+      journalEntriesDistribution: journalEntriesDistribution,
     );
   }
 
@@ -110,5 +133,8 @@ class CarInfoState extends Equatable {
         notificationsCASCO,
         notificationsRovinieta,
         notificationsTahograf,
+        journalEntriesService,
+        journalEntriesBreaks,
+        journalEntriesDistribution,
       ];
 }

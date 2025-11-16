@@ -101,21 +101,51 @@ class VehicleReminderList extends StatelessWidget {
                           textStyle: const TextStyle(
                             fontSize: 16,
                           ),
-                          onPressed: () {
-                            // Retrieve the VehicleJournalsCubit and set the vehicleId
+                          onPressed: () async {
                             final cubit = context.read<VehicleJournalsCubit>();
                             final userId =
                                 context.read<UserDataCubit>().state.member.id;
 
-                            cubit.fetchAllJournalsForVehicle(
-                              userId: userId,
-                              vehicleId: vehicleReminder.id,
-                              carModel: vehicleReminder.carModel,
-                              carLicense: vehicleReminder.registrationNumber,
+                            // Show loading dialog
+                            showDialog(
+                              context: context,
+                              barrierDismissible: false,
+                              builder: (context) => const Center(
+                                child: CircularProgressIndicator(),
+                              ),
                             );
 
-                            // Code for editing the vehicle
-                            context.push(VehicleJournalScreen.absolutePath);
+                            try {
+                              // Wait for the fetch to complete
+                              await cubit.fetchAllJournalsForVehicle(
+                                userId: userId,
+                                vehicleId: vehicleReminder.id,
+                                carModel: vehicleReminder.carModel,
+                                carLicense: vehicleReminder.registrationNumber,
+                              );
+
+                              // Close loading dialog
+                              if (context.mounted) {
+                                Navigator.of(context).pop();
+
+                                // Navigate to the journal screen
+                                context.push(VehicleJournalScreen.absolutePath);
+                              }
+                            } catch (e) {
+                              // Close loading dialog
+                              if (context.mounted) {
+                                Navigator.of(context).pop();
+
+                                // Show error message
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                        'Eroare la încărcarea jurnalului: $e'),
+                                    backgroundColor: Colors.red,
+                                  ),
+                                );
+                              }
+                            }
                           },
                           text: 'Vezi Jurnal',
                         ),
