@@ -34,7 +34,7 @@ class CarInfoCubit extends Cubit<CarInfoState> {
     }
 
     List<NotificationModel> notificationsToUse;
-    
+
     if (state.notificationsITP.isEmpty) {
       // First time setting expiration date - create default notification
       int notifId = await NotificationHelper.generateUniqueNotificationId();
@@ -55,7 +55,7 @@ class CarInfoCubit extends Cubit<CarInfoState> {
       notificationsToUse = state.notificationsITP
           .where((notification) => notification.date.isBefore(date))
           .toList();
-      
+
       if (notificationsToUse.isEmpty) {
         int notifId = await NotificationHelper.generateUniqueNotificationId();
         notificationsToUse = [
@@ -85,7 +85,7 @@ class CarInfoCubit extends Cubit<CarInfoState> {
     }
 
     List<NotificationModel> notificationsToUse;
-    
+
     if (state.notificationsRCA.isEmpty) {
       int notifId = await NotificationHelper.generateUniqueNotificationId();
       notificationsToUse = [
@@ -104,7 +104,7 @@ class CarInfoCubit extends Cubit<CarInfoState> {
       notificationsToUse = state.notificationsRCA
           .where((notification) => notification.date.isBefore(date))
           .toList();
-      
+
       if (notificationsToUse.isEmpty) {
         int notifId = await NotificationHelper.generateUniqueNotificationId();
         notificationsToUse = [
@@ -134,7 +134,7 @@ class CarInfoCubit extends Cubit<CarInfoState> {
     }
 
     List<NotificationModel> notificationsToUse;
-    
+
     if (state.notificationsCASCO.isEmpty) {
       int notifId = await NotificationHelper.generateUniqueNotificationId();
       notificationsToUse = [
@@ -153,7 +153,7 @@ class CarInfoCubit extends Cubit<CarInfoState> {
       notificationsToUse = state.notificationsCASCO
           .where((notification) => notification.date.isBefore(date))
           .toList();
-      
+
       if (notificationsToUse.isEmpty) {
         int notifId = await NotificationHelper.generateUniqueNotificationId();
         notificationsToUse = [
@@ -183,7 +183,7 @@ class CarInfoCubit extends Cubit<CarInfoState> {
     }
 
     List<NotificationModel> notificationsToUse;
-    
+
     if (state.notificationsRovinieta.isEmpty) {
       int notifId = await NotificationHelper.generateUniqueNotificationId();
       notificationsToUse = [
@@ -202,7 +202,7 @@ class CarInfoCubit extends Cubit<CarInfoState> {
       notificationsToUse = state.notificationsRovinieta
           .where((notification) => notification.date.isBefore(date))
           .toList();
-      
+
       if (notificationsToUse.isEmpty) {
         int notifId = await NotificationHelper.generateUniqueNotificationId();
         notificationsToUse = [
@@ -232,7 +232,7 @@ class CarInfoCubit extends Cubit<CarInfoState> {
     }
 
     List<NotificationModel> notificationsToUse;
-    
+
     if (state.notificationsTahograf.isEmpty) {
       int notifId = await NotificationHelper.generateUniqueNotificationId();
       notificationsToUse = [
@@ -251,7 +251,7 @@ class CarInfoCubit extends Cubit<CarInfoState> {
       notificationsToUse = state.notificationsTahograf
           .where((notification) => notification.date.isBefore(date))
           .toList();
-      
+
       if (notificationsToUse.isEmpty) {
         int notifId = await NotificationHelper.generateUniqueNotificationId();
         notificationsToUse = [
@@ -287,7 +287,7 @@ class CarInfoCubit extends Cubit<CarInfoState> {
   ) {
     List<NotificationModel> notifications;
     DateTime? expirationDate;
-    
+
     // Get the appropriate notification list and expiration date
     switch (type) {
       case VehicleNotificationType.ITP:
@@ -303,20 +303,23 @@ class CarInfoCubit extends Cubit<CarInfoState> {
         expirationDate = state.expirationDateCASCO;
         break;
       case VehicleNotificationType.Rovinieta:
-        notifications = List<NotificationModel>.from(state.notificationsRovinieta);
+        notifications =
+            List<NotificationModel>.from(state.notificationsRovinieta);
         expirationDate = state.expirationDateRovinieta;
         break;
       case VehicleNotificationType.Tahograf:
-        notifications = List<NotificationModel>.from(state.notificationsTahograf);
+        notifications =
+            List<NotificationModel>.from(state.notificationsTahograf);
         expirationDate = state.expirationDateTahograf;
         break;
     }
-    
+
     if (expirationDate == null) return;
-    
+
     // Simply update the flags on the existing notification
     notifications[index] = NotificationModel(
-      date: expirationDate.subtract(const Duration(days: 1)), // Keep a reference date
+      date: expirationDate
+          .subtract(const Duration(days: 1)), // Keep a reference date
       sms: false,
       email: email,
       push: push,
@@ -325,7 +328,7 @@ class CarInfoCubit extends Cubit<CarInfoState> {
       weekBefore: weekBefore,
       dayBefore: dayBefore,
     );
-    
+
     // Emit the updated state based on type
     switch (type) {
       case VehicleNotificationType.ITP:
@@ -420,12 +423,13 @@ class CarInfoCubit extends Cubit<CarInfoState> {
     DateTime? expirationDate,
   ) async {
     if (expirationDate == null) return [];
-    
+
     List<NotificationModel> expandedNotifications = [];
-    
+
     for (var notification in notifications) {
       if (notification.monthBefore ?? false) {
-        final monthBeforeDate = expirationDate.subtract(const Duration(days: 30));
+        final monthBeforeDate =
+            expirationDate.subtract(const Duration(days: 30));
         if (monthBeforeDate.isAfter(DateTime.now())) {
           expandedNotifications.add(
             NotificationModel(
@@ -433,7 +437,8 @@ class CarInfoCubit extends Cubit<CarInfoState> {
               sms: false,
               email: notification.email,
               push: notification.push,
-              notificationId: await NotificationHelper.generateUniqueNotificationId(),
+              notificationId:
+                  await NotificationHelper.generateUniqueNotificationId(),
               monthBefore: true,
               weekBefore: false,
               dayBefore: false,
@@ -441,7 +446,7 @@ class CarInfoCubit extends Cubit<CarInfoState> {
           );
         }
       }
-      
+
       if (notification.weekBefore ?? false) {
         final weekBeforeDate = expirationDate.subtract(const Duration(days: 7));
         if (weekBeforeDate.isAfter(DateTime.now())) {
@@ -451,7 +456,8 @@ class CarInfoCubit extends Cubit<CarInfoState> {
               sms: false,
               email: notification.email,
               push: notification.push,
-              notificationId: await NotificationHelper.generateUniqueNotificationId(),
+              notificationId:
+                  await NotificationHelper.generateUniqueNotificationId(),
               monthBefore: false,
               weekBefore: true,
               dayBefore: false,
@@ -459,7 +465,7 @@ class CarInfoCubit extends Cubit<CarInfoState> {
           );
         }
       }
-      
+
       if (notification.dayBefore ?? false) {
         final dayBeforeDate = expirationDate.subtract(const Duration(days: 1));
         if (dayBeforeDate.isAfter(DateTime.now())) {
@@ -469,7 +475,8 @@ class CarInfoCubit extends Cubit<CarInfoState> {
               sms: false,
               email: notification.email,
               push: notification.push,
-              notificationId: await NotificationHelper.generateUniqueNotificationId(),
+              notificationId:
+                  await NotificationHelper.generateUniqueNotificationId(),
               monthBefore: false,
               weekBefore: false,
               dayBefore: true,
@@ -480,6 +487,80 @@ class CarInfoCubit extends Cubit<CarInfoState> {
     }
 
     return expandedNotifications.map((n) => n.toMap()).toList();
+  }
+
+  void addTemporaryJournalEntry(
+      JournalEntryType type, DateTime date, int kilometers) {
+    // Create a temporary entry with a placeholder ID
+    final entry = JournalEntry(
+      entryId: DateTime.now().millisecondsSinceEpoch.toString(),
+      name: _getJournalNameFromType(type),
+      createdAt: Timestamp.now(),
+      editedAt: Timestamp.now(),
+      type: type,
+      date: date,
+      kms: kilometers,
+    );
+
+    List<JournalEntry> updatedEntries;
+
+    switch (type) {
+      case JournalEntryType.service:
+        updatedEntries = [...state.journalEntriesService, entry];
+        emit(state.copyWith(journalEntriesService: updatedEntries));
+        break;
+      case JournalEntryType.breaks:
+        updatedEntries = [...state.journalEntriesBreaks, entry];
+        emit(state.copyWith(journalEntriesBreaks: updatedEntries));
+        break;
+      case JournalEntryType.distribution:
+        updatedEntries = [...state.journalEntriesDistribution, entry];
+        emit(state.copyWith(journalEntriesDistribution: updatedEntries));
+        break;
+      case JournalEntryType.other:
+        break;
+    }
+  }
+
+  /// Remove a temporary journal entry (before car is saved)
+  void removeTemporaryJournalEntry(JournalEntryType type, String entryId) {
+    List<JournalEntry> updatedEntries;
+
+    switch (type) {
+      case JournalEntryType.service:
+        updatedEntries = state.journalEntriesService
+            .where((e) => e.entryId != entryId)
+            .toList();
+        emit(state.copyWith(journalEntriesService: updatedEntries));
+        break;
+      case JournalEntryType.breaks:
+        updatedEntries = state.journalEntriesBreaks
+            .where((e) => e.entryId != entryId)
+            .toList();
+        emit(state.copyWith(journalEntriesBreaks: updatedEntries));
+        break;
+      case JournalEntryType.distribution:
+        updatedEntries = state.journalEntriesDistribution
+            .where((e) => e.entryId != entryId)
+            .toList();
+        emit(state.copyWith(journalEntriesDistribution: updatedEntries));
+        break;
+      case JournalEntryType.other:
+        break;
+    }
+  }
+
+  String _getJournalNameFromType(JournalEntryType type) {
+    switch (type) {
+      case JournalEntryType.service:
+        return 'Service';
+      case JournalEntryType.breaks:
+        return 'Plăcuțe frână';
+      case JournalEntryType.distribution:
+        return 'Transmisie';
+      case JournalEntryType.other:
+        return 'Altele';
+    }
   }
 
   // Add Car logic with notification expansion
@@ -594,6 +675,36 @@ class CarInfoCubit extends Cubit<CarInfoState> {
       breaksJournal: breaksJournal,
       serviceJournal: serviceJournal,
     );
+
+    String carName = state.vehicleModel.replaceAll(' ', '');
+    String vehicleId = '${state.carNr}-$carName';
+
+    // Add all service entries
+    for (var entry in state.journalEntriesService) {
+      await addJournalEntry(
+        userId: userId,
+        vehicleId: vehicleId,
+        newEntry: entry,
+      );
+    }
+
+    // Add all breaks entries
+    for (var entry in state.journalEntriesBreaks) {
+      await addJournalEntry(
+        userId: userId,
+        vehicleId: vehicleId,
+        newEntry: entry,
+      );
+    }
+
+    // Add all distribution entries
+    for (var entry in state.journalEntriesDistribution) {
+      await addJournalEntry(
+        userId: userId,
+        vehicleId: vehicleId,
+        newEntry: entry,
+      );
+    }
     return true;
   }
 

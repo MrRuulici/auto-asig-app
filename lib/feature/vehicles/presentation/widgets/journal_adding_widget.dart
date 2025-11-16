@@ -31,17 +31,17 @@ class JournalAddingWidget extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          Text(
-            // selectedDate != null
-            //     ? DateFormat('dd.MM.yyyy').format(selectedDate!)
-            //     :
-            'Adaugă',
-            style: const TextStyle(
-              // fontSize: 16,
-              color: buttonBlue,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
+          // Text(
+          //   // selectedDate != null
+          //   //     ? DateFormat('dd.MM.yyyy').format(selectedDate!)
+          //   //     :
+          //   'Adaugă',
+          //   style: const TextStyle(
+          //     // fontSize: 16,
+          //     color: buttonBlue,
+          //     fontWeight: FontWeight.bold,
+          //   ),
+          // ),
         ],
       ),
     );
