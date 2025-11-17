@@ -1,14 +1,18 @@
+// feature/home/presentation/screens/home_screen.dart
+
 import 'package:auto_asig/core/cubit/user_data_cubit.dart';
 import 'package:auto_asig/core/data/constants.dart';
 import 'package:auto_asig/core/widgets/auto_asig_appbar.dart';
 import 'package:auto_asig/core/widgets/auto_asig_drawer.dart';
 import 'package:auto_asig/feature/add/presentation/screens/add_screen.dart';
+import 'package:auto_asig/feature/home/presentation/cubit/feedback_cubit.dart';
 import 'package:auto_asig/feature/home/presentation/cubit/home_screen_cubit.dart';
 import 'package:auto_asig/feature/home/presentation/cubit/home_screen_state.dart';
 import 'package:auto_asig/feature/home/presentation/cubit/reminder_cubit.dart';
 import 'package:auto_asig/feature/home/presentation/cubit/reminder_state.dart';
 import 'package:auto_asig/feature/home/presentation/cubit/unified_cubit.dart';
 import 'package:auto_asig/feature/home/presentation/cubit/unified_state.dart';
+import 'package:auto_asig/feature/home/presentation/screens/feedback_screen.dart';
 import 'package:auto_asig/feature/home/presentation/screens/reminder_list.dart';
 import 'package:auto_asig/feature/home/presentation/screens/vehicle_reminder_list.dart';
 import 'package:auto_asig/feature/home/presentation/widgets/home_bottom_navigation_bar.dart';
@@ -43,80 +47,87 @@ class HomeScreen extends StatelessWidget {
       homeCubit.initialize();
     }
 
-    return Scaffold(
-      backgroundColor: backgroundGreyColor,
-      appBar: AlliatAppBar(),
-      //drawer: const AutoAsigDrawer(),
-      body: BlocListener<HomeScreenCubit, HomeScreenState>(
-        listener: (context, state) async {
-          if (state.activeTab == HomeScreenTabState.personal) {
-            reminderCubit.fetchReminders(userId);
-          } else if (state.activeTab == HomeScreenTabState.vehicles) {
-            reminderCubit.fetchVehicleReminders(userId);
-          } else if (state.activeTab == HomeScreenTabState.support) {
-            // Todo - load the support chat screen
-          } else if (state.activeTab == HomeScreenTabState.home) {
-            final unifiedCubit = context.read<UnifiedCubit>();
-            await unifiedCubit.initialize(userId);
-          }
-        },
-        child: BlocBuilder<HomeScreenCubit, HomeScreenState>(
-          builder: (context, homeState) {
-            if (homeState.activeTab == HomeScreenTabState.home) {
-              // For unified view, use UnifiedCubit instead of ReminderCubit
-              return BlocBuilder<UnifiedCubit, UnifiedState>(
-                builder: (context, unifiedState) {
-                  if (unifiedState.reminders == null &&
-                      unifiedState.vehicleReminders == null) {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => FeedbackCubit(),
+        ),
+      ],
+      child: Scaffold(
+        backgroundColor: backgroundGreyColor,
+        appBar: AlliatAppBar(),
+        //drawer: const AutoAsigDrawer(),
+        body: BlocListener<HomeScreenCubit, HomeScreenState>(
+          listener: (context, state) async {
+            if (state.activeTab == HomeScreenTabState.personal) {
+              reminderCubit.fetchReminders(userId);
+            } else if (state.activeTab == HomeScreenTabState.vehicles) {
+              reminderCubit.fetchVehicleReminders(userId);
+            } else if (state.activeTab == HomeScreenTabState.support) {
+              // Support tab is now handled in the builder below
+            } else if (state.activeTab == HomeScreenTabState.home) {
+              final unifiedCubit = context.read<UnifiedCubit>();
+              await unifiedCubit.initialize(userId);
+            }
+          },
+          child: BlocBuilder<HomeScreenCubit, HomeScreenState>(
+            builder: (context, homeState) {
+              if (homeState.activeTab == HomeScreenTabState.home) {
+                // For unified view, use UnifiedCubit instead of ReminderCubit
+                return BlocBuilder<UnifiedCubit, UnifiedState>(
+                  builder: (context, unifiedState) {
+                    if (unifiedState.reminders == null &&
+                        unifiedState.vehicleReminders == null) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    return const UnifiedReminderList();
+                  },
+                );
+              } else if (homeState.activeTab == HomeScreenTabState.support) {
+                // Show ChatPage directly
+                return const ChatPage();
+              }
+
+              // For other tabs, use ReminderCubit as before
+              return BlocBuilder<ReminderCubit, ReminderState>(
+                builder: (context, reminderState) {
+                  if (reminderState is ReminderLoading) {
                     return const Center(child: CircularProgressIndicator());
+                  } else if (reminderState is ReminderError) {
+                    return Center(child: Text(reminderState.message));
+                  } else if (reminderState is ReminderLoaded) {
+                    if (homeState.activeTab == HomeScreenTabState.personal) {
+                      return const ReminderList();
+                    } else if (homeState.activeTab ==
+                        HomeScreenTabState.vehicles) {
+                      return const VehicleReminderList();
+                    } else {
+                      return const Center(child: Text('Eroare necunoscuta.'));
+                    }
+                  } else {
+                    return const Center(
+                      child: Text('Eroare necunoscuta.'),
+                    );
                   }
-                  return const UnifiedReminderList();
                 },
               );
-            }
-
-            // For other tabs, use ReminderCubit as before
-            return BlocBuilder<ReminderCubit, ReminderState>(
-              builder: (context, reminderState) {
-                if (reminderState is ReminderLoading) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (reminderState is ReminderError) {
-                  return Center(child: Text(reminderState.message));
-                } else if (reminderState is ReminderLoaded) {
-                  if (homeState.activeTab == HomeScreenTabState.personal) {
-                    return const ReminderList();
-                  } else if (homeState.activeTab ==
-                      HomeScreenTabState.vehicles) {
-                    return const VehicleReminderList();
-                  } else if (homeState.activeTab ==
-                      HomeScreenTabState.support) {
-                    return const Center(child: Text('Chat support'));
-                  } else {
-                    return const Center(child: Text('Eroare necunoscuta.'));
-                  }
-                } else {
-                  return const Center(
-                    child: Text('Eroare necunoscuta.'),
-                  );
-                }
-              },
-            );
+            },
+          ),
+        ),
+        bottomNavigationBar: HomeBottomNavigationBar(homeCubit: homeCubit),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            // FAB logic
+            context.push(AddScreen.absolutePath);
           },
+          backgroundColor: logoBlue,
+          child: const Icon(
+            Icons.add,
+            color: Colors.white,
+          ),
         ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       ),
-      bottomNavigationBar: HomeBottomNavigationBar(homeCubit: homeCubit),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // FAB logic
-          context.push(AddScreen.absolutePath);
-        },
-        backgroundColor: logoBlue,
-        child: const Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }
 }
