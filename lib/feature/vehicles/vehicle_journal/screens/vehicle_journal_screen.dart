@@ -1,4 +1,5 @@
 import 'package:auto_asig/core/cubit/user_data_cubit.dart';
+import 'package:auto_asig/core/data/constants.dart';
 import 'package:auto_asig/core/widgets/auto_asig_appbar.dart';
 import 'package:auto_asig/feature/home/presentation/screens/home_screen.dart';
 import 'package:auto_asig/feature/vehicles/vehicle_journal/cubit/vehicle_journals_cubit.dart';
@@ -15,6 +16,7 @@ class VehicleJournalScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AlliatAppBar(),
       body: BlocBuilder<VehicleJournalsCubit, VehicleJournalsState>(
         builder: (context, state) {
@@ -36,20 +38,72 @@ class VehicleJournalScreen extends StatelessWidget {
               );
             }
 
-            return ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: journals.length,
-              itemBuilder: (context, index) {
-                final journalType = journals.keys.elementAt(index);
-                final entries = journals[journalType]!;
-                final vehicleId = '${state.carLicense}-${state.carModel}';
+            return Column(
+              children: [
+                // Header with car info
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [logoBlue, logoBlue.withOpacity(0.8)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.blue.withOpacity(0.2),
+                        spreadRadius: 3,
+                        blurRadius: 6,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        state.carLicense.toUpperCase(),
+                        style: const TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                          fontFamily: 'Poppins',
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        state.carModel.toUpperCase(),
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                          fontFamily: 'Poppins',
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                
+                // Journal list
+                Expanded(
+                  child: ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: journals.length,
+                    itemBuilder: (context, index) {
+                      final journalType = journals.keys.elementAt(index);
+                      final entries = journals[journalType]!;
+                      final vehicleId = '${state.carLicense}-${state.carModel}';
 
-                return JournalCategory(
-                  type: journalType,
-                  entries: entries,
-                  vehicleId: vehicleId, // Pass the vehicleId dynamically
-                );
-              },
+                      return JournalCategory(
+                        type: journalType,
+                        entries: entries,
+                        vehicleId: vehicleId,
+                      );
+                    },
+                  ),
+                ),
+              ],
             );
           } else {
             return const Center(child: CircularProgressIndicator());
@@ -59,8 +113,6 @@ class VehicleJournalScreen extends StatelessWidget {
     );
   }
 }
-
-
 
 // class VehicleJournalScreen extends StatelessWidget {
 //   const VehicleJournalScreen({super.key});

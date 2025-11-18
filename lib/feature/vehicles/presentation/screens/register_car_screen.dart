@@ -309,17 +309,27 @@ class _RegisterCarScreenState extends State<RegisterCarScreen> {
                 const Divider(),
                 const SizedBox(height: 20),
 
-                const SizedBox(
+                // Dynamic Journal Title - Updates based on vehicle model
+                SizedBox(
                   width: double.maxFinite,
-                  child: Text(
-                    'Jurnal (Marca Model)',
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: logoBlue,
-                      fontFamily: 'Poppins',
-                      fontWeight: FontWeight.w900,
-                    ),
-                    textAlign: TextAlign.start,
+                  child: ValueListenableBuilder<TextEditingValue>(
+                    valueListenable: vehicleModelController,
+                    builder: (context, value, child) {
+                      final displayText = value.text.isEmpty 
+                          ? '(Marca Model)' 
+                          : '(${value.text})';
+                      
+                      return Text(
+                        'Jurnal $displayText',
+                        style: const TextStyle(
+                          fontSize: 20,
+                          color: logoBlue,
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w900,
+                        ),
+                        textAlign: TextAlign.start,
+                      );
+                    },
                   ),
                 ),
                 const SizedBox(height: 20),
