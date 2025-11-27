@@ -53,6 +53,8 @@ ios/GoogleService-Info.plist
 lib/firebase_options.dart
 lib/core/data/email_data.dart
 .lh/lib/core/data/email_data.dart.json
+android/app/src/main/res/values/strings.xml
+ios/Runner/Secrets.xcconfig
 .env
 .env.local
 .env.*

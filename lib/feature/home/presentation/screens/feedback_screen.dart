@@ -14,7 +14,7 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  final _subjectController = TextEditingController(text: 'Feedback Aplicație');
+  final _subjectController = TextEditingController(text: 'Ce putem îmbunătăți?');
   final _bodyController = TextEditingController();
 
   @override
