@@ -235,6 +235,7 @@ class VehicleReminderList extends StatelessWidget {
           actionText: 'Detalii',
           notifications: notifications,
           isExpired: remainingTime < 0,
+          vehicleReminder: vehicleReminder,
         ),
       );
     }

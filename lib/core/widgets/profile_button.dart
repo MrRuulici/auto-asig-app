@@ -13,8 +13,7 @@ class ProfileButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final userData = context.read<UserDataCubit>().state;
-
-    print("profile picture: " + userData.member.profilePictureUrl);
+    
     // Determine which image to show
     ImageProvider profileImage;
     if (userData.member.profilePictureUrl.isNotEmpty &&

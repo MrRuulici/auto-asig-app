@@ -167,7 +167,7 @@ class NotifItem extends StatelessWidget {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text(
-                              'Notificarea a fost ștearsă cu succes',
+                              'Documentul a fost șters cu succes',
                               style: TextStyle(
                                 color: Colors.white,
                               ),

@@ -36,77 +36,120 @@ class BottomSheetNotification extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          const Text(
-            'Notificare',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          IconButton(
-            icon: const Icon(Icons.close, color: Colors.red),
-            onPressed: () {
-              if (nrOfNotifications <= 1) {
-                Navigator.pop(context);
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content:
-                        Text('Trebuie să păstrezi cel puțin o notificare.'),
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header with title and delete button
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Notificare',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
                   ),
-                );
-                return;
-              }
-
-              // Show confirmation dialog
-              showDeletionConfirmation(
-                context,
-                title: 'Șterge Notificare',
-                content:
-                    'Ești sigur că dorești să ștergi această notificare? Această acțiune este ireversibilă.',
-                onConfirm: () {
-                  // Remove the notification
-                  context.read<BottomSheetDetailsCubit>().removeNotification(
-                        index,
-                      );
-                },
-              );
-            },
-          ),
-        ],
-      ),
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              // _buildStatusIcon(notification.sms),
-              // const SizedBox(width: 8),
-              // const Text('SMS'),
-              //const SizedBox(width: 16),
-              _buildStatusIcon(notification.email),
-              const SizedBox(width: 8),
-              const Text('Email'),
-              const SizedBox(width: 16),
-              _buildStatusIcon(notification.push),
-              const SizedBox(width: 8),
-              const Text('Push'),
-            ],
-          ),
-          const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              const Text('Data Notificării: '),
-              Text(
-                '${notification.date.day}-${notification.date.month}-${notification.date.year}',
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
                 ),
+                // IconButton(
+                //   icon: const Icon(Icons.close, color: Colors.red),
+                //   onPressed: () {
+                //     if (nrOfNotifications <= 1) {
+                //       Navigator.pop(context);
+                //       ScaffoldMessenger.of(context).showSnackBar(
+                //         const SnackBar(
+                //           content: Text('Trebuie să păstrezi cel puțin o notificare.'),
+                //         ),
+                //       );
+                //       return;
+                //     }
+
+                //     // Show confirmation dialog
+                //     showDeletionConfirmation(
+                //       context,
+                //       title: 'Șterge Notificare',
+                //       content: 'Ești sigur că dorești să ștergi această notificare? Această acțiune este ireversibilă.',
+                //       onConfirm: () {
+                //         // Remove the notification
+                //         context.read<BottomSheetDetailsCubit>().removeNotification(index);
+                //       },
+                //     );
+                //   },
+                // ),
+              ],
+            ),
+            
+            const Divider(),
+            const SizedBox(height: 8),
+
+            // Notification channels (Email, Push)
+            const Text(
+              'Tip notificare:',
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
               ),
-            ],
-          ),
-        ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                _buildStatusIcon(notification.email),
+                const SizedBox(width: 8),
+                const Text('Email'),
+                const SizedBox(width: 16),
+                _buildStatusIcon(notification.push),
+                const SizedBox(width: 8),
+                const Text('Push'),
+              ],
+            ),
+            
+            const SizedBox(height: 16),
+            const Divider(),
+            const SizedBox(height: 8),
+
+            // Notification timing (read-only with icons)
+            const Text(
+              'Dată notificări:',
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontSize: 14,
+              ),
+            ),
+            const SizedBox(height: 8),
+
+            // Month Before
+            Row(
+              children: [
+                _buildStatusIcon(notification.monthBefore),
+                const SizedBox(width: 8),
+                const Text('Cu o lună înainte'),
+              ],
+            ),
+            const SizedBox(height: 10),
+
+            // Week Before
+            Row(
+              children: [
+                _buildStatusIcon(notification.weekBefore),
+                const SizedBox(width: 8),
+                const Text('Cu o săptămână înainte'),
+              ],
+            ),
+            const SizedBox(height: 10),
+
+            // Day Before
+            Row(
+              children: [
+                _buildStatusIcon(notification.dayBefore),
+                const SizedBox(width: 8),
+                const Text('Cu o zi înainte'),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

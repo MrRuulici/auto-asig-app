@@ -110,7 +110,7 @@ class UnifiedReminderList extends StatelessWidget {
                             .inDays;
                         vehicleCards.add(
                           VehicleReminderCards(
-                            reminderId: '${vehicleReminder.id}-ITP',
+                            reminderId: vehicleReminder.id,
                             title: 'ITP',
                             subtitle:
                                 '${vehicleReminder.registrationNumber} - ${vehicleReminder.carModel}',
@@ -119,6 +119,7 @@ class UnifiedReminderList extends StatelessWidget {
                             notifications: vehicleReminder.notificationsITP,
                             isExpired: vehicleReminder.expirationDateITP!
                                 .isBefore(DateTime.now()),
+                            vehicleReminder: vehicleReminder,
                           ),
                         );
                       }
@@ -129,7 +130,7 @@ class UnifiedReminderList extends StatelessWidget {
                             .inDays;
                         vehicleCards.add(
                           VehicleReminderCards(
-                            reminderId: '${vehicleReminder.id}-RCA',
+                            reminderId: vehicleReminder.id,
                             title: 'RCA',
                             subtitle:
                                 '${vehicleReminder.registrationNumber} - ${vehicleReminder.carModel}',
@@ -138,6 +139,7 @@ class UnifiedReminderList extends StatelessWidget {
                             notifications: vehicleReminder.notificationsRCA,
                             isExpired: vehicleReminder.expirationDateRCA!
                                 .isBefore(DateTime.now()),
+                            vehicleReminder: vehicleReminder,
                           ),
                         );
                       }
@@ -148,13 +150,14 @@ class UnifiedReminderList extends StatelessWidget {
                             .inDays;
                         vehicleCards.add(
                           VehicleReminderCards(
-                            reminderId: '${vehicleReminder.id}-CASCO',
+                            reminderId: vehicleReminder.id,
                             title: 'CASCO',
                             subtitle:
                                 '${vehicleReminder.registrationNumber} - ${vehicleReminder.carModel}',
                             progressValue: remainingTime.abs(),
                             actionText: 'Detalii',
                             notifications: vehicleReminder.notificationsCASCO,
+                            vehicleReminder: vehicleReminder,
                             isExpired: vehicleReminder.expirationDateCASCO!
                                 .isBefore(DateTime.now()),
                           ),
@@ -167,13 +170,14 @@ class UnifiedReminderList extends StatelessWidget {
                             .inDays;
                         vehicleCards.add(
                           VehicleReminderCards(
-                            reminderId: '${vehicleReminder.id}-Rovinieta',
+                            reminderId: vehicleReminder.id,
                             title: 'Rovinieta',
                             subtitle:
                                 '${vehicleReminder.registrationNumber} - ${vehicleReminder.carModel}',
                             progressValue: remainingTime.abs(),
                             actionText: 'Detalii',
                             notifications: vehicleReminder.notificationsRovinieta,
+                            vehicleReminder: vehicleReminder,
                             isExpired: vehicleReminder.expirationDateRovinieta!
                                 .isBefore(DateTime.now()),
                           ),
@@ -186,13 +190,14 @@ class UnifiedReminderList extends StatelessWidget {
                             .inDays;
                         vehicleCards.add(
                           VehicleReminderCards(
-                            reminderId: '${vehicleReminder.id}-Tahograf',
+                            reminderId: vehicleReminder.id,
                             title: 'Tahograf',
                             subtitle:
                                 '${vehicleReminder.registrationNumber} - ${vehicleReminder.carModel}',
                             progressValue: remainingTime.abs(),
                             actionText: 'Detalii',
                             notifications: vehicleReminder.notificationsTahograf,
+                            vehicleReminder: vehicleReminder,
                             isExpired: vehicleReminder.expirationDateTahograf!
                                 .isBefore(DateTime.now()),
                           ),

@@ -10,36 +10,40 @@ class EditJournalEntryCubit extends Cubit<EditJournalEntryState> {
   late final TextEditingController nameController;
   late final TextEditingController kmsController;
 
-  EditJournalEntryCubit()
-      : super(EditJournalEntryState(
-          entry: JournalEntry(
-            entryId: '',
-            name: '',
-            createdAt: Timestamp.now(),
-            editedAt: Timestamp.now(),
-            type: JournalEntryType.other,
-            date: DateTime.now(),
-            kms: 0,
-          ),
-          vehicleId: '',
-        )) {
-    // Initialize controllers
-    nameController = TextEditingController(text: state.entry.name)
-      ..addListener(() {
-        updateName(nameController.text);
-      });
-    kmsController = TextEditingController(text: state.entry.kms.toString())
-      ..addListener(() {
-        updateKms(int.tryParse(kmsController.text) ?? 0);
-      });
-  }
+EditJournalEntryCubit()
+    : super(EditJournalEntryState(
+        entry: JournalEntry(
+          entryId: '',
+          name: '',
+          createdAt: Timestamp.now(),
+          editedAt: Timestamp.now(),
+          type: JournalEntryType.other,
+          date: DateTime.now(),
+          kms: 0,
+        ),
+        vehicleId: '',
+      )) {
+  // Initialize controllers
+  nameController = TextEditingController(text: state.entry.name)
+    ..addListener(() {
+      updateName(nameController.text);
+    });
+  kmsController = TextEditingController()
+    ..addListener(() {
+      if (kmsController.text.isNotEmpty) {
+        updateKms(int.tryParse(kmsController.text) ?? 1);
+      } else {
+        updateKms(1); 
+      }
+    });
+}
 
-  void initializeEntry(JournalEntry entry, String vehicleId) {
-    emit(state.copyWith(entry: entry, vehicleId: vehicleId));
-    nameController.text = entry.name;
-    kmsController.text = entry.kms.toString();
-  }
-
+void initializeEntry(JournalEntry entry, String vehicleId) {
+  emit(state.copyWith(entry: entry, vehicleId: vehicleId));
+  nameController.text = entry.name;
+  // Show value only if greater than 0
+  kmsController.text = entry.kms > 0 ? entry.kms.toString() : '';
+}
   void updateType(JournalEntryType type) {
     emit(state.copyWith(
       entry: state.entry.copyWith(type: type),
