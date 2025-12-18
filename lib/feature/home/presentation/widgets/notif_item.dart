@@ -141,10 +141,24 @@ class NotifItem extends StatelessWidget {
                     progressValue: days,
                     initialNotifications: reminder.notificationDates,
                     onEditCallback: (p0) {
-                      // Navigate to edit screen
+                      // Determine the correct path based on reminder type
+                      String typePath;
+                      switch (reminder.type) {
+                        case ReminderType.idCard:
+                          typePath = 'idCard';
+                          break;
+                        case ReminderType.passport:
+                          typePath = 'passport';
+                          break;
+                        case ReminderType.drivingLicense:
+                          typePath = 'drivingLicense';
+                          break;
+                      }
+
+                      // Navigate to edit screen with correct type
                       context
                           .push(
-                        '${ReminderScreen.absolutePath}/idCard',
+                        '${ReminderScreen.absolutePath}/$typePath',
                         extra: reminder,
                       )
                           .then((_) async {
