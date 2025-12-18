@@ -32,18 +32,16 @@ class HomeScreen extends StatelessWidget {
     final homeCubit = context.read<HomeScreenCubit>();
     final reminderCubit = context.read<ReminderCubit>();
 
-    if (homeCubit.state.activeTab == HomeScreenTabState.home &&
-        !homeCubit.state.isInitialized) {
-      final unifiedCubit = context.read<UnifiedCubit>();
-      unifiedCubit.initialize(userId);
-      homeCubit.initialize();
-    } else if (homeCubit.state.activeTab == HomeScreenTabState.personal &&
-        !homeCubit.state.isInitialized) {
-      reminderCubit.fetchReminders(userId);
-      homeCubit.initialize();
-    } else if (homeCubit.state.activeTab == HomeScreenTabState.vehicles &&
-        !homeCubit.state.isInitialized) {
-      reminderCubit.fetchVehicleReminders(userId);
+    // Initial load only
+    if (!homeCubit.state.isInitialized) {
+      if (homeCubit.state.activeTab == HomeScreenTabState.home) {
+        final unifiedCubit = context.read<UnifiedCubit>();
+        unifiedCubit.initialize(userId);
+      } else if (homeCubit.state.activeTab == HomeScreenTabState.personal) {
+        reminderCubit.fetchReminders(userId);
+      } else if (homeCubit.state.activeTab == HomeScreenTabState.vehicles) {
+        reminderCubit.fetchVehicleReminders(userId);
+      }
       homeCubit.initialize();
     }
 
@@ -54,17 +52,20 @@ class HomeScreen extends StatelessWidget {
         ),
       ],
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: backgroundGreyColor,
         appBar: AlliatAppBar(),
-        //drawer: const AutoAsigDrawer(),
         body: BlocListener<HomeScreenCubit, HomeScreenState>(
+          listenWhen: (previous, current) {
+            // Only listen when the tab actually changes
+            return previous.activeTab != current.activeTab;
+          },
           listener: (context, state) async {
+            // This only fires when switching tabs, not on initial load
             if (state.activeTab == HomeScreenTabState.personal) {
               reminderCubit.fetchReminders(userId);
             } else if (state.activeTab == HomeScreenTabState.vehicles) {
               reminderCubit.fetchVehicleReminders(userId);
-            } else if (state.activeTab == HomeScreenTabState.support) {
-              // Support tab is now handled in the builder below
             } else if (state.activeTab == HomeScreenTabState.home) {
               final unifiedCubit = context.read<UnifiedCubit>();
               await unifiedCubit.initialize(userId);
@@ -73,7 +74,6 @@ class HomeScreen extends StatelessWidget {
           child: BlocBuilder<HomeScreenCubit, HomeScreenState>(
             builder: (context, homeState) {
               if (homeState.activeTab == HomeScreenTabState.home) {
-                // For unified view, use UnifiedCubit instead of ReminderCubit
                 return BlocBuilder<UnifiedCubit, UnifiedState>(
                   builder: (context, unifiedState) {
                     if (unifiedState.reminders == null &&
@@ -84,11 +84,9 @@ class HomeScreen extends StatelessWidget {
                   },
                 );
               } else if (homeState.activeTab == HomeScreenTabState.support) {
-                // Show ChatPage directly
                 return const ChatPage();
               }
 
-              // For other tabs, use ReminderCubit as before
               return BlocBuilder<ReminderCubit, ReminderState>(
                 builder: (context, reminderState) {
                   if (reminderState is ReminderLoading) {
@@ -117,7 +115,6 @@ class HomeScreen extends StatelessWidget {
         bottomNavigationBar: HomeBottomNavigationBar(homeCubit: homeCubit),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            // FAB logic
             context.push(AddScreen.absolutePath);
           },
           backgroundColor: logoBlue,

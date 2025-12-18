@@ -47,7 +47,7 @@ class NotificationModel {
   // Convert NotificationModel to a Map for Firestore
   Map<String, dynamic> toMap() {
     return {
-      'date': date,
+      'date': Timestamp.fromDate(date),
       'sms': sms,
       'email': email,
       'push': push,

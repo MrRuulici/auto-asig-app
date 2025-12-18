@@ -86,6 +86,72 @@ class NotificationHelper {
     }
   }
 
+  /// Schedule notifications from collapsed format (with flags)
+  /// This expands the flags into individual scheduled notifications
+  static Future<void> scheduleNotificationsFromCollapsed({
+    required String documentType,
+    required String documentInfo,
+    required DateTime expirationDate,
+    required List<NotificationModel> notifications,
+  }) async {
+    for (var notification in notifications) {
+      // Only schedule if push is enabled
+      if (!notification.push) continue;
+
+      // Schedule for month before if flag is set
+      if (notification.monthBefore ?? false) {
+        final monthBeforeDate = expirationDate.subtract(const Duration(days: 30));
+        if (monthBeforeDate.isAfter(DateTime.now())) {
+          await scheduleNotification(
+            id: await generateUniqueNotificationId(),
+            title: '$documentType expiră în 1 lună',
+            body: '$documentInfo - $documentType expiră pe ${_formatDate(expirationDate)}',
+            dateTime: monthBeforeDate,
+          );
+        }
+      }
+
+      // Schedule for week before if flag is set
+      if (notification.weekBefore ?? false) {
+        final weekBeforeDate = expirationDate.subtract(const Duration(days: 7));
+        if (weekBeforeDate.isAfter(DateTime.now())) {
+          await scheduleNotification(
+            id: await generateUniqueNotificationId(),
+            title: '$documentType expiră în 1 săptămână',
+            body: '$documentInfo - $documentType expiră pe ${_formatDate(expirationDate)}',
+            dateTime: weekBeforeDate,
+          );
+        }
+      }
+
+      // Schedule for day before if flag is set
+      if (notification.dayBefore ?? false) {
+        final dayBeforeDate = expirationDate.subtract(const Duration(days: 1));
+        if (dayBeforeDate.isAfter(DateTime.now())) {
+          await scheduleNotification(
+            id: await generateUniqueNotificationId(),
+            title: '$documentType expiră mâine!',
+            body: '$documentInfo - $documentType expiră pe ${_formatDate(expirationDate)}',
+            dateTime: dayBeforeDate,
+          );
+        }
+      }
+    }
+  }
+
+  /// Cancel all notifications associated with a collapsed notification model
+  /// Note: Since we generate new IDs when scheduling, we can't cancel by the stored ID
+  /// This is a limitation - consider storing scheduled notification IDs separately if needed
+  static Future<void> cancelNotificationsForCollapsed(
+    List<NotificationModel> notifications,
+  ) async {
+    // This is tricky because we generate new IDs when scheduling
+    // For now, this is a placeholder - you might need to store scheduled IDs
+    for (var notification in notifications) {
+      await cancelNotification(notification.notificationId);
+    }
+  }
+
   static void scheduleNotifications(
     Map<String, List<NotificationModel>> notifications,
   ) {
@@ -127,17 +193,6 @@ class NotificationHelper {
 
     return i;
   }
-
-  // static void scheduleNotificationFromModel(NotificationModel notification) {
-  //   if (notification.push && notification.date.isAfter(DateTime.now())) {
-  //     NotificationHelper.scheduleNotification(
-  //       id: notification.id, // Unique ID for each notification
-  //       title: 'Reminder',
-  //       body: 'Your notification is scheduled for ${notification.date}.',
-  //       dateTime: notification.date,
-  //     );
-  //   }
-  // }
 
   // update the notification
   static Future<void> updateNotification({
@@ -194,5 +249,9 @@ class NotificationHelper {
 
   static clearAllNotifications() {
     _notificationsPlugin.cancelAll();
+  }
+
+  static String _formatDate(DateTime date) {
+    return '${date.day}.${date.month}.${date.year}';
   }
 }

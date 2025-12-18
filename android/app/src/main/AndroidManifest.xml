@@ -7,7 +7,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     
     <application
-        android:label="Alliat Asigurari"
+        android:label="Alliat"
         android:name="${applicationName}"
         android:enableOnBackInvokedCallback="true"
         android:icon="@mipmap/ic_launcher">

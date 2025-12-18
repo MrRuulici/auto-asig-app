@@ -417,77 +417,77 @@ class CarInfoCubit extends Cubit<CarInfoState> {
     }
   }
 
-  // Helper method to expand notifications based on flags
-  Future<List<Map<String, dynamic>>> _expandNotifications(
-    List<NotificationModel> notifications,
-    DateTime? expirationDate,
-  ) async {
-    if (expirationDate == null) return [];
+  // // Helper method to expand notifications based on flags
+  // Future<List<Map<String, dynamic>>> _expandNotifications(
+  //   List<NotificationModel> notifications,
+  //   DateTime? expirationDate,
+  // ) async {
+  //   if (expirationDate == null) return [];
 
-    List<NotificationModel> expandedNotifications = [];
+  //   List<NotificationModel> expandedNotifications = [];
 
-    for (var notification in notifications) {
-      if (notification.monthBefore ?? false) {
-        final monthBeforeDate =
-            expirationDate.subtract(const Duration(days: 30));
-        if (monthBeforeDate.isAfter(DateTime.now())) {
-          expandedNotifications.add(
-            NotificationModel(
-              date: monthBeforeDate,
-              sms: false,
-              email: notification.email,
-              push: notification.push,
-              notificationId:
-                  await NotificationHelper.generateUniqueNotificationId(),
-              monthBefore: true,
-              weekBefore: false,
-              dayBefore: false,
-            ),
-          );
-        }
-      }
+  //   for (var notification in notifications) {
+  //     if (notification.monthBefore ?? false) {
+  //       final monthBeforeDate =
+  //           expirationDate.subtract(const Duration(days: 30));
+  //       if (monthBeforeDate.isAfter(DateTime.now())) {
+  //         expandedNotifications.add(
+  //           NotificationModel(
+  //             date: monthBeforeDate,
+  //             sms: false,
+  //             email: notification.email,
+  //             push: notification.push,
+  //             notificationId:
+  //                 await NotificationHelper.generateUniqueNotificationId(),
+  //             monthBefore: true,
+  //             weekBefore: false,
+  //             dayBefore: false,
+  //           ),
+  //         );
+  //       }
+  //     }
 
-      if (notification.weekBefore ?? false) {
-        final weekBeforeDate = expirationDate.subtract(const Duration(days: 7));
-        if (weekBeforeDate.isAfter(DateTime.now())) {
-          expandedNotifications.add(
-            NotificationModel(
-              date: weekBeforeDate,
-              sms: false,
-              email: notification.email,
-              push: notification.push,
-              notificationId:
-                  await NotificationHelper.generateUniqueNotificationId(),
-              monthBefore: false,
-              weekBefore: true,
-              dayBefore: false,
-            ),
-          );
-        }
-      }
+  //     if (notification.weekBefore ?? false) {
+  //       final weekBeforeDate = expirationDate.subtract(const Duration(days: 7));
+  //       if (weekBeforeDate.isAfter(DateTime.now())) {
+  //         expandedNotifications.add(
+  //           NotificationModel(
+  //             date: weekBeforeDate,
+  //             sms: false,
+  //             email: notification.email,
+  //             push: notification.push,
+  //             notificationId:
+  //                 await NotificationHelper.generateUniqueNotificationId(),
+  //             monthBefore: false,
+  //             weekBefore: true,
+  //             dayBefore: false,
+  //           ),
+  //         );
+  //       }
+  //     }
 
-      if (notification.dayBefore ?? false) {
-        final dayBeforeDate = expirationDate.subtract(const Duration(days: 1));
-        if (dayBeforeDate.isAfter(DateTime.now())) {
-          expandedNotifications.add(
-            NotificationModel(
-              date: dayBeforeDate,
-              sms: false,
-              email: notification.email,
-              push: notification.push,
-              notificationId:
-                  await NotificationHelper.generateUniqueNotificationId(),
-              monthBefore: false,
-              weekBefore: false,
-              dayBefore: true,
-            ),
-          );
-        }
-      }
-    }
+  //     if (notification.dayBefore ?? false) {
+  //       final dayBeforeDate = expirationDate.subtract(const Duration(days: 1));
+  //       if (dayBeforeDate.isAfter(DateTime.now())) {
+  //         expandedNotifications.add(
+  //           NotificationModel(
+  //             date: dayBeforeDate,
+  //             sms: false,
+  //             email: notification.email,
+  //             push: notification.push,
+  //             notificationId:
+  //                 await NotificationHelper.generateUniqueNotificationId(),
+  //             monthBefore: false,
+  //             weekBefore: false,
+  //             dayBefore: true,
+  //           ),
+  //         );
+  //       }
+  //     }
+  //   }
 
-    return expandedNotifications.map((n) => n.toMap()).toList();
-  }
+  //   return expandedNotifications.map((n) => n.toMap()).toList();
+  // }
 
   void addTemporaryJournalEntry(
       JournalEntryType type, DateTime date, int kilometers) {
@@ -563,7 +563,7 @@ class CarInfoCubit extends Cubit<CarInfoState> {
     }
   }
 
-  // Add Car logic with notification expansion
+// Add Car logic without notification expansion
   Future<bool> addCar(String userId) async {
     print('Adding car info for user: $userId');
     print('Car number: ${state.carNr}');
@@ -580,52 +580,42 @@ class CarInfoCubit extends Cubit<CarInfoState> {
       return false;
     }
 
-    // Expand notifications for each type
-    List<Map<String, dynamic>> expandedITP = await _expandNotifications(
-      state.notificationsITP,
-      state.expirationDateITP,
-    );
-    List<Map<String, dynamic>> expandedRCA = await _expandNotifications(
-      state.notificationsRCA,
-      state.expirationDateRCA,
-    );
-    List<Map<String, dynamic>> expandedCASCO = await _expandNotifications(
-      state.notificationsCASCO,
-      state.expirationDateCASCO,
-    );
-    List<Map<String, dynamic>> expandedRovinieta = await _expandNotifications(
-      state.notificationsRovinieta,
-      state.expirationDateRovinieta,
-    );
-    List<Map<String, dynamic>> expandedTahograf = await _expandNotifications(
-      state.notificationsTahograf,
-      state.expirationDateTahograf,
-    );
+    // DON'T expand - just convert to map format
+    List<Map<String, dynamic>> notificationsITP =
+        state.notificationsITP.map((n) => n.toMap()).toList();
+    List<Map<String, dynamic>> notificationsRCA =
+        state.notificationsRCA.map((n) => n.toMap()).toList();
+    List<Map<String, dynamic>> notificationsCASCO =
+        state.notificationsCASCO.map((n) => n.toMap()).toList();
+    List<Map<String, dynamic>> notificationsRovinieta =
+        state.notificationsRovinieta.map((n) => n.toMap()).toList();
+    List<Map<String, dynamic>> notificationsTahograf =
+        state.notificationsTahograf.map((n) => n.toMap()).toList();
 
-    // Build the structured data with expiration dates and expanded notifications
+    // Build the structured data with expiration dates and collapsed notifications
     Map<String, dynamic> carInfo = {
       'carNr': state.carNr,
       'vehicleModel': state.vehicleModel,
       'expirationDates': {
         'RCA': {
           'date': state.expirationDateRCA,
-          'notifications': expandedRCA,
+          'notifications': notificationsRCA,
         },
         'ITP': {
           'date': state.expirationDateITP,
-          'notifications': expandedITP,
+          'notifications': notificationsITP,
         },
         'CASCO': {
           'date': state.expirationDateCASCO,
-          'notifications': expandedCASCO,
+          'notifications': notificationsCASCO,
         },
         'Rovinieta': {
           'date': state.expirationDateRovinieta,
-          'notifications': expandedRovinieta,
+          'notifications': notificationsRovinieta,
         },
         'Tahograf': {
           'date': state.expirationDateTahograf,
-          'notifications': expandedTahograf,
+          'notifications': notificationsTahograf,
         },
       },
     };
@@ -705,6 +695,63 @@ class CarInfoCubit extends Cubit<CarInfoState> {
         newEntry: entry,
       );
     }
+
+    // Schedule notifications for the new vehicle
+    final vehicleInfo = '${state.carNr} - ${state.vehicleModel}';
+
+    // Schedule ITP notifications
+    if (state.expirationDateITP != null && state.notificationsITP.isNotEmpty) {
+      await NotificationHelper.scheduleNotificationsFromCollapsed(
+        documentType: 'ITP',
+        documentInfo: vehicleInfo,
+        expirationDate: state.expirationDateITP!,
+        notifications: state.notificationsITP,
+      );
+    }
+
+    // Schedule RCA notifications
+    if (state.expirationDateRCA != null && state.notificationsRCA.isNotEmpty) {
+      await NotificationHelper.scheduleNotificationsFromCollapsed(
+        documentType: 'RCA',
+        documentInfo: vehicleInfo,
+        expirationDate: state.expirationDateRCA!,
+        notifications: state.notificationsRCA,
+      );
+    }
+
+    // Schedule CASCO notifications
+    if (state.expirationDateCASCO != null &&
+        state.notificationsCASCO.isNotEmpty) {
+      await NotificationHelper.scheduleNotificationsFromCollapsed(
+        documentType: 'CASCO',
+        documentInfo: vehicleInfo,
+        expirationDate: state.expirationDateCASCO!,
+        notifications: state.notificationsCASCO,
+      );
+    }
+
+    // Schedule Rovinieta notifications
+    if (state.expirationDateRovinieta != null &&
+        state.notificationsRovinieta.isNotEmpty) {
+      await NotificationHelper.scheduleNotificationsFromCollapsed(
+        documentType: 'Rovinieta',
+        documentInfo: vehicleInfo,
+        expirationDate: state.expirationDateRovinieta!,
+        notifications: state.notificationsRovinieta,
+      );
+    }
+
+    // Schedule Tahograf notifications
+    if (state.expirationDateTahograf != null &&
+        state.notificationsTahograf.isNotEmpty) {
+      await NotificationHelper.scheduleNotificationsFromCollapsed(
+        documentType: 'Tahograf',
+        documentInfo: vehicleInfo,
+        expirationDate: state.expirationDateTahograf!,
+        notifications: state.notificationsTahograf,
+      );
+    }
+
     return true;
   }
 

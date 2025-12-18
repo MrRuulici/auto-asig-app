@@ -1,8 +1,13 @@
 import 'package:auto_asig/core/data/assistants.dart';
 import 'package:auto_asig/core/data/constants.dart';
 import 'package:auto_asig/core/models/notification_model.dart';
+import 'package:auto_asig/core/models/vehicle_reminder.dart';
 import 'package:auto_asig/core/widgets/progress_colored_bar.dart';
+import 'package:auto_asig/feature/vehicles/presentation/cubit/edit_vehicle_reminder_cubit.dart';
+import 'package:auto_asig/feature/vehicles/presentation/screens/edit_car_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 class VehicleReminderCards extends StatelessWidget {
@@ -15,6 +20,8 @@ class VehicleReminderCards extends StatelessWidget {
   final List<NotificationModel> notifications;
   final String reminderId;
   final EdgeInsets? padding;
+  final VehicleReminder vehicleReminder;
+
 
   const VehicleReminderCards({
     super.key,
@@ -24,6 +31,7 @@ class VehicleReminderCards extends StatelessWidget {
     required this.notifications,
     required this.isExpired,
     required this.reminderId,
+    required this.vehicleReminder,
     this.subtitle,
     this.padding,
   });
@@ -110,8 +118,8 @@ class VehicleReminderCards extends StatelessWidget {
                         ),
                         GestureDetector(
                           onTap: () {
-                            // print('Reminder ID: $reminderId');
-                            // print('Notification Type: $title');
+                            print('Reminder ID: $reminderId');
+                            print('Notification Type: $title');
 
                             showDetailsBottomSheet(
                               context: context,
@@ -122,8 +130,14 @@ class VehicleReminderCards extends StatelessWidget {
                               reminderId: reminderId,
                               notificationType: title,
                               onEditCallback: (updatedNotifications) {
-                                // Todo - Load the Edit Info Screen.
-                              },
+                                // Initialize the cubit with the vehicle data
+                                context.read<EditVehicleReminderCubit>().initializeReminder(vehicleReminder);
+                                
+                                // Navigate to edit screen
+                                context.push(
+                                  EditCarScreen.absolutePath,
+                                  extra: vehicleReminder,
+                                );                              },
                             );
                           },
                           child: Row(

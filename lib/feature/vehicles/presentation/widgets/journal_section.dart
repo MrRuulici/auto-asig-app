@@ -22,6 +22,14 @@ class JournalSection extends StatelessWidget {
   });
 
   Future<void> _showDatePicker(BuildContext context) async {
+    // Unfocus any active text field before showing date picker
+    FocusScope.of(context).unfocus();
+
+    // Add a small delay to ensure unfocus completes
+    await Future.delayed(const Duration(milliseconds: 100));
+
+    if (!context.mounted) return;
+
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -46,9 +54,10 @@ class JournalSection extends StatelessWidget {
     }
   }
 
-  Future<void> _showKilometersDialog(BuildContext context, DateTime date) async {
+  Future<void> _showKilometersDialog(
+      BuildContext context, DateTime date) async {
     final TextEditingController kmController = TextEditingController();
-    
+
     return showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -83,7 +92,7 @@ class JournalSection extends StatelessWidget {
                 inputFormatters: [
                   FilteringTextInputFormatter.digitsOnly,
                 ],
-                autofocus: false,
+                autofocus: true,
               ),
             ],
           ),
@@ -122,7 +131,7 @@ class JournalSection extends StatelessWidget {
           onAdd: () => _showDatePicker(context),
         ),
         const SizedBox(height: 8),
-        
+
         // Display existing entries
         if (entries.isNotEmpty) ...[
           Padding(
@@ -137,7 +146,7 @@ class JournalSection extends StatelessWidget {
             ),
           ),
         ],
-        
+
         // Add entry button
         Padding(
           padding: const EdgeInsets.only(left: 8.0),

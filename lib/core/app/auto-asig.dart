@@ -1,6 +1,7 @@
 import 'package:auto_asig/core/data/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:auto_asig/core/app/router.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 class AutoAsig extends StatelessWidget {
   const AutoAsig({super.key});
@@ -17,11 +18,18 @@ class AutoAsig extends StatelessWidget {
           shape: CircleBorder(),
         ),
       ),
-      // onGenerateTitle: (context) => context.l10n.appName,
-      // localizationsDelegates: AppLocalizations.localizationsDelegates,
-      // supportedLocales: AppLocalizations.supportedLocales,
+      // Add localization support
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en', 'US'),
+        Locale('ro', 'RO'),
+      ],
+      locale: const Locale('ro', 'RO'), // Set Romanian as default
       routerConfig: appRouter,
-      // theme: lightTheme,
       builder: (context, child) {
         var finalChild = child!;
         return finalChild;

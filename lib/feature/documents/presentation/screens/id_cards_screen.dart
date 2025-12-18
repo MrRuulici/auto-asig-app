@@ -2,6 +2,7 @@ import 'package:auto_asig/core/cubit/user_data_cubit.dart';
 import 'package:auto_asig/core/data/assistants.dart';
 import 'package:auto_asig/core/data/constants.dart';
 import 'package:auto_asig/core/helpers/notification_helper.dart';
+import 'package:auto_asig/core/helpers/refresh_home_screen.dart';
 import 'package:auto_asig/core/models/notification_model.dart';
 import 'package:auto_asig/core/models/reminder.dart';
 import 'package:auto_asig/core/widgets/auto_asig_appbar.dart';
@@ -42,9 +43,9 @@ class _ReminderScreenState extends State<ReminderScreen> {
   @override
   void initState() {
     super.initState();
-    
+
     final idCardsCubit = context.read<IdCardsCubit>();
-    
+
     // Reset or initialize based on mode
     if (widget.reminder != null) {
       // Edit mode: initialize with existing data
@@ -136,7 +137,9 @@ class _ReminderScreenState extends State<ReminderScreen> {
                     ),
                   ),
                   onChanged: (value) {
-                    context.read<IdCardsCubit>().updateName(value.toUpperCase());
+                    context
+                        .read<IdCardsCubit>()
+                        .updateName(value.toUpperCase());
                   },
                 ),
 
@@ -161,7 +164,8 @@ class _ReminderScreenState extends State<ReminderScreen> {
                 // Notification Section - Only show if notifications exist
                 if (state.notificationDates.isEmpty)
                   Container(
-                    padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 30, horizontal: 20),
                     decoration: BoxDecoration(
                       color: Colors.grey[100],
                       borderRadius: BorderRadius.circular(15),
@@ -209,27 +213,34 @@ class _ReminderScreenState extends State<ReminderScreen> {
                         NotificationItem(
                           index: i,
                           expirationDate: state.expirationDate,
-                          monthBefore: state.notificationDates[i].monthBefore ?? false,
-                          weekBefore: state.notificationDates[i].weekBefore ?? false,
-                          dayBefore: state.notificationDates[i].dayBefore ?? false,
+                          monthBefore:
+                              state.notificationDates[i].monthBefore ?? false,
+                          weekBefore:
+                              state.notificationDates[i].weekBefore ?? false,
+                          dayBefore:
+                              state.notificationDates[i].dayBefore ?? false,
                           email: state.notificationDates[i].email,
                           push: state.notificationDates[i].push,
-                          onNotificationRemove: () =>
-                              context.read<IdCardsCubit>().removeNotification(context, i),
-                          onNotificationUpdate: (monthBefore, weekBefore, dayBefore, email, push) {
-                            context.read<IdCardsCubit>().updateNotificationPeriods(
-                              i,
-                              monthBefore,
-                              weekBefore,
-                              dayBefore,
-                              email,
-                              push,
-                            );
+                          onNotificationRemove: () => context
+                              .read<IdCardsCubit>()
+                              .removeNotification(context, i),
+                          onNotificationUpdate: (monthBefore, weekBefore,
+                              dayBefore, email, push) {
+                            context
+                                .read<IdCardsCubit>()
+                                .updateNotificationPeriods(
+                                  i,
+                                  monthBefore,
+                                  weekBefore,
+                                  dayBefore,
+                                  email,
+                                  push,
+                                );
                           },
                         ),
                     ],
                   ),
-                
+
                 const SizedBox(height: 20),
               ],
             );
@@ -244,14 +255,17 @@ class _ReminderScreenState extends State<ReminderScreen> {
               return;
             }
 
-            if (!checkIfDateIsInFuture(context.read<IdCardsCubit>().state.expirationDate)) {
-              showErrorSnackbar(context, 'Data expirarii trebuie sa fie in viitor');
+            if (!checkIfDateIsInFuture(
+                context.read<IdCardsCubit>().state.expirationDate)) {
+              showErrorSnackbar(
+                  context, 'Data expirarii trebuie sa fie in viitor');
               return;
             }
 
             // Validate that at least one notification exists
             if (context.read<IdCardsCubit>().state.notificationDates.isEmpty) {
-              showErrorSnackbar(context, 'Selectează o dată de expirare validă');
+              showErrorSnackbar(
+                  context, 'Selectează o dată de expirare validă');
               return;
             }
 
@@ -264,16 +278,23 @@ class _ReminderScreenState extends State<ReminderScreen> {
                 await context.read<IdCardsCubit>().save(userId, widget.type);
                 showSuccessSnackbar(context, 'Reminder salvat cu succes');
               } else {
-                await context.read<IdCardsCubit>().update(userId, widget.reminder!.id, widget.type);
+                await context
+                    .read<IdCardsCubit>()
+                    .update(userId, widget.reminder!.id, widget.type);
                 showSuccessSnackbar(context, 'Reminder actualizat cu succes');
               }
 
-              Navigator.of(context).pop();
+              Navigator.of(context).pop(); // Close loading dialog
+
+              // Refresh home screen data
+              await refreshHomeScreenData(context);
+
               context.go(HomeScreen.path);
             } catch (e) {
               Navigator.of(context).pop();
               print('Error at creating/updating reminder: $e');
-              showErrorSnackbar(context, 'Eroare la salvarea datelor. Te rugam sa incerci mai tarziu');
+              showErrorSnackbar(context,
+                  'Eroare la salvarea datelor. Te rugam sa incerci mai tarziu');
             }
           },
           text: widget.reminder == null ? 'SALVEAZĂ' : 'ACTUALIZEAZĂ',

@@ -63,26 +63,6 @@ class NoElements extends StatelessWidget {
                     ),
                   ),
                 ),
-                const TextSpan(
-                  text: ' sau una din iconițele ',
-                ),
-                const WidgetSpan(
-                  alignment: PlaceholderAlignment.middle,
-                  child: Icon(
-                    Icons.directions_car,
-                    color: logoBlue,
-                    size: 20,
-                  ),
-                ),
-                const TextSpan(text: ' sau '),
-                const WidgetSpan(
-                  alignment: PlaceholderAlignment.middle,
-                  child: Icon(
-                    Icons.person,
-                    color: logoBlue,
-                    size: 20,
-                  ),
-                ),
               ],
             ),
           ),
