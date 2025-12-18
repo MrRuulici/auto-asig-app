@@ -1,3 +1,4 @@
+import 'package:auto_asig/core/helpers/refresh_home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -17,6 +18,7 @@ class AddItemButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
+        refreshHomeScreenData(context);
         context.push(path);
       },
       child: Container(

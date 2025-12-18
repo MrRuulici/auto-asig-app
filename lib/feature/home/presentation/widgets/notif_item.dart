@@ -2,6 +2,7 @@ import 'package:auto_asig/core/cubit/user_data_cubit.dart';
 import 'package:auto_asig/core/data/assistants.dart';
 import 'package:auto_asig/core/data/constants.dart';
 import 'package:auto_asig/core/data/http_data.dart';
+import 'package:auto_asig/core/helpers/refresh_home_screen.dart';
 import 'package:auto_asig/core/models/reminder.dart';
 import 'package:auto_asig/core/widgets/progress_colored_bar.dart';
 import 'package:auto_asig/feature/documents/presentation/screens/id_cards_screen.dart';
@@ -140,11 +141,16 @@ class NotifItem extends StatelessWidget {
                     progressValue: days,
                     initialNotifications: reminder.notificationDates,
                     onEditCallback: (p0) {
-                      // Todo - Handle edit callback, e.g., update reminder
-                      context.push(
+                      // Navigate to edit screen
+                      context
+                          .push(
                         '${ReminderScreen.absolutePath}/idCard',
                         extra: reminder,
-                      );
+                      )
+                          .then((_) async {
+                        // Refresh after returning from edit screen
+                        await refreshHomeScreenData(context);
+                      });
                     },
                     onDeleteCallback: () async {
                       // show loading dialog
@@ -157,37 +163,23 @@ class NotifItem extends StatelessWidget {
                           userId, reminder.id, reminder.type);
 
                       // close loading dialog
-                      context.pop();
+                      Navigator.of(context).pop();
 
+                      // Show snackbar BEFORE closing bottom sheet
                       if (deleted) {
-                        // close the bottom sheet
-                        Navigator.of(context).pop();
-
-                        // show success snackbar
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              'Documentul a fost șters cu succes',
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                            backgroundColor: Colors.green,
-                          ),
-                        );
+                        showSuccessSnackbar(
+                            context, 'Notificarea a fost ștearsă cu succes');
                       } else {
-                        // show error snackbar
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              'A apărut o eroare la ștergerea documentului',
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
+                        showErrorSnackbar(context,
+                            'A apărut o eroare la ștergerea documentului');
+                      }
+
+                      // close bottom sheet AFTER showing snackbar
+                      Navigator.of(context).pop();
+
+                      // Refresh the reminder list after closing bottom sheet
+                      if (deleted && context.mounted) {
+                        await refreshHomeScreenData(context);
                       }
                     },
                   );
