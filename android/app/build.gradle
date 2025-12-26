@@ -12,16 +12,17 @@ plugins {
 android {
     namespace = "com.geektec.autoasig"
     // compileSdk = flutter.compileSdkVersion
-    compileSdk = 34
+    compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
     def keystoreProperties = new Properties()
-    def keystorePropertiesFile = rootProject.file("key.properties")
+    def keystorePropertiesFile = file("key.properties")
     if (keystorePropertiesFile.exists()) {
         keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
     }
 
     compileOptions {
+        coreLibraryDesugaringEnabled true
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
@@ -37,36 +38,36 @@ android {
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = 23
         // targetSdk = flutter.targetSdkVersion
-        targetSdk = 31
+        targetSdk = 35
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }
 
-    // buildTypes {
-    //     release {
-    //         // TODO: Add your own signing config for the release build.
-    //         // Signing with the debug keys for now, so `flutter run --release` works.
-    //         signingConfig = signingConfigs.debug
-    //     }
-    // }
-
-    //  signingConfigs {
-    //     release {
-    //         keyAlias keystoreProperties['keyAlias']
-    //         keyPassword keystoreProperties['keyPassword']
-    //         storeFile file(keystoreProperties['storeFile'])
-    //         storePassword keystoreProperties['storePassword']
-    //     }
-    // }
+    signingConfigs {
+        release {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+        }
+    }
 
     buildTypes {
         release {
-            // signingConfig signingConfigs.release
+            signingConfig signingConfigs.release
             minifyEnabled false
             shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib"
+
+    // Required for core library desugaring (flutter_local_notifications)
+    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:2.0.4"
+    // If AGP suggests a newer version (e.g. 2.1.x), you can use that instead.
 }
 
 flutter {

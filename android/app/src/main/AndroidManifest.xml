@@ -10,7 +10,7 @@
         android:label="Alliat"
         android:name="${applicationName}"
         android:enableOnBackInvokedCallback="true"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/launcher_icon">
         
         <!-- Facebook Configuration -->
         <meta-data 
