@@ -3,7 +3,7 @@ import 'package:auto_asig/feature/authentication/presentation/cubit/registration
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fl_country_code_picker/src/models/country_code.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+//import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class RegistrationCubit extends Cubit<RegistrationState> {
@@ -187,26 +187,26 @@ class RegistrationCubit extends Cubit<RegistrationState> {
     }
   }
 
-  Future<void> signInWithFacebook() async {
-  try {
-    emit(RegistrationLoading());
+//   Future<void> signInWithFacebook() async {
+//   try {
+//     emit(RegistrationLoading());
 
-    final LoginResult result = await FacebookAuth.instance.login();
+//     final LoginResult result = await FacebookAuth.instance.login();
 
-    if (result.status == LoginStatus.success) {
-      final accessToken = result.accessToken!.tokenString;
-      final facebookCredential = FacebookAuthProvider.credential(accessToken);
-      final userCredential =
-          await _firebaseAuth.signInWithCredential(facebookCredential);
+//     if (result.status == LoginStatus.success) {
+//       final accessToken = result.accessToken!.tokenString;
+//       final facebookCredential = FacebookAuthProvider.credential(accessToken);
+//       final userCredential =
+//           await _firebaseAuth.signInWithCredential(facebookCredential);
 
-      // Handle new user registration, emit success states, etc.
-      emit(RegistrationGoogleSuccess()); // or a new FacebookSuccess state
-    } else {
-      emit(RegistrationFailure('Facebook login failed or cancelled'));
-    }
-  } catch (e) {
-    emit(RegistrationFailure('Eroare la autentificarea Facebook: $e'));
-  }
-}
+//       // Handle new user registration, emit success states, etc.
+//       emit(RegistrationGoogleSuccess()); // or a new FacebookSuccess state
+//     } else {
+//       emit(RegistrationFailure('Facebook login failed or cancelled'));
+//     }
+//   } catch (e) {
+//     emit(RegistrationFailure('Eroare la autentificarea Facebook: $e'));
+//   }
+// }
 
 }

@@ -4,6 +4,7 @@ import 'package:auto_asig/feature/authentication/presentation/screens/create_acc
 import 'package:auto_asig/feature/authentication/presentation/screens/forgot_password_screen.dart';
 import 'package:auto_asig/feature/authentication/presentation/screens/login_screen.dart';
 import 'package:auto_asig/feature/authentication/presentation/screens/onboarding_screen.dart';
+import 'package:auto_asig/feature/user/presentation/screens/norification_test_screen.dart';
 import 'package:auto_asig/feature/user/presentation/screens/profile_screen.dart';
 import 'package:auto_asig/feature/vehicles/presentation/screens/edit_car_screen.dart';
 import 'package:auto_asig/feature/vehicles/presentation/screens/register_car_screen.dart';
@@ -87,6 +88,11 @@ final appRouter = GoRouter(
         ),
       ],
     ),
+    // Add notification test route here
+    GoRoute(
+      path: '/notification-test',
+      builder: (context, state) => const NotificationTestScreen(),
+    ),
     GoRoute(
       path: HomeScreen.path,
       builder: (context, state) => const HomeScreen(),
@@ -107,22 +113,23 @@ final appRouter = GoRouter(
           path: EditCarScreen.path,
           builder: (context, state) => const EditCarScreen(),
         ),
-         GoRoute(
+        GoRoute(
           path: ProfileScreen.path,
           builder: (context, state) => const ProfileScreen(),
         ),
         GoRoute(
-            path: VehicleJournalScreen.path,
-            builder: (context, state) => const VehicleJournalScreen(),
-            routes: [
-              GoRoute(
-                path: EditJournalEntryScreen.path,
-                builder: (context, state) {
-                  final JournalEntry entry = state.extra as JournalEntry;
-                  return const EditJournalEntryScreen();
-                },
-              ),
-            ]),
+          path: VehicleJournalScreen.path,
+          builder: (context, state) => const VehicleJournalScreen(),
+          routes: [
+            GoRoute(
+              path: EditJournalEntryScreen.path,
+              builder: (context, state) {
+                final JournalEntry entry = state.extra as JournalEntry;
+                return const EditJournalEntryScreen();
+              },
+            ),
+          ],
+        ),
         GoRoute(
           path: '${ReminderScreen.path}/:type',
           builder: (context, state) {

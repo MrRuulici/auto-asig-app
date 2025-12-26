@@ -1,51 +1,153 @@
 import 'dart:math';
+import 'dart:io' show Platform;
 
 import 'package:auto_asig/core/models/notification_model.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/timezone.dart' as tz;
-import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:permission_handler/permission_handler.dart';
 
 class NotificationHelper {
   static final FlutterLocalNotificationsPlugin _notificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
-  // Initialize notifications
+  /// Initialize notifications with proper permissions and settings
   static Future<void> initialize() async {
-    // Initialize TimeZone database
-    tz.initializeTimeZones();
+    await _configureLocalTimeZone();
 
     // Define settings for Android
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
 
-    // Define settings for iOS
-    const DarwinInitializationSettings initializationSettingsIOS =
-        DarwinInitializationSettings();
+    // Define settings for iOS/macOS
+    const DarwinInitializationSettings initializationSettingsDarwin =
+        DarwinInitializationSettings(
+      requestAlertPermission: true,
+      requestBadgePermission: true,
+      requestSoundPermission: true,
+    );
 
-    // Define settings for iOS (optional)
+    // Combined initialization settings
     const InitializationSettings initializationSettings =
         InitializationSettings(
-            android: initializationSettingsAndroid,
-            iOS: initializationSettingsIOS); // Add iOS settings here
+      android: initializationSettingsAndroid,
+      iOS: initializationSettingsDarwin,
+      macOS: initializationSettingsDarwin,
+    );
 
-    // Initialize the plugin
-    await _notificationsPlugin.initialize(initializationSettings);
+    // Initialize the plugin with callback for notification taps
+    await _notificationsPlugin.initialize(
+      initializationSettings,
+      onDidReceiveNotificationResponse: _onNotificationTapped,
+      onDidReceiveBackgroundNotificationResponse: _notificationTapBackground,
+    );
+
+    // Request permissions
+    await _requestPermissions();
   }
 
+  /// Configure local timezone
+  static Future<void> _configureLocalTimeZone() async {
+    tz.initializeTimeZones();
+    
+    // Get TimezoneInfo and extract the name property
+    final TimezoneInfo timeZoneInfo = await FlutterTimezone.getLocalTimezone();
+    final String timeZoneName = timeZoneInfo.identifier;
+    
+    tz.setLocalLocation(tz.getLocation(timeZoneName));
+}
+
+
+  /// Handle notification tap (foreground)
+  static void _onNotificationTapped(NotificationResponse response) {
+    print('Notification tapped: ID=${response.id}, Payload=${response.payload}');
+    // Handle navigation or other actions here
+    // You can use a navigation service or global key to navigate
+  }
+
+  /// Handle notification tap (background/terminated)
+  @pragma('vm:entry-point')
+  static void _notificationTapBackground(NotificationResponse response) {
+    print('Background notification tapped: ID=${response.id}');
+  }
+
+  /// Request all necessary permissions
+  static Future<bool> _requestPermissions() async {
+    bool granted = true;
+
+    if (Platform.isAndroid) {
+      // Check notification permission (Android 13+)
+      final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
+          _notificationsPlugin.resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>();
+
+      final bool? grantedNotificationPermission =
+          await androidImplementation?.requestNotificationsPermission();
+      granted = grantedNotificationPermission ?? false;
+
+      // Request exact alarm permission
+      if (granted) {
+        granted = granted && await _requestExactAlarmPermission();
+      }
+    }
+
+    // iOS/macOS permissions are requested during initialization
+    if (Platform.isIOS || Platform.isMacOS) {
+      final result = await _notificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
+            alert: true,
+            badge: true,
+            sound: true,
+          );
+      granted = result ?? false;
+    }
+
+    return granted;
+  }
+
+  /// Request exact alarm permission for Android 12+
+  static Future<bool> _requestExactAlarmPermission() async {
+    if (Platform.isAndroid) {
+      if (await Permission.scheduleExactAlarm.isGranted) {
+        return true;
+      } else {
+        final status = await Permission.scheduleExactAlarm.request();
+        return status.isGranted;
+      }
+    }
+    return true;
+  }
+
+  /// Check if notifications are enabled
+  static Future<bool> areNotificationsEnabled() async {
+    if (Platform.isAndroid) {
+      final bool? enabled = await _notificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()
+          ?.areNotificationsEnabled();
+      return enabled ?? false;
+    }
+    return true; // iOS handles this differently
+  }
+
+  /// Schedule a single notification
   static Future<void> scheduleNotification({
     required int id,
     required String title,
     required String body,
     required DateTime dateTime,
+    String? payload,
   }) async {
     // Ensure the scheduled date is in the future
     if (dateTime.isBefore(DateTime.now())) {
-      print('Scheduled date must be in the future.');
+      print('Scheduled date must be in the future: $dateTime');
       return;
     }
-    // Request exact alarm permission if needed
-    if (await _requestExactAlarmPermission()) {
+
+    try {
       // Android-specific details
       const AndroidNotificationDetails androidDetails =
           AndroidNotificationDetails(
@@ -54,40 +156,45 @@ class NotificationHelper {
         channelDescription: 'This channel is for Alliat notifications',
         importance: Importance.high,
         priority: Priority.high,
+        enableVibration: true,
+        playSound: true,
+      );
+
+      // iOS/macOS-specific details
+      const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
+        presentAlert: true,
+        presentBadge: true,
+        presentSound: true,
       );
 
       // Notification details
-      const NotificationDetails notificationDetails =
-          NotificationDetails(android: androidDetails);
+      const NotificationDetails notificationDetails = NotificationDetails(
+        android: androidDetails,
+        iOS: iosDetails,
+        macOS: iosDetails,
+      );
+
+      // Convert DateTime to TZDateTime
+      final tz.TZDateTime scheduledDate = tz.TZDateTime.from(dateTime, tz.local);
 
       // Schedule the notification
       await _notificationsPlugin.zonedSchedule(
-        id, // Unique ID for the notification
-        title, // Notification title
-        body, // Notification body
-        tz.TZDateTime.from(dateTime, tz.local), // Scheduled time
-        notificationDetails, // Notification details
-        androidScheduleMode:
-            AndroidScheduleMode.exactAllowWhileIdle, // Add this line
-        uiLocalNotificationDateInterpretation:
-            UILocalNotificationDateInterpretation.absoluteTime,
+        id,
+        title,
+        body,
+        scheduledDate,
+        notificationDetails,
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        payload: payload,
       );
-    } else {
-      print('Exact alarms are not permitted.');
-    }
-  }
 
-  static Future<bool> _requestExactAlarmPermission() async {
-    if (await Permission.scheduleExactAlarm.isGranted) {
-      return true;
-    } else {
-      final status = await Permission.scheduleExactAlarm.request();
-      return status.isGranted;
+      print('✅ Notification scheduled: ID=$id at $scheduledDate');
+    } catch (e) {
+      print('❌ Error scheduling notification: $e');
     }
   }
 
   /// Schedule notifications from collapsed format (with flags)
-  /// This expands the flags into individual scheduled notifications
   static Future<void> scheduleNotificationsFromCollapsed({
     required String documentType,
     required String documentInfo,
@@ -100,13 +207,21 @@ class NotificationHelper {
 
       // Schedule for month before if flag is set
       if (notification.monthBefore ?? false) {
-        final monthBeforeDate = expirationDate.subtract(const Duration(days: 30));
+        final monthBeforeDate = DateTime(
+          expirationDate.year,
+          expirationDate.month - 1,
+          expirationDate.day,
+          9, // Schedule at 9 AM
+          0,
+        );
+        
         if (monthBeforeDate.isAfter(DateTime.now())) {
           await scheduleNotification(
             id: await generateUniqueNotificationId(),
             title: '$documentType expiră în 1 lună',
             body: '$documentInfo - $documentType expiră pe ${_formatDate(expirationDate)}',
             dateTime: monthBeforeDate,
+            payload: 'month_before|$documentType|$documentInfo',
           );
         }
       }
@@ -114,12 +229,21 @@ class NotificationHelper {
       // Schedule for week before if flag is set
       if (notification.weekBefore ?? false) {
         final weekBeforeDate = expirationDate.subtract(const Duration(days: 7));
-        if (weekBeforeDate.isAfter(DateTime.now())) {
+        final scheduledTime = DateTime(
+          weekBeforeDate.year,
+          weekBeforeDate.month,
+          weekBeforeDate.day,
+          9, // Schedule at 9 AM
+          0,
+        );
+        
+        if (scheduledTime.isAfter(DateTime.now())) {
           await scheduleNotification(
             id: await generateUniqueNotificationId(),
             title: '$documentType expiră în 1 săptămână',
             body: '$documentInfo - $documentType expiră pe ${_formatDate(expirationDate)}',
-            dateTime: weekBeforeDate,
+            dateTime: scheduledTime,
+            payload: 'week_before|$documentType|$documentInfo',
           );
         }
       }
@@ -127,131 +251,162 @@ class NotificationHelper {
       // Schedule for day before if flag is set
       if (notification.dayBefore ?? false) {
         final dayBeforeDate = expirationDate.subtract(const Duration(days: 1));
-        if (dayBeforeDate.isAfter(DateTime.now())) {
+        final scheduledTime = DateTime(
+          dayBeforeDate.year,
+          dayBeforeDate.month,
+          dayBeforeDate.day,
+          9, // Schedule at 9 AM
+          0,
+        );
+        
+        if (scheduledTime.isAfter(DateTime.now())) {
           await scheduleNotification(
             id: await generateUniqueNotificationId(),
             title: '$documentType expiră mâine!',
             body: '$documentInfo - $documentType expiră pe ${_formatDate(expirationDate)}',
-            dateTime: dayBeforeDate,
+            dateTime: scheduledTime,
+            payload: 'day_before|$documentType|$documentInfo',
           );
         }
       }
     }
   }
 
-  /// Cancel all notifications associated with a collapsed notification model
-  /// Note: Since we generate new IDs when scheduling, we can't cancel by the stored ID
-  /// This is a limitation - consider storing scheduled notification IDs separately if needed
-  static Future<void> cancelNotificationsForCollapsed(
-    List<NotificationModel> notifications,
-  ) async {
-    // This is tricky because we generate new IDs when scheduling
-    // For now, this is a placeholder - you might need to store scheduled IDs
-    for (var notification in notifications) {
-      await cancelNotification(notification.notificationId);
-    }
-  }
-
-  static void scheduleNotifications(
+  /// Schedule notifications from a map
+  static Future<void> scheduleNotifications(
     Map<String, List<NotificationModel>> notifications,
-  ) {
-    notifications.forEach((key, value) {
-      for (int i = 0; i < value.length; i++) {
-        final notification = value[i];
+  ) async {
+    for (var entry in notifications.entries) {
+      final key = entry.key;
+      final notificationList = entry.value;
 
+      for (var notification in notificationList) {
         if (notification.push && notification.date.isAfter(DateTime.now())) {
-          NotificationHelper.scheduleNotification(
-            id: notification.notificationId, // Unique ID for each notification
-            title: 'Notificare - ${key} - ${notification.date}',
-            body: 'În data de ${notification.date} expiră documentul: $key.',
+          await scheduleNotification(
+            id: notification.notificationId,
+            title: 'Notificare - $key',
+            body: 'În data de ${_formatDate(notification.date)} expiră documentul: $key.',
             dateTime: notification.date,
+            payload: 'document|$key',
           );
         }
       }
-    });
+    }
   }
 
+  /// Generate a unique notification ID
   static Future<int> generateUniqueNotificationId() async {
     final List<PendingNotificationRequest> pendingNotifications =
         await _notificationsPlugin.pendingNotificationRequests();
 
-    // random generate an int between 0 and 10000
+    int id = _generateRandomInt(1000, 999999);
+    
+    final existingIds = pendingNotifications.map((n) => n.id).toSet();
+    
+    while (existingIds.contains(id)) {
+      id = _generateRandomInt(1000, 999999);
+    }
 
-    int i = _generateRandomInt(0, 10000);
-    bool idExists;
-
-    do {
-      idExists = false;
-      for (var notification in pendingNotifications) {
-        if (notification.id == i) {
-          idExists = true;
-          i++;
-          break;
-        }
-      }
-    } while (idExists);
-
-    return i;
+    return id;
   }
 
-  // update the notification
+  /// Update an existing notification (essentially reschedule it)
   static Future<void> updateNotification({
     required int id,
     required String title,
     required String body,
     required DateTime dateTime,
+    String? payload,
   }) async {
-    // Ensure the scheduled date is in the future
-    if (dateTime.isBefore(DateTime.now())) {
-      print('Scheduled date must be in the future.');
-      return;
+    // Cancel the old notification
+    await cancelNotification(id);
+    
+    // Schedule the new one
+    await scheduleNotification(
+      id: id,
+      title: title,
+      body: body,
+      dateTime: dateTime,
+      payload: payload,
+    );
+  }
+
+  /// Cancel a specific notification
+  static Future<void> cancelNotification(int id) async {
+    await _notificationsPlugin.cancel(id);
+    print('🗑️ Notification cancelled: ID=$id');
+  }
+
+  /// Cancel all notifications
+  static Future<void> cancelAllNotifications() async {
+    await _notificationsPlugin.cancelAll();
+    print('🗑️ All notifications cancelled');
+  }
+
+  /// Cancel notifications for a collapsed model
+  static Future<void> cancelNotificationsForCollapsed(
+    List<NotificationModel> notifications,
+  ) async {
+    for (var notification in notifications) {
+      await cancelNotification(notification.notificationId);
     }
-    // Android-specific details
+  }
+
+  /// Get all pending notifications
+  static Future<List<PendingNotificationRequest>> getPendingNotifications() async {
+    return await _notificationsPlugin.pendingNotificationRequests();
+  }
+
+  /// Get all active notifications (Android 6.0+, iOS 10.0+)
+  static Future<List<ActiveNotification>?> getActiveNotifications() async {
+    return await _notificationsPlugin.getActiveNotifications();
+  }
+
+  /// Show an immediate notification (not scheduled)
+  static Future<void> showImmediateNotification({
+    required int id,
+    required String title,
+    required String body,
+    String? payload,
+  }) async {
     const AndroidNotificationDetails androidDetails =
         AndroidNotificationDetails(
-      'alliat_asig', // Channel ID
-      'Alliat', // Channel Name
+      'alliat_asig',
+      'Alliat',
       channelDescription: 'This channel is for Alliat notifications',
       importance: Importance.high,
       priority: Priority.high,
     );
 
-    // Notification details
-    const NotificationDetails notificationDetails =
-        NotificationDetails(android: androidDetails);
+    const DarwinNotificationDetails iosDetails = DarwinNotificationDetails();
 
-    // Schedule the notification
-    await _notificationsPlugin.zonedSchedule(
-      id, // Unique ID for the notification
-      title, // Notification title
-      body, // Notification body
-      tz.TZDateTime.from(dateTime, tz.local), // Scheduled time
-      notificationDetails, // Notification details
-      androidScheduleMode:
-          AndroidScheduleMode.exactAllowWhileIdle, // Add this line
-      uiLocalNotificationDateInterpretation:
-          UILocalNotificationDateInterpretation.absoluteTime,
+    const NotificationDetails notificationDetails = NotificationDetails(
+      android: androidDetails,
+      iOS: iosDetails,
+      macOS: iosDetails,
+    );
+
+    await _notificationsPlugin.show(
+      id,
+      title,
+      body,
+      notificationDetails,
+      payload: payload,
     );
   }
 
-  static Future<void> cancelNotification(int id) async {
-    await _notificationsPlugin.cancel(id);
-  }
-
-  static Future<void> cancelAllNotifications() async {
-    await _notificationsPlugin.cancelAll();
-  }
-
+  /// Helper methods
   static int _generateRandomInt(int min, int max) {
     final Random random = Random();
     return min + random.nextInt(max - min + 1);
   }
 
-  static clearAllNotifications() {
-    _notificationsPlugin.cancelAll();
+  static String _formatDate(DateTime date) {
+    return '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
   }
 
-  static String _formatDate(DateTime date) {
-    return '${date.day}.${date.month}.${date.year}';
+  /// Clear all notifications (alias for cancelAllNotifications)
+  static Future<void> clearAllNotifications() async {
+    await cancelAllNotifications();
   }
 }
