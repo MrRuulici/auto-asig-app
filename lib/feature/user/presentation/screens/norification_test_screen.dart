@@ -21,9 +21,10 @@ class _NotificationTestScreenState extends State<NotificationTestScreen> {
   Future<void> _checkStatus() async {
     final enabled = await NotificationHelper.areNotificationsEnabled();
     final pending = await NotificationHelper.getPendingNotifications();
-    
+
     setState(() {
-      _status = enabled ? '✅ Notifications Enabled' : '❌ Notifications Disabled';
+      _status =
+          enabled ? '✅ Notifications Enabled' : '❌ Notifications Disabled';
       _pendingCount = pending.length;
     });
   }
@@ -36,7 +37,7 @@ class _NotificationTestScreenState extends State<NotificationTestScreen> {
         body: 'Această notificare ar trebui să apară imediat!',
         payload: 'test_immediate',
       );
-      
+
       _showSnackBar('✅ Notificare imediată trimisă!');
     } catch (e) {
       _showSnackBar('❌ Eroare: $e');
@@ -46,15 +47,16 @@ class _NotificationTestScreenState extends State<NotificationTestScreen> {
   Future<void> _testScheduled5Seconds() async {
     try {
       final scheduledTime = DateTime.now().add(const Duration(seconds: 5));
-      
+
       await NotificationHelper.scheduleNotification(
         id: 998,
         title: 'Test Programat (5 sec)',
-        body: 'Această notificare a fost programată pentru ${scheduledTime.hour}:${scheduledTime.minute}:${scheduledTime.second}',
+        body:
+            'Această notificare a fost programată pentru ${scheduledTime.hour}:${scheduledTime.minute}:${scheduledTime.second}',
         dateTime: scheduledTime,
         payload: 'test_5sec',
       );
-      
+
       _showSnackBar('✅ Notificare programată pentru 5 secunde!');
       await _checkStatus();
     } catch (e) {
@@ -65,15 +67,16 @@ class _NotificationTestScreenState extends State<NotificationTestScreen> {
   Future<void> _testScheduled1Minute() async {
     try {
       final scheduledTime = DateTime.now().add(const Duration(minutes: 1));
-      
+
       await NotificationHelper.scheduleNotification(
         id: 997,
         title: 'Test Programat (1 min)',
-        body: 'Această notificare a fost programată pentru ${scheduledTime.hour}:${scheduledTime.minute}',
+        body:
+            'Această notificare a fost programată pentru ${scheduledTime.hour}:${scheduledTime.minute}',
         dateTime: scheduledTime,
         payload: 'test_1min',
       );
-      
+
       _showSnackBar('✅ Notificare programată pentru 1 minut!');
       await _checkStatus();
     } catch (e) {
@@ -85,8 +88,9 @@ class _NotificationTestScreenState extends State<NotificationTestScreen> {
     try {
       // Schedule 3 notifications at different times
       for (int i = 0; i < 3; i++) {
-        final scheduledTime = DateTime.now().add(Duration(seconds: 10 + (i * 5)));
-        
+        final scheduledTime =
+            DateTime.now().add(Duration(seconds: 10 + (i * 5)));
+
         await NotificationHelper.scheduleNotification(
           id: 900 + i,
           title: 'Notificare Multiplă ${i + 1}',
@@ -95,7 +99,7 @@ class _NotificationTestScreenState extends State<NotificationTestScreen> {
           payload: 'test_multi_$i',
         );
       }
-      
+
       _showSnackBar('✅ 3 notificări programate (la 10, 15, 20 sec)!');
       await _checkStatus();
     } catch (e) {
@@ -105,7 +109,7 @@ class _NotificationTestScreenState extends State<NotificationTestScreen> {
 
   Future<void> _showPendingNotifications() async {
     final pending = await NotificationHelper.getPendingNotifications();
-    
+
     if (pending.isEmpty) {
       _showSnackBar('Nu există notificări programate');
       return;
@@ -201,14 +205,14 @@ class _NotificationTestScreenState extends State<NotificationTestScreen> {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 24),
             const Text(
               'Teste de Bază',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            
+
             ElevatedButton.icon(
               onPressed: _testImmediateNotification,
               icon: const Icon(Icons.notifications_active),
@@ -217,9 +221,9 @@ class _NotificationTestScreenState extends State<NotificationTestScreen> {
                 padding: const EdgeInsets.all(16),
               ),
             ),
-            
+
             const SizedBox(height: 8),
-            
+
             ElevatedButton.icon(
               onPressed: _testScheduled5Seconds,
               icon: const Icon(Icons.timer),
@@ -228,9 +232,9 @@ class _NotificationTestScreenState extends State<NotificationTestScreen> {
                 padding: const EdgeInsets.all(16),
               ),
             ),
-            
+
             const SizedBox(height: 8),
-            
+
             ElevatedButton.icon(
               onPressed: _testScheduled1Minute,
               icon: const Icon(Icons.access_time),
@@ -239,14 +243,14 @@ class _NotificationTestScreenState extends State<NotificationTestScreen> {
                 padding: const EdgeInsets.all(16),
               ),
             ),
-            
+
             const SizedBox(height: 24),
             const Text(
               'Teste Avansate',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            
+
             ElevatedButton.icon(
               onPressed: _testMultipleNotifications,
               icon: const Icon(Icons.notifications),
@@ -256,14 +260,14 @@ class _NotificationTestScreenState extends State<NotificationTestScreen> {
                 backgroundColor: Colors.orange,
               ),
             ),
-            
+
             const SizedBox(height: 24),
             const Text(
               'Administrare',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            
+
             OutlinedButton.icon(
               onPressed: _showPendingNotifications,
               icon: const Icon(Icons.list),
@@ -272,9 +276,9 @@ class _NotificationTestScreenState extends State<NotificationTestScreen> {
                 padding: const EdgeInsets.all(16),
               ),
             ),
-            
+
             const SizedBox(height: 8),
-            
+
             OutlinedButton.icon(
               onPressed: _cancelAllNotifications,
               icon: const Icon(Icons.clear_all),
@@ -284,11 +288,34 @@ class _NotificationTestScreenState extends State<NotificationTestScreen> {
                 foregroundColor: Colors.red,
               ),
             ),
-            
+
+            const SizedBox(height: 8),
+
+
+            ElevatedButton.icon(
+              onPressed: () async {
+                await NotificationHelper.sendEmailNotification(
+                  userEmail: 'ruulici3@gmail.com',
+                  userName: 'Test User',
+                  documentType: 'Carte de identitate',
+                  documentInfo: 'CI TEST123',
+                  expirationDate: DateTime.now().add(Duration(days: 30)),
+                  timePeriod: '1 lună',
+                );
+                _showSnackBar('📧 Email de test trimis!');
+              },
+              icon: const Icon(Icons.email),
+              label: const Text('Test Email Notification'),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.all(16),
+                backgroundColor: Colors.green,
+              ),
+            ),
+
             const SizedBox(height: 24),
             const Divider(),
             const SizedBox(height: 16),
-            
+
             // Instructions
             const Card(
               child: Padding(
@@ -302,7 +329,8 @@ class _NotificationTestScreenState extends State<NotificationTestScreen> {
                     ),
                     SizedBox(height: 8),
                     Text('1. Pentru notificări imediate: apasă primul buton'),
-                    Text('2. Pentru notificări programate: apasă și minimizează aplicația'),
+                    Text(
+                        '2. Pentru notificări programate: apasă și minimizează aplicația'),
                     Text('3. Notificările vor apărea la timpul programat'),
                     Text('4. Apasă pe notificare pentru a deschide aplicația'),
                     SizedBox(height: 8),

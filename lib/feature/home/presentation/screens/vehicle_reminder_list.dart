@@ -43,6 +43,8 @@ class VehicleReminderList extends StatelessWidget {
                 vehicleReminder,
                 vehicleReminder.id,
               );
+              final hasAlmostExpired = _hasAlmostExpiredItems(vehicleReminder);
+              
               return ExpansionTile(
                 title: Container(
                   padding:
@@ -81,6 +83,22 @@ class VehicleReminderList extends StatelessWidget {
                           overflow: TextOverflow.fade,
                         ),
                       ),
+                      if (hasAlmostExpired)
+                        Container(
+                          width: 12,
+                          height: 12,
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.red.withOpacity(0.5),
+                                spreadRadius: 2,
+                                blurRadius: 4,
+                              ),
+                            ],
+                          ),
+                        ),
                     ],
                   ),
                 ),
@@ -203,6 +221,24 @@ class VehicleReminderList extends StatelessWidget {
         }
       },
     );
+  }
+
+  // Check if vehicle has any items expiring within 30 days or already expired
+  bool _hasAlmostExpiredItems(VehicleReminder vehicleReminder) {
+    const int warningDays = 30;
+    final now = DateTime.now();
+
+    bool isAlmostExpired(DateTime? expirationDate) {
+      if (expirationDate == null) return false;
+      final difference = expirationDate.difference(now).inDays;
+      return difference <= warningDays;
+    }
+
+    return isAlmostExpired(vehicleReminder.expirationDateITP) ||
+        isAlmostExpired(vehicleReminder.expirationDateRCA) ||
+        isAlmostExpired(vehicleReminder.expirationDateCASCO) ||
+        isAlmostExpired(vehicleReminder.expirationDateRovinieta) ||
+        isAlmostExpired(vehicleReminder.expirationDateTahograf);
   }
 
   List<Widget> _buildExpirationItems(

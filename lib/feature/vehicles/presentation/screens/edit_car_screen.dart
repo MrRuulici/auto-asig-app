@@ -236,8 +236,24 @@ class EditCarScreen extends StatelessWidget {
 
             try {
               String userId = context.read<UserDataCubit>().state.member.id;
+              final userEmail =
+                  context.read<UserDataCubit>().state.member.email;
+              final userName =
+                  context.read<UserDataCubit>().state.member.firstName ??
+                      context
+                          .read<UserDataCubit>()
+                          .state
+                          .member
+                          .email
+                          ?.split('@')
+                          .first ??
+                      'Utilizator';
 
-              await cubit.saveChanges(userId);
+              await cubit.saveChanges(
+                userId,
+                userEmail: userEmail,
+                userName: userName,
+              );
 
               // Close loading dialog
               Navigator.of(context).pop();

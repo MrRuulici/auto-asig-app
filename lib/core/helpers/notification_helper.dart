@@ -1,26 +1,33 @@
 import 'dart:math';
 import 'dart:io' show Platform;
 
+import 'package:auto_asig/core/data/email_data.dart';
 import 'package:auto_asig/core/models/notification_model.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:permission_handler/permission_handler.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:intl/intl.dart';
 
 class NotificationHelper {
   static final FlutterLocalNotificationsPlugin _notificationsPlugin =
       FlutterLocalNotificationsPlugin();
 
+  // EmailJS Configuration - Add your credentials
+  static const String _emailServiceId = EmailData.serviceId;
+  static const String _emailTemplateId = EmailData.notifTemplateId;
+  static const String _emailPublicKey = EmailData.publicKey;
+
   /// Initialize notifications with proper permissions and settings
   static Future<void> initialize() async {
     await _configureLocalTimeZone();
 
-    // Define settings for Android
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
 
-    // Define settings for iOS/macOS
     const DarwinInitializationSettings initializationSettingsDarwin =
         DarwinInitializationSettings(
       requestAlertPermission: true,
@@ -28,7 +35,6 @@ class NotificationHelper {
       requestSoundPermission: true,
     );
 
-    // Combined initialization settings
     const InitializationSettings initializationSettings =
         InitializationSettings(
       android: initializationSettingsAndroid,
@@ -36,48 +42,36 @@ class NotificationHelper {
       macOS: initializationSettingsDarwin,
     );
 
-    // Initialize the plugin with callback for notification taps
     await _notificationsPlugin.initialize(
       initializationSettings,
       onDidReceiveNotificationResponse: _onNotificationTapped,
       onDidReceiveBackgroundNotificationResponse: _notificationTapBackground,
     );
 
-    // Request permissions
     await _requestPermissions();
   }
 
-  /// Configure local timezone
   static Future<void> _configureLocalTimeZone() async {
     tz.initializeTimeZones();
-    
-    // Get TimezoneInfo and extract the name property
     final TimezoneInfo timeZoneInfo = await FlutterTimezone.getLocalTimezone();
     final String timeZoneName = timeZoneInfo.identifier;
-    
-    tz.setLocalLocation(tz.getLocation(timeZoneName));
-}
 
-
-  /// Handle notification tap (foreground)
-  static void _onNotificationTapped(NotificationResponse response) {
-    print('Notification tapped: ID=${response.id}, Payload=${response.payload}');
-    // Handle navigation or other actions here
-    // You can use a navigation service or global key to navigate
+    tz.setLocalLocation(tz.getLocation(timeZoneName!));
   }
 
-  /// Handle notification tap (background/terminated)
+  static void _onNotificationTapped(NotificationResponse response) {
+    print('Notification tapped: ID=${response.id}, Payload=${response.payload}');
+  }
+
   @pragma('vm:entry-point')
   static void _notificationTapBackground(NotificationResponse response) {
     print('Background notification tapped: ID=${response.id}');
   }
 
-  /// Request all necessary permissions
   static Future<bool> _requestPermissions() async {
     bool granted = true;
 
     if (Platform.isAndroid) {
-      // Check notification permission (Android 13+)
       final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
           _notificationsPlugin.resolvePlatformSpecificImplementation<
               AndroidFlutterLocalNotificationsPlugin>();
@@ -86,13 +80,11 @@ class NotificationHelper {
           await androidImplementation?.requestNotificationsPermission();
       granted = grantedNotificationPermission ?? false;
 
-      // Request exact alarm permission
       if (granted) {
         granted = granted && await _requestExactAlarmPermission();
       }
     }
 
-    // iOS/macOS permissions are requested during initialization
     if (Platform.isIOS || Platform.isMacOS) {
       final result = await _notificationsPlugin
           .resolvePlatformSpecificImplementation<
@@ -108,7 +100,6 @@ class NotificationHelper {
     return granted;
   }
 
-  /// Request exact alarm permission for Android 12+
   static Future<bool> _requestExactAlarmPermission() async {
     if (Platform.isAndroid) {
       if (await Permission.scheduleExactAlarm.isGranted) {
@@ -121,7 +112,6 @@ class NotificationHelper {
     return true;
   }
 
-  /// Check if notifications are enabled
   static Future<bool> areNotificationsEnabled() async {
     if (Platform.isAndroid) {
       final bool? enabled = await _notificationsPlugin
@@ -130,7 +120,7 @@ class NotificationHelper {
           ?.areNotificationsEnabled();
       return enabled ?? false;
     }
-    return true; // iOS handles this differently
+    return true;
   }
 
   /// Schedule a single notification
@@ -141,18 +131,16 @@ class NotificationHelper {
     required DateTime dateTime,
     String? payload,
   }) async {
-    // Ensure the scheduled date is in the future
     if (dateTime.isBefore(DateTime.now())) {
       print('Scheduled date must be in the future: $dateTime');
       return;
     }
 
     try {
-      // Android-specific details
       const AndroidNotificationDetails androidDetails =
           AndroidNotificationDetails(
-        'alliat_asig', // Channel ID
-        'Alliat', // Channel Name
+        'alliat_asig',
+        'Alliat',
         channelDescription: 'This channel is for Alliat notifications',
         importance: Importance.high,
         priority: Priority.high,
@@ -160,24 +148,20 @@ class NotificationHelper {
         playSound: true,
       );
 
-      // iOS/macOS-specific details
       const DarwinNotificationDetails iosDetails = DarwinNotificationDetails(
         presentAlert: true,
         presentBadge: true,
         presentSound: true,
       );
 
-      // Notification details
       const NotificationDetails notificationDetails = NotificationDetails(
         android: androidDetails,
         iOS: iosDetails,
         macOS: iosDetails,
       );
 
-      // Convert DateTime to TZDateTime
       final tz.TZDateTime scheduledDate = tz.TZDateTime.from(dateTime, tz.local);
 
-      // Schedule the notification
       await _notificationsPlugin.zonedSchedule(
         id,
         title,
@@ -194,16 +178,67 @@ class NotificationHelper {
     }
   }
 
+  /// Send email notification via EmailJS
+  static Future<void> sendEmailNotification({
+    required String userEmail,
+    required String userName,
+    required String documentType,
+    required String documentInfo,
+    required DateTime expirationDate,
+    required String timePeriod,
+  }) async {
+    try {
+      print('📧 Sending email notification to $userEmail...');
+      
+      final url = Uri.parse('https://api.emailjs.com/api/v1.0/email/send');
+      
+      final data = {
+        'service_id': _emailServiceId,
+        'template_id': _emailTemplateId,
+        'user_id': _emailPublicKey,
+        'template_params': {
+          'to_email': userEmail,
+          'to_name': userName,
+          'document_type': documentType,
+          'document_info': documentInfo,
+          'expiration_date': _formatDate(expirationDate),
+          'time_period': timePeriod,
+          'send_date': DateFormat('dd/MM/yyyy HH:mm').format(DateTime.now()),
+        }
+      };
+
+      print('Email request data: ${json.encode(data)}');
+      
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: json.encode(data),
+      );
+
+      if (response.statusCode == 200) {
+        print('✅ Email sent successfully via EmailJS');
+      } else {
+        print('❌ EmailJS error: ${response.statusCode} - ${response.body}');
+      }
+    } catch (error) {
+      print('❌ EmailJS exception: $error');
+    }
+  }
+
   /// Schedule notifications from collapsed format (with flags)
   static Future<void> scheduleNotificationsFromCollapsed({
     required String documentType,
     required String documentInfo,
     required DateTime expirationDate,
     required List<NotificationModel> notifications,
+    String? userEmail,
+    String? userName,
   }) async {
     for (var notification in notifications) {
-      // Only schedule if push is enabled
-      if (!notification.push) continue;
+      // Only schedule if push or email is enabled
+      if (!notification.push && !notification.email) continue;
 
       // Schedule for month before if flag is set
       if (notification.monthBefore ?? false) {
@@ -211,18 +246,33 @@ class NotificationHelper {
           expirationDate.year,
           expirationDate.month - 1,
           expirationDate.day,
-          9, // Schedule at 9 AM
+          9,
           0,
         );
         
         if (monthBeforeDate.isAfter(DateTime.now())) {
-          await scheduleNotification(
-            id: await generateUniqueNotificationId(),
-            title: '$documentType expiră în 1 lună',
-            body: '$documentInfo - $documentType expiră pe ${_formatDate(expirationDate)}',
-            dateTime: monthBeforeDate,
-            payload: 'month_before|$documentType|$documentInfo',
-          );
+          // Push notification
+          if (notification.push) {
+            await scheduleNotification(
+              id: await generateUniqueNotificationId(),
+              title: '$documentType expiră în 1 lună',
+              body: '$documentInfo - $documentType expiră pe ${_formatDate(expirationDate)}',
+              dateTime: monthBeforeDate,
+              payload: 'month_before|$documentType|$documentInfo',
+            );
+          }
+          
+          // Email notification
+          if (notification.email && userEmail != null) {
+            await sendEmailNotification(
+              userEmail: userEmail,
+              userName: userName ?? 'Utilizator',
+              documentType: documentType,
+              documentInfo: documentInfo,
+              expirationDate: expirationDate,
+              timePeriod: '1 lună',
+            );
+          }
         }
       }
 
@@ -233,18 +283,34 @@ class NotificationHelper {
           weekBeforeDate.year,
           weekBeforeDate.month,
           weekBeforeDate.day,
-          9, // Schedule at 9 AM
+          9,
           0,
         );
         
         if (scheduledTime.isAfter(DateTime.now())) {
-          await scheduleNotification(
-            id: await generateUniqueNotificationId(),
-            title: '$documentType expiră în 1 săptămână',
-            body: '$documentInfo - $documentType expiră pe ${_formatDate(expirationDate)}',
-            dateTime: scheduledTime,
-            payload: 'week_before|$documentType|$documentInfo',
-          );
+          // Push notification
+          if (notification.push) {
+            await scheduleNotification(
+              id: await generateUniqueNotificationId(),
+              title: '$documentType expiră în 1 săptămână',
+              body: '$documentInfo - $documentType expiră pe ${_formatDate(expirationDate)}',
+              dateTime: scheduledTime,
+              payload: 'week_before|$documentType|$documentInfo',
+            );
+          }
+          
+          // Email notification (send immediately for testing, or schedule for later)
+          if (notification.email && userEmail != null) {
+            // For immediate testing:
+            await sendEmailNotification(
+              userEmail: userEmail,
+              userName: userName ?? 'Utilizator',
+              documentType: documentType,
+              documentInfo: documentInfo,
+              expirationDate: expirationDate,
+              timePeriod: '1 săptămână',
+            );
+          }
         }
       }
 
@@ -255,24 +321,38 @@ class NotificationHelper {
           dayBeforeDate.year,
           dayBeforeDate.month,
           dayBeforeDate.day,
-          9, // Schedule at 9 AM
+          9,
           0,
         );
         
         if (scheduledTime.isAfter(DateTime.now())) {
-          await scheduleNotification(
-            id: await generateUniqueNotificationId(),
-            title: '$documentType expiră mâine!',
-            body: '$documentInfo - $documentType expiră pe ${_formatDate(expirationDate)}',
-            dateTime: scheduledTime,
-            payload: 'day_before|$documentType|$documentInfo',
-          );
+          // Push notification
+          if (notification.push) {
+            await scheduleNotification(
+              id: await generateUniqueNotificationId(),
+              title: '$documentType expiră mâine!',
+              body: '$documentInfo - $documentType expiră pe ${_formatDate(expirationDate)}',
+              dateTime: scheduledTime,
+              payload: 'day_before|$documentType|$documentInfo',
+            );
+          }
+          
+          // Email notification
+          if (notification.email && userEmail != null) {
+            await sendEmailNotification(
+              userEmail: userEmail,
+              userName: userName ?? 'Utilizator',
+              documentType: documentType,
+              documentInfo: documentInfo,
+              expirationDate: expirationDate,
+              timePeriod: '1 zi',
+            );
+          }
         }
       }
     }
   }
 
-  /// Schedule notifications from a map
   static Future<void> scheduleNotifications(
     Map<String, List<NotificationModel>> notifications,
   ) async {
@@ -294,7 +374,6 @@ class NotificationHelper {
     }
   }
 
-  /// Generate a unique notification ID
   static Future<int> generateUniqueNotificationId() async {
     final List<PendingNotificationRequest> pendingNotifications =
         await _notificationsPlugin.pendingNotificationRequests();
@@ -310,7 +389,6 @@ class NotificationHelper {
     return id;
   }
 
-  /// Update an existing notification (essentially reschedule it)
   static Future<void> updateNotification({
     required int id,
     required String title,
@@ -318,10 +396,7 @@ class NotificationHelper {
     required DateTime dateTime,
     String? payload,
   }) async {
-    // Cancel the old notification
     await cancelNotification(id);
-    
-    // Schedule the new one
     await scheduleNotification(
       id: id,
       title: title,
@@ -331,19 +406,16 @@ class NotificationHelper {
     );
   }
 
-  /// Cancel a specific notification
   static Future<void> cancelNotification(int id) async {
     await _notificationsPlugin.cancel(id);
     print('🗑️ Notification cancelled: ID=$id');
   }
 
-  /// Cancel all notifications
   static Future<void> cancelAllNotifications() async {
     await _notificationsPlugin.cancelAll();
     print('🗑️ All notifications cancelled');
   }
 
-  /// Cancel notifications for a collapsed model
   static Future<void> cancelNotificationsForCollapsed(
     List<NotificationModel> notifications,
   ) async {
@@ -352,17 +424,14 @@ class NotificationHelper {
     }
   }
 
-  /// Get all pending notifications
   static Future<List<PendingNotificationRequest>> getPendingNotifications() async {
     return await _notificationsPlugin.pendingNotificationRequests();
   }
 
-  /// Get all active notifications (Android 6.0+, iOS 10.0+)
   static Future<List<ActiveNotification>?> getActiveNotifications() async {
     return await _notificationsPlugin.getActiveNotifications();
   }
 
-  /// Show an immediate notification (not scheduled)
   static Future<void> showImmediateNotification({
     required int id,
     required String title,
@@ -395,7 +464,6 @@ class NotificationHelper {
     );
   }
 
-  /// Helper methods
   static int _generateRandomInt(int min, int max) {
     final Random random = Random();
     return min + random.nextInt(max - min + 1);
@@ -405,7 +473,6 @@ class NotificationHelper {
     return '${date.day.toString().padLeft(2, '0')}.${date.month.toString().padLeft(2, '0')}.${date.year}';
   }
 
-  /// Clear all notifications (alias for cancelAllNotifications)
   static Future<void> clearAllNotifications() async {
     await cancelAllNotifications();
   }
