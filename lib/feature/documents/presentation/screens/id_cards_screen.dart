@@ -272,15 +272,28 @@ class _ReminderScreenState extends State<ReminderScreen> {
             showLoadingDialog(context);
 
             final userId = context.read<UserDataCubit>().state.member.id;
+            final userEmail = context.read<UserDataCubit>().state.member.email;
+            final userName = context.read<UserDataCubit>().state.member.firstName ?? 
+                            context.read<UserDataCubit>().state.member.email?.split('@').first ?? 
+                            'Utilizator';
 
             try {
               if (widget.reminder == null) {
-                await context.read<IdCardsCubit>().save(userId, widget.type);
+                await context.read<IdCardsCubit>().save(
+                  userId, 
+                  widget.type,
+                  userEmail: userEmail,
+                  userName: userName,
+                );
                 showSuccessSnackbar(context, 'Reminder salvat cu succes');
               } else {
-                await context
-                    .read<IdCardsCubit>()
-                    .update(userId, widget.reminder!.id, widget.type);
+                await context.read<IdCardsCubit>().update(
+                  userId, 
+                  widget.reminder!.id, 
+                  widget.type,
+                  userEmail: userEmail,
+                  userName: userName,
+                );
                 showSuccessSnackbar(context, 'Reminder actualizat cu succes');
               }
 

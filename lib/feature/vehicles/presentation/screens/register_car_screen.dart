@@ -410,8 +410,7 @@ class _RegisterCarScreenState extends State<RegisterCarScreen> {
           padding: EdgeInsets.only(
             left: padding,
             right: padding,
-            bottom:
-                MediaQuery.of(context).viewInsets.bottom,
+            bottom: MediaQuery.of(context).viewInsets.bottom,
           ),
           child: AutoAsigButton(
             onPressed: () async {
@@ -436,9 +435,16 @@ class _RegisterCarScreenState extends State<RegisterCarScreen> {
 
               try {
                 final userData = context.read<UserDataCubit>();
-                final res = await context
-                    .read<CarInfoCubit>()
-                    .addCar(userData.state.member.id);
+                final userEmail = userData.state.member.email;
+                final userName = userData.state.member.firstName ??
+                    userData.state.member.email?.split('@').first ??
+                    'Utilizator';
+
+                final res = await context.read<CarInfoCubit>().addCar(
+                      userData.state.member.id,
+                      userEmail: userEmail,
+                      userName: userName,
+                    );
 
                 // Close loading dialog
                 Navigator.of(context).pop();

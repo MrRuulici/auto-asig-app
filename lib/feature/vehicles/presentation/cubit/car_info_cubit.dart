@@ -563,11 +563,14 @@ class CarInfoCubit extends Cubit<CarInfoState> {
     }
   }
 
-// Add Car logic without notification expansion
-  Future<bool> addCar(String userId) async {
-    print('Adding car info for user: $userId');
-    print('Car number: ${state.carNr}');
-    print('Vehicle model: ${state.vehicleModel}');
+  Future<bool> addCar(
+    String userId, {
+    String? userEmail,
+    String? userName,
+  }) async {
+    print('💾 Adding car info for user: $userId');
+    print('🚗 Car number: ${state.carNr}');
+    print('🚗 Vehicle model: ${state.vehicleModel}');
 
     // Check if at least one expiration date has notifications
     bool hasAtLeastOneExpiration = state.notificationsITP.isNotEmpty ||
@@ -580,7 +583,7 @@ class CarInfoCubit extends Cubit<CarInfoState> {
       return false;
     }
 
-    // DON'T expand - just convert to map format
+    // Convert to map format (collapsed format)
     List<Map<String, dynamic>> notificationsITP =
         state.notificationsITP.map((n) => n.toMap()).toList();
     List<Map<String, dynamic>> notificationsRCA =
@@ -620,6 +623,7 @@ class CarInfoCubit extends Cubit<CarInfoState> {
       },
     };
 
+    // Prepare journal data
     Map<String, dynamic> distributionJournal = {};
     Map<String, dynamic> breaksJournal = {};
     Map<String, dynamic> serviceJournal = {};
@@ -657,7 +661,7 @@ class CarInfoCubit extends Cubit<CarInfoState> {
       };
     }
 
-    // Call the function to add vehicle data
+    // Save to Firestore
     await addVehicleDataForUser(
       userId: userId,
       carInfo: carInfo,
@@ -666,10 +670,10 @@ class CarInfoCubit extends Cubit<CarInfoState> {
       serviceJournal: serviceJournal,
     );
 
+    // Add journal entries
     String carName = state.vehicleModel.replaceAll(' ', '');
     String vehicleId = '${state.carNr}-$carName';
 
-    // Add all service entries
     for (var entry in state.journalEntriesService) {
       await addJournalEntry(
         userId: userId,
@@ -678,7 +682,6 @@ class CarInfoCubit extends Cubit<CarInfoState> {
       );
     }
 
-    // Add all breaks entries
     for (var entry in state.journalEntriesBreaks) {
       await addJournalEntry(
         userId: userId,
@@ -687,7 +690,6 @@ class CarInfoCubit extends Cubit<CarInfoState> {
       );
     }
 
-    // Add all distribution entries
     for (var entry in state.journalEntriesDistribution) {
       await addJournalEntry(
         userId: userId,
@@ -696,60 +698,87 @@ class CarInfoCubit extends Cubit<CarInfoState> {
       );
     }
 
-    // Schedule notifications for the new vehicle
+    print('✅ Vehicle saved to Firestore');
+
+    // Schedule notifications with email support
     final vehicleInfo = '${state.carNr} - ${state.vehicleModel}';
 
-    // Schedule ITP notifications
-    if (state.expirationDateITP != null && state.notificationsITP.isNotEmpty) {
-      await NotificationHelper.scheduleNotificationsFromCollapsed(
-        documentType: 'ITP',
-        documentInfo: vehicleInfo,
-        expirationDate: state.expirationDateITP!,
-        notifications: state.notificationsITP,
-      );
-    }
+    try {
+      // Schedule ITP notifications
+      if (state.expirationDateITP != null &&
+          state.notificationsITP.isNotEmpty) {
+        await NotificationHelper.scheduleNotificationsFromCollapsed(
+          documentType: 'ITP',
+          documentInfo: vehicleInfo,
+          expirationDate: state.expirationDateITP!,
+          notifications: state.notificationsITP,
+          userEmail: userEmail,
+          userName: userName,
+        );
+        print('✅ ITP notifications scheduled');
+      }
 
-    // Schedule RCA notifications
-    if (state.expirationDateRCA != null && state.notificationsRCA.isNotEmpty) {
-      await NotificationHelper.scheduleNotificationsFromCollapsed(
-        documentType: 'RCA',
-        documentInfo: vehicleInfo,
-        expirationDate: state.expirationDateRCA!,
-        notifications: state.notificationsRCA,
-      );
-    }
+      // Schedule RCA notifications
+      if (state.expirationDateRCA != null &&
+          state.notificationsRCA.isNotEmpty) {
+        await NotificationHelper.scheduleNotificationsFromCollapsed(
+          documentType: 'RCA',
+          documentInfo: vehicleInfo,
+          expirationDate: state.expirationDateRCA!,
+          notifications: state.notificationsRCA,
+          userEmail: userEmail,
+          userName: userName,
+        );
+        print('✅ RCA notifications scheduled');
+      }
 
-    // Schedule CASCO notifications
-    if (state.expirationDateCASCO != null &&
-        state.notificationsCASCO.isNotEmpty) {
-      await NotificationHelper.scheduleNotificationsFromCollapsed(
-        documentType: 'CASCO',
-        documentInfo: vehicleInfo,
-        expirationDate: state.expirationDateCASCO!,
-        notifications: state.notificationsCASCO,
-      );
-    }
+      // Schedule CASCO notifications
+      if (state.expirationDateCASCO != null &&
+          state.notificationsCASCO.isNotEmpty) {
+        await NotificationHelper.scheduleNotificationsFromCollapsed(
+          documentType: 'CASCO',
+          documentInfo: vehicleInfo,
+          expirationDate: state.expirationDateCASCO!,
+          notifications: state.notificationsCASCO,
+          userEmail: userEmail,
+          userName: userName,
+        );
+        print('✅ CASCO notifications scheduled');
+      }
 
-    // Schedule Rovinieta notifications
-    if (state.expirationDateRovinieta != null &&
-        state.notificationsRovinieta.isNotEmpty) {
-      await NotificationHelper.scheduleNotificationsFromCollapsed(
-        documentType: 'Rovinieta',
-        documentInfo: vehicleInfo,
-        expirationDate: state.expirationDateRovinieta!,
-        notifications: state.notificationsRovinieta,
-      );
-    }
+      // Schedule Rovinieta notifications
+      if (state.expirationDateRovinieta != null &&
+          state.notificationsRovinieta.isNotEmpty) {
+        await NotificationHelper.scheduleNotificationsFromCollapsed(
+          documentType: 'Rovinieta',
+          documentInfo: vehicleInfo,
+          expirationDate: state.expirationDateRovinieta!,
+          notifications: state.notificationsRovinieta,
+          userEmail: userEmail,
+          userName: userName,
+        );
+        print('✅ Rovinieta notifications scheduled');
+      }
 
-    // Schedule Tahograf notifications
-    if (state.expirationDateTahograf != null &&
-        state.notificationsTahograf.isNotEmpty) {
-      await NotificationHelper.scheduleNotificationsFromCollapsed(
-        documentType: 'Tahograf',
-        documentInfo: vehicleInfo,
-        expirationDate: state.expirationDateTahograf!,
-        notifications: state.notificationsTahograf,
-      );
+      // Schedule Tahograf notifications
+      if (state.expirationDateTahograf != null &&
+          state.notificationsTahograf.isNotEmpty) {
+        await NotificationHelper.scheduleNotificationsFromCollapsed(
+          documentType: 'Tahograf',
+          documentInfo: vehicleInfo,
+          expirationDate: state.expirationDateTahograf!,
+          notifications: state.notificationsTahograf,
+          userEmail: userEmail,
+          userName: userName,
+        );
+        print('✅ Tahograf notifications scheduled');
+      }
+
+      // Debug: Check pending notifications
+      final pending = await NotificationHelper.getPendingNotifications();
+      print('📱 Total pending notifications: ${pending.length}');
+    } catch (e) {
+      print('❌ Error scheduling notifications: $e');
     }
 
     return true;

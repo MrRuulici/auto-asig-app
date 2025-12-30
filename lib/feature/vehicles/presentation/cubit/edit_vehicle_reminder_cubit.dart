@@ -241,71 +241,135 @@ class EditVehicleReminderCubit extends Cubit<EditVehicleReminderState> {
   //   return expandedNotifications.map((n) => n.toMap()).toList();
   // }
 
-  /// Saves the updated vehicle reminder and schedules notifications
-  Future<void> saveChanges(String userId) async {
+  Future<void> saveChanges(
+    String userId, {
+    String? userEmail,
+    String? userName,
+  }) async {
     if (state.vehicleReminder == null) return;
 
-    print('Saving vehicle reminder: ${state.vehicleReminder}');
+    print(
+        '💾 Saving vehicle reminder: ${state.vehicleReminder!.registrationNumber}');
 
-    // Save to Firestore (collapsed format)
-    await updateVehicleReminder(
-      userId,
-      state.vehicleReminder!.id,
-      state.vehicleReminder!,
-    );
+    // STEP 1: Cancel all old notifications first
+    try {
+      print('🗑️ Cancelling old notifications...');
 
-    // Schedule notifications for each type
+      for (var notif in state.vehicleReminder!.notificationsITP ?? []) {
+        await NotificationHelper.cancelNotification(notif.notificationId);
+      }
+      for (var notif in state.vehicleReminder!.notificationsRCA ?? []) {
+        await NotificationHelper.cancelNotification(notif.notificationId);
+      }
+      for (var notif in state.vehicleReminder!.notificationsCASCO ?? []) {
+        await NotificationHelper.cancelNotification(notif.notificationId);
+      }
+      for (var notif in state.vehicleReminder!.notificationsRovinieta ?? []) {
+        await NotificationHelper.cancelNotification(notif.notificationId);
+      }
+      for (var notif in state.vehicleReminder!.notificationsTahograf ?? []) {
+        await NotificationHelper.cancelNotification(notif.notificationId);
+      }
+
+      print('✅ Old notifications cancelled');
+    } catch (e) {
+      print('⚠️ Error cancelling old notifications: $e');
+    }
+
+    // STEP 2: Save to Firestore (collapsed format)
+    try {
+      await updateVehicleReminder(
+        userId,
+        state.vehicleReminder!.id,
+        state.vehicleReminder!,
+      );
+      print('✅ Vehicle reminder updated in Firestore');
+    } catch (e) {
+      print('❌ Error updating Firestore: $e');
+      rethrow;
+    }
+
+    // STEP 3: Schedule new notifications with email support
     final vehicleInfo =
         '${state.vehicleReminder!.registrationNumber} - ${state.vehicleReminder!.carModel}';
 
-    // ITP
-    if (state.vehicleReminder!.expirationDateITP != null) {
-      await NotificationHelper.scheduleNotificationsFromCollapsed(
-        documentType: 'ITP',
-        documentInfo: vehicleInfo,
-        expirationDate: state.vehicleReminder!.expirationDateITP!,
-        notifications: state.vehicleReminder!.notificationsITP ?? [],
-      );
-    }
+    try {
+      // Schedule ITP notifications
+      if (state.vehicleReminder!.expirationDateITP != null &&
+          (state.vehicleReminder!.notificationsITP?.isNotEmpty ?? false)) {
+        await NotificationHelper.scheduleNotificationsFromCollapsed(
+          documentType: 'ITP',
+          documentInfo: vehicleInfo,
+          expirationDate: state.vehicleReminder!.expirationDateITP!,
+          notifications: state.vehicleReminder!.notificationsITP!,
+          userEmail: userEmail,
+          userName: userName,
+        );
+        print('✅ ITP notifications scheduled');
+      }
 
-    // RCA
-    if (state.vehicleReminder!.expirationDateRCA != null) {
-      await NotificationHelper.scheduleNotificationsFromCollapsed(
-        documentType: 'RCA',
-        documentInfo: vehicleInfo,
-        expirationDate: state.vehicleReminder!.expirationDateRCA!,
-        notifications: state.vehicleReminder!.notificationsRCA ?? [],
-      );
-    }
+      // Schedule RCA notifications
+      if (state.vehicleReminder!.expirationDateRCA != null &&
+          (state.vehicleReminder!.notificationsRCA?.isNotEmpty ?? false)) {
+        await NotificationHelper.scheduleNotificationsFromCollapsed(
+          documentType: 'RCA',
+          documentInfo: vehicleInfo,
+          expirationDate: state.vehicleReminder!.expirationDateRCA!,
+          notifications: state.vehicleReminder!.notificationsRCA!,
+          userEmail: userEmail,
+          userName: userName,
+        );
+        print('✅ RCA notifications scheduled');
+      }
 
-    // CASCO
-    if (state.vehicleReminder!.expirationDateCASCO != null) {
-      await NotificationHelper.scheduleNotificationsFromCollapsed(
-        documentType: 'CASCO',
-        documentInfo: vehicleInfo,
-        expirationDate: state.vehicleReminder!.expirationDateCASCO!,
-        notifications: state.vehicleReminder!.notificationsCASCO ?? [],
-      );
-    }
+      // Schedule CASCO notifications
+      if (state.vehicleReminder!.expirationDateCASCO != null &&
+          (state.vehicleReminder!.notificationsCASCO?.isNotEmpty ?? false)) {
+        await NotificationHelper.scheduleNotificationsFromCollapsed(
+          documentType: 'CASCO',
+          documentInfo: vehicleInfo,
+          expirationDate: state.vehicleReminder!.expirationDateCASCO!,
+          notifications: state.vehicleReminder!.notificationsCASCO!,
+          userEmail: userEmail,
+          userName: userName,
+        );
+        print('✅ CASCO notifications scheduled');
+      }
 
-    // Rovinieta
-    if (state.vehicleReminder!.expirationDateRovinieta != null) {
-      await NotificationHelper.scheduleNotificationsFromCollapsed(
-        documentType: 'Rovinieta',
-        documentInfo: vehicleInfo,
-        expirationDate: state.vehicleReminder!.expirationDateRovinieta!,
-        notifications: state.vehicleReminder!.notificationsRovinieta ?? [],
-      );
-    }
+      // Schedule Rovinieta notifications
+      if (state.vehicleReminder!.expirationDateRovinieta != null &&
+          (state.vehicleReminder!.notificationsRovinieta?.isNotEmpty ??
+              false)) {
+        await NotificationHelper.scheduleNotificationsFromCollapsed(
+          documentType: 'Rovinieta',
+          documentInfo: vehicleInfo,
+          expirationDate: state.vehicleReminder!.expirationDateRovinieta!,
+          notifications: state.vehicleReminder!.notificationsRovinieta!,
+          userEmail: userEmail,
+          userName: userName,
+        );
+        print('✅ Rovinieta notifications scheduled');
+      }
 
-    // Tahograf
-    if (state.vehicleReminder!.expirationDateTahograf != null) {
-      await NotificationHelper.scheduleNotificationsFromCollapsed(
-        documentType: 'Tahograf',
-        documentInfo: vehicleInfo,
-        expirationDate: state.vehicleReminder!.expirationDateTahograf!,
-        notifications: state.vehicleReminder!.notificationsTahograf ?? [],
-      );
+      // Schedule Tahograf notifications
+      if (state.vehicleReminder!.expirationDateTahograf != null &&
+          (state.vehicleReminder!.notificationsTahograf?.isNotEmpty ?? false)) {
+        await NotificationHelper.scheduleNotificationsFromCollapsed(
+          documentType: 'Tahograf',
+          documentInfo: vehicleInfo,
+          expirationDate: state.vehicleReminder!.expirationDateTahograf!,
+          notifications: state.vehicleReminder!.notificationsTahograf!,
+          userEmail: userEmail,
+          userName: userName,
+        );
+        print('✅ Tahograf notifications scheduled');
+      }
+
+      // Debug: Check pending notifications
+      final pending = await NotificationHelper.getPendingNotifications();
+      print('📱 Total pending notifications: ${pending.length}');
+    } catch (e) {
+      print('❌ Error scheduling notifications: $e');
     }
   }
 

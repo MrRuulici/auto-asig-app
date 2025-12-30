@@ -20,13 +20,11 @@ class IdCardsCubit extends Cubit<IdCardsState> {
       return;
     }
 
-    print('New expiration date: $expirationDate'); // Debug print
+    print('📅 New expiration date: $expirationDate');
 
-    // Only create default notification if there are no notifications yet
     List<NotificationModel> notificationsToUse;
     
     if (state.notificationDates.isEmpty) {
-      // First time setting expiration date - create default notification
       int notifId = await NotificationHelper.generateUniqueNotificationId();
       notificationsToUse = [
         NotificationModel(
@@ -40,38 +38,16 @@ class IdCardsCubit extends Cubit<IdCardsState> {
           dayBefore: true,
         )
       ];
+      print('🔔 Created default notification with ID: $notifId');
     } else {
-      // Already have notifications - adjust them to be before the new expiration date
-      notificationsToUse = state.notificationDates
-          .where((notification) => notification.date.isBefore(expirationDate))
-          .toList();
-      
-      // If all notifications got filtered out, add a default one
-      if (notificationsToUse.isEmpty) {
-        int notifId = await NotificationHelper.generateUniqueNotificationId();
-        notificationsToUse = [
-          NotificationModel(
-            date: expirationDate.subtract(const Duration(days: 1)),
-            sms: false,
-            email: false,
-            push: true,
-            notificationId: notifId,
-            monthBefore: false,
-            weekBefore: false,
-            dayBefore: true,
-          )
-        ];
-      }
+      notificationsToUse = state.notificationDates;
+      print('🔔 Keeping existing notifications');
     }
-
-    print('Notifications to use: $notificationsToUse'); // Debug print
 
     emit(state.copyWith(
       expirationDate: expirationDate,
       notificationDates: notificationsToUse,
     ));
-
-    print('New state emitted: ${state.expirationDate}'); // Debug print
   }
 
   void updateNotification(int index, NotificationModel updatedNotification) {
@@ -85,13 +61,13 @@ class IdCardsCubit extends Cubit<IdCardsState> {
     updatedNotifications[index] = updatedNotification;
     emit(state.copyWith(notificationDates: updatedNotifications));
 
-    print('Notification at index $index updated to: $updatedNotification');
+    print('✏️ Notification at index $index updated');
   }
 
   void addNotification(NotificationModel notification) {
     if (notification.date.isBefore(DateTime.now()) ||
         notification.date.isAfter(state.expirationDate)) {
-      return; // Ensure notifications are within valid range
+      return;
     }
 
     emit(state.copyWith(
@@ -107,12 +83,10 @@ class IdCardsCubit extends Cubit<IdCardsState> {
     bool email,
     bool push,
   ) async {
-    // Simply update the flags on the existing notification
     final updatedNotifications = List<NotificationModel>.from(state.notificationDates);
     
-    // Just update the single notification with the selected flags
     updatedNotifications[index] = NotificationModel(
-      date: state.expirationDate.subtract(const Duration(days: 1)), // Keep a reference date
+      date: state.expirationDate,
       sms: false,
       email: email,
       push: push,
@@ -121,6 +95,8 @@ class IdCardsCubit extends Cubit<IdCardsState> {
       weekBefore: weekBefore,
       dayBefore: dayBefore,
     );
+    
+    print('🔔 Updated notification - Month: $monthBefore, Week: $weekBefore, Day: $dayBefore, Push: $push, Email: $email');
     
     emit(state.copyWith(notificationDates: updatedNotifications));
   }
@@ -132,10 +108,11 @@ class IdCardsCubit extends Cubit<IdCardsState> {
 
     if (isEditing || updatedNotifications.isNotEmpty) {
       emit(state.copyWith(notificationDates: updatedNotifications));
+      print('🗑️ Removed notification at index $index');
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Trebuie sa ai cel puțin o notificare adăugată'),
+          content: Text('Trebuie să ai cel puțin o notificare adăugată'),
         ),
       );
     }
@@ -143,38 +120,57 @@ class IdCardsCubit extends Cubit<IdCardsState> {
 
   void reset() {
     emit(IdCardsInitial());
+    print('🔄 State reset');
   }
 
-  Future<void> save(String userId, ReminderType type) async {
+  Future<void> save(
+    String userId, 
+    ReminderType type, {
+    String? userEmail,
+    String? userName,
+  }) async {
+    print('💾 Saving reminder...');
+    
     String id = '';
 
-    // DON'T expand - keep collapsed format
-    // Convert to map format for Firestore
     List<Map<String, dynamic>> notificationsData = state.notificationDates
         .map((notification) => notification.toMap())
         .toList();
 
-    Map<String, dynamic> ids = {
+    Map<String, dynamic> reminderData = {
       'name': state.name,
       'exp': state.expirationDate,
       'notifications': notificationsData,
       'timestamp': FieldValue.serverTimestamp(),
     };
 
-    id = await addReminderForUser(userId, ids, type);
+    id = await addReminderForUser(userId, reminderData, type);
     emit(state.copyWith(id: id));
+    print('✅ Reminder saved with ID: $id');
 
-    // Schedule local notifications based on flags
-    await NotificationHelper.scheduleNotificationsFromCollapsed(
-      documentType: _getReminderTypeName(type),
-      documentInfo: state.name,
-      expirationDate: state.expirationDate,
-      notifications: state.notificationDates,
-    );
+    // Schedule notifications (both push and email)
+    try {
+      await NotificationHelper.scheduleNotificationsFromCollapsed(
+        documentType: _getReminderTypeName(type),
+        documentInfo: state.name,
+        expirationDate: state.expirationDate,
+        notifications: state.notificationDates,
+        userEmail: userEmail,
+        userName: userName,
+      );
+      print('✅ Notifications scheduled successfully');
+      
+      final pending = await NotificationHelper.getPendingNotifications();
+      print('📱 Total pending notifications: ${pending.length}');
+    } catch (e) {
+      print('❌ Error scheduling notifications: $e');
+    }
   }
 
   void initializeForEdit(Reminder reminder) {
+    print('✏️ Initializing for edit: ${reminder.title}');
     emit(state.copyWith(
+      id: reminder.id,
       name: reminder.title,
       expirationDate: reminder.expirationDate,
       notificationDates:
@@ -182,14 +178,29 @@ class IdCardsCubit extends Cubit<IdCardsState> {
     ));
   }
 
-  Future<void> update(String userId, String documentId, ReminderType type) async {
-    // DON'T expand - keep collapsed format
-    // Convert to map format for Firestore
+  Future<void> update(
+    String userId, 
+    String documentId, 
+    ReminderType type, {
+    String? userEmail,
+    String? userName,
+  }) async {
+    print('💾 Updating reminder: $documentId');
+    
+    // Cancel old notifications
+    try {
+      for (var notification in state.notificationDates) {
+        await NotificationHelper.cancelNotification(notification.notificationId);
+      }
+      print('🗑️ Cancelled old notifications');
+    } catch (e) {
+      print('⚠️ Error cancelling old notifications: $e');
+    }
+
     List<Map<String, dynamic>> notificationsData = state.notificationDates
         .map((notification) => notification.toMap())
         .toList();
 
-    // Prepare data for updating
     Map<String, dynamic> updatedData = {
       'name': state.name,
       'exp': state.expirationDate,
@@ -199,14 +210,47 @@ class IdCardsCubit extends Cubit<IdCardsState> {
 
     await updateTheReminderForUser(userId, documentId, updatedData, type);
     emit(state.copyWith(id: documentId));
+    print('✅ Reminder updated in Firestore');
 
-    // Schedule local notifications based on flags
-    await NotificationHelper.scheduleNotificationsFromCollapsed(
-      documentType: _getReminderTypeName(type),
-      documentInfo: state.name,
-      expirationDate: state.expirationDate,
-      notifications: state.notificationDates,
-    );
+    // Schedule new notifications (both push and email)
+    try {
+      await NotificationHelper.scheduleNotificationsFromCollapsed(
+        documentType: _getReminderTypeName(type),
+        documentInfo: state.name,
+        expirationDate: state.expirationDate,
+        notifications: state.notificationDates,
+        userEmail: userEmail,
+        userName: userName,
+      );
+      print('✅ New notifications scheduled');
+      
+      final pending = await NotificationHelper.getPendingNotifications();
+      print('📱 Total pending notifications: ${pending.length}');
+    } catch (e) {
+      print('❌ Error scheduling notifications: $e');
+    }
+  }
+
+  Future<void> deleteReminder(
+    String userId, 
+    String documentId, 
+    ReminderType type,
+  ) async {
+    print('🗑️ Deleting reminder: $documentId');
+    
+    try {
+      for (var notification in state.notificationDates) {
+        await NotificationHelper.cancelNotification(notification.notificationId);
+      }
+      print('✅ Cancelled all notifications for this reminder');
+    } catch (e) {
+      print('⚠️ Error cancelling notifications: $e');
+    }
+    
+    await deleteReminderForUser(userId, documentId, type);
+    print('✅ Reminder deleted from Firestore');
+    
+    reset();
   }
 
   void clearReminderData() {
@@ -215,6 +259,7 @@ class IdCardsCubit extends Cubit<IdCardsState> {
       expirationDate: DateTime.now(),
       notificationDates: [],
     ));
+    print('🧹 Reminder data cleared');
   }
 
   String _getReminderTypeName(ReminderType type) {
