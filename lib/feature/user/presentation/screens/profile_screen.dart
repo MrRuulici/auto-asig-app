@@ -422,6 +422,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         ElevatedButton.icon(
+          onPressed: () {
+            context.go('/notification-test');
+          },
+          icon: const Icon(Icons.info_rounded),
+          label: const Text('Test notificari'),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.grey[50],
+            minimumSize: const Size(double.infinity, 50),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        ElevatedButton.icon(
           onPressed: _openAbout,
           icon: const Icon(Icons.info_rounded),
           label: const Text('Despre aplicație'),
