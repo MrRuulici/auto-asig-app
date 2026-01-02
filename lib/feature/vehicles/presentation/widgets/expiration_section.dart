@@ -33,13 +33,13 @@ class ExpirationSection extends StatelessWidget {
   // Calculate remaining days
   int _getRemainingDays() {
     if (selectedDate == null) return 0;
-    return selectedDate!.difference(DateTime.now()).inDays;
+    return selectedDate!.difference(DateTime.now()).inDays + 1;
   }
 
   int _calculateProgress() {
     if (selectedDate == null) return 0;
     const daysTotal = 60; // Full progress for 60 days
-    final daysRemaining = selectedDate!.difference(DateTime.now()).inDays;
+    final daysRemaining = selectedDate!.difference(DateTime.now()).inDays + 1;
     final progress =
         (daysRemaining > daysTotal ? daysTotal : daysRemaining) / daysTotal;
     return (progress * 100)

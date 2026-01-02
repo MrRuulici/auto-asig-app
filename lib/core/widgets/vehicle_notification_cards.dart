@@ -22,7 +22,6 @@ class VehicleReminderCards extends StatelessWidget {
   final EdgeInsets? padding;
   final VehicleReminder vehicleReminder;
 
-
   const VehicleReminderCards({
     super.key,
     required this.title,
@@ -48,16 +47,16 @@ class VehicleReminderCards extends StatelessWidget {
     final DateFormat dateFormatter = DateFormat('dd.MM.yyyy');
     late String expirationDate = '';
 
-    if (!isExpired) {
-      print('$title is not expired');
-      expirationDate = dateFormatter.format(DateTime.now().add(Duration(
-          days:
-              progressValue))); // Adjust as per your actual expiration date source
+    if (isExpired) {
+      // progressValue is negative for expired items
+      expirationDate = dateFormatter
+          .format(DateTime.now().add(Duration(days: progressValue)));
+    } else if (isZero) {
+      expirationDate = dateFormatter.format(DateTime.now());
     } else {
-      print('$title is expired');
-      expirationDate = dateFormatter.format(DateTime.now().subtract(Duration(
-          days:
-              progressValue))); // Adjust as per your actual expiration date source
+      // progressValue is positive for future items
+      expirationDate = dateFormatter
+          .format(DateTime.now().add(Duration(days: progressValue)));
     }
 
     // Calculate remaining years, months, and days
@@ -131,13 +130,16 @@ class VehicleReminderCards extends StatelessWidget {
                               notificationType: title,
                               onEditCallback: (updatedNotifications) {
                                 // Initialize the cubit with the vehicle data
-                                context.read<EditVehicleReminderCubit>().initializeReminder(vehicleReminder);
-                                
+                                context
+                                    .read<EditVehicleReminderCubit>()
+                                    .initializeReminder(vehicleReminder);
+
                                 // Navigate to edit screen
                                 context.push(
                                   EditCarScreen.absolutePath,
                                   extra: vehicleReminder,
-                                );                              },
+                                );
+                              },
                             );
                           },
                           child: Row(

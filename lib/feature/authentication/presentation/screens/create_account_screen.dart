@@ -298,7 +298,7 @@ class CreateAccountScreen extends StatelessWidget {
                                 }
                               : null,
                         ),
-                        
+
                         // Google Sign-In Button
                         AutoAsigButtonEmpty(
                           buttonWidth: 275,
@@ -312,12 +312,54 @@ class CreateAccountScreen extends StatelessWidget {
                             color: Color.fromRGBO(199, 22, 16, 1),
                           ),
                           text: 'GOOGLE',
-                          onPressed: isChecked
-                              ? () {
-                                  // Call the Google Sign-In method
-                                  context.read<RegistrationCubit>().signInWithGoogle();
-                                }
-                              : null,
+                          onPressed: () {
+                            if (isChecked) {
+                              // Call the Google Sign-In method
+                              context
+                                  .read<RegistrationCubit>()
+                                  .signInWithGoogle();
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                      'Te rugăm să accepți termenii și condițiile'),
+                                ),
+                              );
+                            }
+                          },
+                        ),
+
+                        // Apple Sign-In Button
+                        AutoAsigButtonEmpty(
+                          buttonWidth: 275,
+                          textStyle: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: logoBlue,
+                          ),
+                          preTextIcon: const Icon(
+                            FontAwesomeIcons.apple,
+                            color: Colors.black,
+                          ),
+                          text: 'APPLE',
+                          onPressed: () {
+                            if (isChecked) {
+                              // TODO: Implement Apple Sign-In
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                      'Apple Sign-In va fi disponibil în curând'),
+                                ),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                      'Te rugăm să accepți termenii și condițiile'),
+                                ),
+                              );
+                            }
+                          },
                         ),
 
                         // Facebook Sign-In Button
@@ -339,32 +381,6 @@ class CreateAccountScreen extends StatelessWidget {
                         //         }
                         //       : null,
                         // ),
-                        
-                        // Apple Sign-In Button (placeholder for future implementation)
-                        AutoAsigButtonEmpty(
-                          buttonWidth: 275,
-                          textStyle: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
-                            color: logoBlue,
-                          ),
-                          preTextIcon: const Icon(
-                            FontAwesomeIcons.apple,
-                            color: Colors.black,
-                          ),
-                          text: 'APPLE',
-                          onPressed: isChecked
-                              ? () {
-                                  // TODO: Implement Apple Sign-In
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text(
-                                          'Apple Sign-In va fi disponibil în curând'),
-                                    ),
-                                  );
-                                }
-                              : null,
-                        ),
                       ],
                     ),
                   ),

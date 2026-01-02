@@ -44,7 +44,7 @@ class VehicleReminderList extends StatelessWidget {
                 vehicleReminder.id,
               );
               final hasAlmostExpired = _hasAlmostExpiredItems(vehicleReminder);
-              
+
               return ExpansionTile(
                 title: Container(
                   padding:
@@ -246,8 +246,13 @@ class VehicleReminderList extends StatelessWidget {
     List<Widget> items = [];
 
     void addItem(String title, DateTime expirationDate) {
-      final remainingTime = expirationDate.difference(DateTime.now()).inDays;
-      final days = remainingTime.abs();
+      // Normalize dates to midnight for accurate day calculation
+      final today = DateTime(
+          DateTime.now().year, DateTime.now().month, DateTime.now().day);
+      final expiry = DateTime(
+          expirationDate.year, expirationDate.month, expirationDate.day);
+
+      final remainingTime = expiry.difference(today).inDays;
 
       List<NotificationModel> notifications = [];
 
@@ -267,7 +272,7 @@ class VehicleReminderList extends StatelessWidget {
         VehicleReminderItem(
           reminderId: id,
           title: title,
-          progressValue: days,
+          progressValue: remainingTime,
           actionText: 'Detalii',
           notifications: notifications,
           isExpired: remainingTime < 0,

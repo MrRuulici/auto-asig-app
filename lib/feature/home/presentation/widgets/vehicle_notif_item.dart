@@ -38,32 +38,32 @@ class VehicleReminderItem extends StatelessWidget {
   Widget build(BuildContext context) {
     // Determine the progress bar color based on remaining time
     Color progressColor = getProgressColor(progressValue);
-    final int absDays = progressValue.abs();
+    final int absDays = progressValue.abs() + 1;
 
     final bool isZero = progressValue == 0;
 
-    // Format expiration date (example: using DateFormat from intl package)
+// Format expiration date (example: using DateFormat from intl package)
     final DateFormat dateFormatter = DateFormat('dd/MM/yyyy');
     late final String expirationDate;
 
-    // DateTime expirationDate = isExpired
-    //     ? DateTime.now().subtract(Duration(days: progressValue))
-    //     : DateTime.now().add(Duration(days: progressValue + 1));
-
     if (isExpired) {
       expirationDate = dateFormatter.format(
-        DateTime.now().subtract(Duration(days: absDays)),
+        DateTime.now().add(Duration(
+            days: progressValue)), // progressValue is negative for expired
       );
+    } else if (isZero) {
+      expirationDate = dateFormatter.format(DateTime.now());
     } else {
       expirationDate = dateFormatter.format(
         DateTime.now().add(Duration(days: progressValue)),
       );
     }
 
-    // Calculate remaining years, months, and days
-    final int years = absDays ~/ 365;
-    final int months = (absDays % 365) ~/ 30;
-    final int remainingDays = absDays % 30;
+// Calculate remaining years, months, and days using progressValue.abs()
+    final int daysForCalculation = progressValue.abs();
+    final int years = daysForCalculation ~/ 365;
+    final int months = (daysForCalculation % 365) ~/ 30;
+    final int remainingDays = daysForCalculation % 30;
 
     // Build the time remaining text dynamically, showing only non-zero values
     List<String> timeComponents = [];
@@ -116,7 +116,7 @@ class VehicleReminderItem extends StatelessWidget {
                             fontSize: 17,
                           ),
                         ),
-                       GestureDetector(
+                        GestureDetector(
                           onTap: () {
                             print('Reminder ID: $reminderId');
                             print('Notification Type: $title');
@@ -131,8 +131,10 @@ class VehicleReminderItem extends StatelessWidget {
                               notificationType: title,
                               onEditCallback: (updatedNotifications) {
                                 // Initialize the cubit with the vehicle data
-                                context.read<EditVehicleReminderCubit>().initializeReminder(vehicleReminder);
-                                
+                                context
+                                    .read<EditVehicleReminderCubit>()
+                                    .initializeReminder(vehicleReminder);
+
                                 // Navigate to edit screen
                                 context.push(
                                   EditCarScreen.absolutePath,

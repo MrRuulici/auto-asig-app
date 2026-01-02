@@ -41,7 +41,8 @@ class UnifiedReminderList extends StatelessWidget {
             ExpansionTile(
               title: Text(
                 'Documente ($documentCount)',
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               initiallyExpanded: state.showDocuments,
               onExpansionChanged: (_) =>
@@ -88,7 +89,8 @@ class UnifiedReminderList extends StatelessWidget {
             ExpansionTile(
               title: Text(
                 'Vehicule ($vehicleCount)',
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style:
+                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
               initiallyExpanded: state.showVehicles,
               onExpansionChanged: (_) =>
@@ -103,103 +105,135 @@ class UnifiedReminderList extends StatelessWidget {
                   : vehicleReminders.expand<Widget>((vehicleReminder) {
                       // Build the cards for this vehicle
                       final List<Widget> vehicleCards = [];
-                      
+
                       if (vehicleReminder.expirationDateITP != null) {
-                        final remainingTime = vehicleReminder.expirationDateITP!
-                            .difference(DateTime.now())
-                            .inDays;
+                        // Normalize dates to midnight for accurate comparison
+                        final today = DateTime(DateTime.now().year,
+                            DateTime.now().month, DateTime.now().day);
+                        final expiry = DateTime(
+                            vehicleReminder.expirationDateITP!.year,
+                            vehicleReminder.expirationDateITP!.month,
+                            vehicleReminder.expirationDateITP!.day);
+
+                        final remainingTime = expiry.difference(today).inDays;
+
                         vehicleCards.add(
                           VehicleReminderCards(
                             reminderId: vehicleReminder.id,
                             title: 'ITP',
                             subtitle:
                                 '${vehicleReminder.registrationNumber} - ${vehicleReminder.carModel}',
-                            progressValue: remainingTime.abs(),
+                            progressValue: remainingTime,
                             actionText: 'Detalii',
                             notifications: vehicleReminder.notificationsITP,
-                            isExpired: vehicleReminder.expirationDateITP!
-                                .isBefore(DateTime.now()),
+                            isExpired: remainingTime < 0,
                             vehicleReminder: vehicleReminder,
                           ),
                         );
                       }
 
                       if (vehicleReminder.expirationDateRCA != null) {
-                        final remainingTime = vehicleReminder.expirationDateRCA!
-                            .difference(DateTime.now())
-                            .inDays;
+                        // Normalize dates to midnight for accurate comparison
+                        final today = DateTime(DateTime.now().year,
+                            DateTime.now().month, DateTime.now().day);
+                        final expiry = DateTime(
+                            vehicleReminder.expirationDateRCA!.year,
+                            vehicleReminder.expirationDateRCA!.month,
+                            vehicleReminder.expirationDateRCA!.day);
+
+                        final remainingTime = expiry.difference(today).inDays;
+
                         vehicleCards.add(
                           VehicleReminderCards(
                             reminderId: vehicleReminder.id,
                             title: 'RCA',
                             subtitle:
                                 '${vehicleReminder.registrationNumber} - ${vehicleReminder.carModel}',
-                            progressValue: remainingTime.abs(),
+                            progressValue: remainingTime,
                             actionText: 'Detalii',
                             notifications: vehicleReminder.notificationsRCA,
-                            isExpired: vehicleReminder.expirationDateRCA!
-                                .isBefore(DateTime.now()),
+                            isExpired: remainingTime < 0,
                             vehicleReminder: vehicleReminder,
                           ),
                         );
                       }
 
                       if (vehicleReminder.expirationDateCASCO != null) {
-                        final remainingTime = vehicleReminder.expirationDateCASCO!
-                            .difference(DateTime.now())
-                            .inDays;
+                        // Normalize dates to midnight for accurate comparison
+                        final today = DateTime(DateTime.now().year,
+                            DateTime.now().month, DateTime.now().day);
+                        final expiry = DateTime(
+                            vehicleReminder.expirationDateCASCO!.year,
+                            vehicleReminder.expirationDateCASCO!.month,
+                            vehicleReminder.expirationDateCASCO!.day);
+
+                        final remainingTime = expiry.difference(today).inDays;
+
                         vehicleCards.add(
                           VehicleReminderCards(
                             reminderId: vehicleReminder.id,
                             title: 'CASCO',
                             subtitle:
                                 '${vehicleReminder.registrationNumber} - ${vehicleReminder.carModel}',
-                            progressValue: remainingTime.abs(),
+                            progressValue: remainingTime,
                             actionText: 'Detalii',
                             notifications: vehicleReminder.notificationsCASCO,
+                            isExpired: remainingTime < 0,
                             vehicleReminder: vehicleReminder,
-                            isExpired: vehicleReminder.expirationDateCASCO!
-                                .isBefore(DateTime.now()),
                           ),
                         );
                       }
 
                       if (vehicleReminder.expirationDateRovinieta != null) {
-                        final remainingTime = vehicleReminder.expirationDateRovinieta!
-                            .difference(DateTime.now())
-                            .inDays;
+                        // Normalize dates to midnight for accurate comparison
+                        final today = DateTime(DateTime.now().year,
+                            DateTime.now().month, DateTime.now().day);
+                        final expiry = DateTime(
+                            vehicleReminder.expirationDateRovinieta!.year,
+                            vehicleReminder.expirationDateRovinieta!.month,
+                            vehicleReminder.expirationDateRovinieta!.day);
+
+                        final remainingTime = expiry.difference(today).inDays;
+
                         vehicleCards.add(
                           VehicleReminderCards(
                             reminderId: vehicleReminder.id,
                             title: 'Rovinieta',
                             subtitle:
                                 '${vehicleReminder.registrationNumber} - ${vehicleReminder.carModel}',
-                            progressValue: remainingTime.abs(),
+                            progressValue: remainingTime,
                             actionText: 'Detalii',
-                            notifications: vehicleReminder.notificationsRovinieta,
+                            notifications:
+                                vehicleReminder.notificationsRovinieta,
+                            isExpired: remainingTime < 0,
                             vehicleReminder: vehicleReminder,
-                            isExpired: vehicleReminder.expirationDateRovinieta!
-                                .isBefore(DateTime.now()),
                           ),
                         );
                       }
 
                       if (vehicleReminder.expirationDateTahograf != null) {
-                        final remainingTime = vehicleReminder.expirationDateTahograf!
-                            .difference(DateTime.now())
-                            .inDays;
+                        // Normalize dates to midnight for accurate comparison
+                        final today = DateTime(DateTime.now().year,
+                            DateTime.now().month, DateTime.now().day);
+                        final expiry = DateTime(
+                            vehicleReminder.expirationDateTahograf!.year,
+                            vehicleReminder.expirationDateTahograf!.month,
+                            vehicleReminder.expirationDateTahograf!.day);
+
+                        final remainingTime = expiry.difference(today).inDays;
+
                         vehicleCards.add(
                           VehicleReminderCards(
                             reminderId: vehicleReminder.id,
                             title: 'Tahograf',
                             subtitle:
                                 '${vehicleReminder.registrationNumber} - ${vehicleReminder.carModel}',
-                            progressValue: remainingTime.abs(),
+                            progressValue: remainingTime,
                             actionText: 'Detalii',
-                            notifications: vehicleReminder.notificationsTahograf,
+                            notifications:
+                                vehicleReminder.notificationsTahograf,
+                            isExpired: remainingTime < 0,
                             vehicleReminder: vehicleReminder,
-                            isExpired: vehicleReminder.expirationDateTahograf!
-                                .isBefore(DateTime.now()),
                           ),
                         );
                       }
